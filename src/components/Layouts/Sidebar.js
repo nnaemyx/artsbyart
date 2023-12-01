@@ -74,7 +74,7 @@ const Sidebar = ({onTitleClick}) => {
                 <Link href={href}>
                   <p
                     className={`flex items-center gap-2 px-6 mx-4  w-full cursor-pointer ${
-                      router.asPath === href && "bg-primary mx-4 fill-white rounded-md  w-[14rem] h-[52px]  text-white"
+                      router.asPath === href && "bg-primary mx-4 fill-white rounded-md  w-[10rem] h-[52px]  text-white"
                     }`}
                     onClick={() => onTitleClick(title)}
                   >
