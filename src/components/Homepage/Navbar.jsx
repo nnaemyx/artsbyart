@@ -40,7 +40,7 @@ const Navbar = () => {
             <span className="absolute inset-x-0  bottom-0  bg-primary transition-transform transform translate-y-full group-hover:border boder-solid border-primary group-hover:translate-x-0 ease-in-out "></span>
           </Link>
           
-            <Link href="/collections/shop" className="relative group">
+            <Link href="/shop" className="relative group">
               <p className="text-[15px]">Shop</p>
               <span
                 className="absolute inset-x-0  bottom-0  bg-primary transition-transform transform translate-y-full group-hover:border boder-solid border-primary group-hover:translate-x-0 ease-in-out "
@@ -51,11 +51,11 @@ const Navbar = () => {
             <p className="text-[15px]">Contact Us</p>
             <span className="absolute inset-x-0  bottom-0  bg-primary transition-transform transform translate-y-full group-hover:border boder-solid border-primary group-hover:translate-x-0 ease-in-out "></span>
           </Link>
-          <Link href="/contact" className="relative group">
+          <Link href="/suppliers" className="relative group">
             <p className="text-[15px]">Become a Supplier</p>
             <span className="absolute inset-x-0  bottom-0  bg-primary transition-transform transform translate-y-full group-hover:border boder-solid border-primary group-hover:translate-x-0 ease-in-out "></span>
           </Link>
-          <Link href="/contact" className="relative group">
+          <Link href="/integratedC" className="relative group">
             <p className="text-[15px]">Become an IC</p>
             <span className="absolute inset-x-0  bottom-0  bg-primary transition-transform transform translate-y-full group-hover:border boder-solid border-primary group-hover:translate-x-0 ease-in-out "></span>
           </Link>

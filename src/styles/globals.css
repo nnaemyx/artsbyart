@@ -75,3 +75,10 @@
   overflow: hidden;
   width: 100%;
 }
+
+/* styles/product/[slug].css (or use inline styles in your component) */
+
+.container {
+  max-width: 1200px;
+}
+

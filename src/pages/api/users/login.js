@@ -1,6 +1,7 @@
 // pages/api/auth.js
 import connectDb from "@/lib/connectDB";
 import User from "@/models/userModel";
+import { compare } from "bcryptjs";
 
 export default async function handler(req, res) {
   await connectDb();
@@ -11,18 +12,19 @@ export default async function handler(req, res) {
     try {
       // Check if the user already exists
       const existingUser = await User.findOne({ phone });
+      const passwordIsCorrect = await compare(password, existingUser.password);
 
       if (existingUser) {
-        // User exists, check the password
-        if (existingUser.comparePassword(password)) {
-          // Password is correct, login successful
+        const newUser = await User.findOne({ password });
+        res.status(201).json(newUser);
+        if (passwordIsCorrect) {
           res.json({ message: "Login successful." });
         } else {
-          // Password is incorrect
-          res.status(401).json({ message: "Incorrect password. Please try again." });
+          res
+            .status(401)
+            .json({ message: "Incorrect password. Please try again." });
         }
       } else {
-        // User does not exist, prompt to create an account
         res.json({ message: "User does not exist. Please create an account." });
       }
     } catch (error) {

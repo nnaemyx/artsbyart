@@ -70,7 +70,7 @@ const Mobileheader = () => {
               </Link>
 
               <Link
-                href="/collections/shop"
+                href="/shop"
                 onClick={closeLeft}
                 className="relative group"
               >

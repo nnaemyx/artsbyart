@@ -28,7 +28,7 @@ const Sidebar = ({onTitleClick}) => {
               {subItems ? (
                 <div className="relative">
                   <div
-                    className={` px-6 w-full mx-4 cursor-pointer`}
+                    className={` px-6 w-full  cursor-pointer`}
                     onClick={() => {
                         onTitleClick(title); 
                         toggleDropdown(title);
@@ -56,7 +56,7 @@ const Sidebar = ({onTitleClick}) => {
                               <div
                                 className={`flex items-center justify-start gap-2 px-16 w-full cursor-pointer ${
                                   isSubItemActive({ href: subHref }, title)
-                                    ? "bg-primary"
+                                    ? "bg-primary  text-white"
                                     : ""
                                 }`}
                               >
@@ -73,8 +73,8 @@ const Sidebar = ({onTitleClick}) => {
               ) : (
                 <Link href={href}>
                   <p
-                    className={`flex items-center gap-2 px-6 mx-4  w-full cursor-pointer ${
-                      router.asPath === href && "bg-primary mx-4 fill-white rounded-md  w-[14rem] h-[52px]  text-white"
+                    className={`flex items-center gap-2 px-6   w-full cursor-pointer ${
+                      router.asPath === href && "bg-primary fill-white  text-white"
                     }`}
                     onClick={() => onTitleClick(title)}
                   >

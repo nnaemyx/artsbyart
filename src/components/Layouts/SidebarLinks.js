@@ -36,17 +36,6 @@ export const menuItems = [
         title: 'Category List',
         icon: <AccountIcon2/>
       },
-      {
-        href: '/admin/catalog/Color',
-        title: 'Color',
-        icon:<AccountIcon2/>
-      },
-      {
-        href: '/admin/catalog/Colorlist',
-        title: 'Color List',
-        icon:<AccountIcon2/>
-      },
-      // Add more subitems as needed
     ],
   },
   {
