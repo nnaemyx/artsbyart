@@ -1,8 +1,11 @@
+import Register from '@/components/Suppliers/Register'
 import React from 'react'
 
 const index = () => {
   return (
-    <div>index</div>
+    <div className='mt-[12rem]'>
+      <Register/>
+    </div>
   )
 }
 
