@@ -88,7 +88,7 @@ const Mobileheader = () => {
                 <p className="text-[15px]">Become a Supplier</p>
               </Link>
               <Link
-                href="/contact"
+                href="/ICregister/Registration"
                 onClick={closeLeft}
                 className="relative group"
               >
@@ -109,7 +109,7 @@ const Mobileheader = () => {
                 <p className="text-[15px]">Team</p>
               </Link>
               <Link
-                href="/authentication/Login"
+                href="/authentication/AdminLogin"
                 onClick={closeLeft}
                 className="relative group"
               >
