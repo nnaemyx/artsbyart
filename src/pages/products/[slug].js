@@ -50,7 +50,7 @@ const ProductDetail = () => {
   }
 
   return (
-    <div className="container mx-auto mt-[11rem]" >
+    <div className="container mx-auto mt-4 lg:mt-[11rem]" >
       <div className="flex flex-col px-6 md:px-0 md:flex-row gap-12">
         <div className="">
           <img
