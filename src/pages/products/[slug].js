@@ -73,7 +73,7 @@ const ProductDetail = () => {
           <button
             onClick={handleToggleChat}
             
-            className="bg-blue-500 text-white p-2 rounded mt-4"
+            className="bg-blue-500 text-white p-2 mb-[8rem] rounded mt-4"
           >
             Create Ticket
           </button>
