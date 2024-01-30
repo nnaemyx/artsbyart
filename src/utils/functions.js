@@ -316,7 +316,7 @@ export const sendMessage = async (text, docId) => {
       successMessage("Message Sent! ✅");
       emailStaffMessage(
         doc.name,
-        `https://localhost:3000/chat/${doc.$id}`,
+        `https://artsbyart.vercel.app//chat/${doc.$id}`,
         doc.email,
         doc.access_code
       );
