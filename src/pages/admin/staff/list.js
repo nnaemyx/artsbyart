@@ -1,13 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
-
 import Head from "next/head";
 import { AiFillCheckCircle } from "react-icons/ai";
-
 import { useRouter } from "next/router";
 import { account } from "@/utils/appwrite";
 import Loading from "@/components/Chat/Loading";
-import AuthNav from "@/components/Chat/AuthNav";
-import SideNav from "@/components/Chat/SideNav";
 import { addUser, deleteUser, getUsers } from "@/utils/functions";
 
 const List = () => {
@@ -54,7 +50,7 @@ const List = () => {
 			</Head>
 
 			<main>
-				<AuthNav />
+				
 				<div className=' w-full flex items-center'>
 					{/* <div className='md:w-[20%] md:block hidden'>
 						<SideNav />
