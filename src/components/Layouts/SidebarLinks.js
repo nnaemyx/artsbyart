@@ -50,9 +50,20 @@ export const menuItems = [
  
   },  
   {
-    href: '/admin/Chat',
     title: 'Chat',
-    icon: <ChatIcon/>
+    icon: <ChatIcon />,
+    subItems: [
+      {
+        href: '/admin/staff/dashboard',
+        title: 'Dashboard',
+        icon: <AccountIcon2/>
+      },
+      {
+        href: '/admin/staff/list',
+        title: 'Staff List',
+        icon: <AccountIcon2/>
+      },
+    ],
   },
   {
     href: '/admin/Suppliers',

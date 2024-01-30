@@ -59,7 +59,7 @@ const Navbar = () => {
             <p className="text-[15px]">Become an IC</p>
             <span className="absolute inset-x-0  bottom-0  bg-primary transition-transform transform translate-y-full group-hover:border boder-solid border-primary group-hover:translate-x-0 ease-in-out "></span>
           </Link>
-          <Link href="/authentication/AdminLogin" className="relative group">
+          <Link href="/authentication/login" className="relative group">
             <p className="text-[15px]">Admin</p>
             <span className="absolute inset-x-0  bottom-0  bg-primary transition-transform transform translate-y-full group-hover:border boder-solid border-primary group-hover:translate-x-0 ease-in-out "></span>
           </Link>
