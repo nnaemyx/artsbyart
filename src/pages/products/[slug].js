@@ -56,7 +56,7 @@ const ProductDetail = () => {
           <img
             src={product.images[0]}
             alt={product.title}
-            className="w-full h-[800px]"
+            className="w-full h-[400px] lg:h-[800px]"
           />
         </div>
         <div className="flex-1"               ref={chatRef}
