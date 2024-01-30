@@ -103,7 +103,7 @@ const Ticket = ({ ticketObject }) => {
               <p>{ticketObject.content}</p>
             </div>
             <Link
-              href={`/chat/${router.query.id}`}
+              href={`/admin/chat/${router.query.id}`}
               target="_blank"
               className="my-6 w-[200px] text-center px-4 py-2 bg-blue-400 hover:bg-red-400 text-gray-100 rounded block"
             >
