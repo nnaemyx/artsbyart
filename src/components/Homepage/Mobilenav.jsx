@@ -18,19 +18,19 @@ const Mobilenav = () => {
 
         
 
-          <div className="flex flex-col items-center">
+          <Link href="/" className="flex flex-col items-center">
             <span>
               <HomeIcon />
             </span>
             <p className=" text-[12px] ">Home</p>
-          </div>
+          </Link>
 
-          <div className="flex flex-col items-center">
+          <Link href="/shop" className="flex flex-col items-center">
           <span>
             <ShopIcon/>
           </span>
             <p className=" text-[12px] ">Shop</p>
-          </div>
+          </Link>
 
           <div className="flex flex-col items-center">
             <span>
