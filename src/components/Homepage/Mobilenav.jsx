@@ -1,6 +1,12 @@
 import React from "react";
 import Mobileheader from "./Mobileheader";
-import { ContactIcon, HomeIcon, NotificationIcon, ProfileIcon, ShopIcon } from "@/icon";
+import {
+  ContactIcon,
+  HomeIcon,
+  NotificationIcon,
+  ProfileIcon,
+  ShopIcon,
+} from "@/icon";
 import Link from "next/link";
 
 const Mobilenav = () => {
@@ -9,15 +15,6 @@ const Mobilenav = () => {
       <Mobileheader />
       <div className="py-2 px-2 w-full md:hidden block z-10 text-dark bg-light shadow-md fixed bottom-0 left-0 h-[66px]">
         <div className="flex 375:gap-[4.3rem]  gap-[3.2rem] mx-auto justify-center 425:gap-[5.3rem]  items-center">
-          <div className="flex flex-col items-center">
-            <span className="text-center ">
-              <ContactIcon />
-            </span>
-            <p className=" text-[12px] ">Contact us</p>
-          </div>
-
-        
-
           <Link href="/" className="flex flex-col items-center">
             <span>
               <HomeIcon />
@@ -25,16 +22,23 @@ const Mobilenav = () => {
             <p className=" text-[12px] ">Home</p>
           </Link>
 
+          <div className="flex flex-col items-center">
+            <span className="text-center ">
+              <ContactIcon />
+            </span>
+            <p className=" text-[12px] ">Contact us</p>
+          </div>
+
           <Link href="/shop" className="flex flex-col items-center">
-          <span>
-            <ShopIcon/>
-          </span>
+            <span>
+              <ShopIcon />
+            </span>
             <p className=" text-[12px] ">Shop</p>
           </Link>
 
           <div className="flex flex-col items-center">
             <span>
-           <ProfileIcon/>
+              <ProfileIcon />
             </span>
             <p className=" text-[12px] ">Profile</p>
           </div>
