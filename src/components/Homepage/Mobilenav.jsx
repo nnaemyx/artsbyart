@@ -8,7 +8,7 @@ const Mobilenav = () => {
     <div className="lg:hidden block">
       <Mobileheader />
       <div className="py-2 px-2 w-full md:hidden block z-10 text-dark bg-light shadow-md fixed bottom-0 left-0 h-[66px]">
-        <div className="flex 375:gap-[4.3rem]  gap-[3.2rem] 425:gap-[5.3rem]  items-center">
+        <div className="flex 375:gap-[4.3rem]  gap-[3.2rem] mx-auto justify-center 425:gap-[5.3rem]  items-center">
           <div className="flex flex-col items-center">
             <span className="text-center ">
               <ContactIcon />
