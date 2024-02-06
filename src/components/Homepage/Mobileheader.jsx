@@ -6,7 +6,7 @@ import { SearchIcon } from "@/icon";
 
 const Mobileheader = () => {
   const [bg, setBg] = useState(false);
-  const { isLeftOpen, openLeft, closeLeft } = useCustomContext();
+  const { isLeftOpen, openLeft, closeLeft, isBottomOpen,openBottom,closeBottom } = useCustomContext();
 
   useEffect(() => {
     // add event listener
@@ -109,7 +109,7 @@ const Mobileheader = () => {
                 <p className="text-[15px]">Team</p>
               </Link>
               <Link
-                href="/authentication/AdminLogin"
+                href="/authentication/login"
                 onClick={closeLeft}
                 className="relative group"
               >

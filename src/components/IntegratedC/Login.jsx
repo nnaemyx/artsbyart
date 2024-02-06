@@ -48,8 +48,7 @@ const Login = () => {
         <form className="font-opensans mx-auto md:max-w-[478px] w-auto mt-[44px]">
           <div className="mt-4 relative">
             <input
-              type="
-              text"
+              type="number"
               value={phoneNumber1}
               placeholder=" "
               className={`focus:outline-none w-[100%] border border-solid px-[18px] py-[18px] ${
@@ -58,7 +57,7 @@ const Login = () => {
                   : "border-gray-300 "
               }`}
               onClick={() => handleInputClick("phoneNumber1")}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => setPhoneNumber1(e.target.value)}
             />
             <label
               htmlFor="
