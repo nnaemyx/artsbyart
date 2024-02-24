@@ -1,21 +1,23 @@
-import { useState } from "react";
+import {  useState } from "react";
 import Modal from "react-modal";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import "react-toastify/dist/ReactToastify.css";
 import Link from 'next/link'
+import { ID, account, db } from "@/utils/appwrite";
 
 const Register = () => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
-    officeAddress: "",
-    businessRegistration: "",
-    businessBankAccount: "",
-    hasSmartphone: "",
+    office_address: "",
+    reg_num: "",
+    bank_account: "",
+    smart_phone: "",
     password: "",
-    businessName: "",
-    phoneNumber1: "",
-    phoneNumber2: "",
+    email:"",
+    bus_name: "",
+    phone_num1: "",
+    phone_num2: "",
     branches: "",
     services: [],
   });
@@ -26,25 +28,45 @@ const Register = () => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
+  const generateID = () => Math.random().toString(36).substring(2, 24);
+
   const submitForm = async () => {
     try {
-      const response = await fetch("/api/integratedC/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
 
-      if (response.ok) {
+      await account.create(
+        generateID(),
+        formData.email, // Use phone number as the email (you may want to change this)
+        formData.password
+      );
+
+      // Assuming you have a collection named 'registrations' in your Appwrite database
+      const response = await db.createDocument(
+        process.env.NEXT_PUBLIC_DB_ID,
+        process.env.NEXT_PUBLIC_REGISTRATION_COLLECTION_ID,
+        ID.unique(),
+        {
+          office_address: formData.office_address,
+          reg_num: formData.reg_num,
+          bank_account: formData.bank_account,
+          smart_phone: formData.smart_phone,
+          bus_name: formData.bus_name,
+          phone_num1: formData.phone_num1,
+          phone_num2: formData.phone_num2,
+          branches: formData.branches,
+          services: formData.services,
+        }
+      );
+
+      if (response.$id) {
         toast.success("Form submitted successfully!");
+        setSuccessModalOpen(true);
       } else {
         toast.error("Error submitting form");
-        // Handle error, show error message, etc.
+        console.log("Error submitting form - Response:", response);
       }
     } catch (error) {
       toast.error("Error submitting form", error);
-      // Handle error, show error message, etc.
+      console.log(error)
     }
   };
 
@@ -52,7 +74,6 @@ const Register = () => {
     if (step === 2) {
       // Submit the form data to the backend API
       submitForm();
-      setSuccessModalOpen(true);
     } else {
       setStep(step + 1);
     }
@@ -97,43 +118,43 @@ const Register = () => {
       {step === 1 && (
         <div className="font-opensans">
           <h2 className="text-xl font-bold mb-2">Step 1: Office Address</h2>
-          <label htmlFor="officeAddress">Office Address:</label>
+          <label htmlFor="office_address">Office Address:</label>
           <input
             type="text"
-            id="officeAddress"
-            name="officeAddress"
-            value={formData.officeAddress}
+            id="office_address"
+            name="office_address"
+            value={formData.office_address}
             onChange={handleChange}
             className="w-full p-2 mb-4 border border-gray-300"
           />
 
-          <label htmlFor="businessRegistration">
+          <label htmlFor="reg_num">
             Registered Business with CAC (Business Registration Number):
           </label>
           <input
-            type="text"
-            id="businessRegistration"
-            name="businessRegistration"
-            value={formData.businessRegistration}
+            type="number"
+            id="reg_num"
+            name="reg_num"
+            value={formData.reg_num}
             onChange={handleChange}
             className="w-full p-2 mb-4 border border-gray-300"
           />
 
-          <label htmlFor="businessBankAccount">Business Bank Account:</label>
+          <label htmlFor="bank_account">Business Bank Account:</label>
           <input
-            type="text"
-            id="businessBankAccount"
-            name="businessBankAccount"
-            value={formData.businessBankAccount}
+            type="number"
+            id="bank_account"
+            name="bank_account"
+            value={formData.bank_account}
             onChange={handleChange}
             className="w-full p-2 mb-4 border border-gray-300"
           />
 
-          <label htmlFor="hasSmartphone">Do you have a smartphone?</label>
+          <label htmlFor="smart_phone">Do you have a smartphone?</label>
           <select
-            id="hasSmartphone"
-            name="hasSmartphone"
-            value={formData.hasSmartphone}
+            id="smart_phone"
+            name="smart_phone"
+            value={formData.smart_phone}
             onChange={handleChange}
             className="w-full p-2 mb-4 border border-gray-300"
           >
@@ -156,32 +177,32 @@ const Register = () => {
           <h2 className="text-xl font-bold mb-2">
             Step 2: Business Information
           </h2>
-          <label htmlFor="businessName">Business Name:</label>
+          <label htmlFor="bus_name">Business Name:</label>
           <input
             type="text"
-            id="businessName"
-            name="businessName"
-            value={formData.businessName}
+            id="bus_name"
+            name="bus_name"
+            value={formData.bus_name}
             onChange={handleChange}
             className="w-full p-2 mb-4 border border-gray-300"
           />
 
-          <label htmlFor="phoneNumber1">Phone Number 1:</label>
+          <label htmlFor="phone_num1">Phone Number 1:</label>
           <input
-            type="text"
-            id="phoneNumber1"
-            name="phoneNumber1"
-            value={formData.phoneNumber1}
+            type="number"
+            id="phone_num1"
+            name="phone_num1"
+            value={formData.phone_num1}
             onChange={handleChange}
             className="w-full p-2 mb-4 border border-gray-300"
           />
 
-          <label htmlFor="phoneNumber2">Phone Number 2 (optional):</label>
+          <label htmlFor="phone_num2">Phone Number 2 (optional):</label>
           <input
-            type="text"
-            id="phoneNumber2"
-            name="phoneNumber2"
-            value={formData.phoneNumber2}
+            type="number"
+            id="phone_num2"
+            name="phone_num2"
+            value={formData.phone_num2}
             onChange={handleChange}
             className="w-full p-2 mb-4 border border-gray-300"
           />
@@ -204,6 +225,16 @@ const Register = () => {
             id="passsword"
             name="password"
             value={formData.password}
+            onChange={handleChange}
+            className="w-full p-2 mb-4 border border-gray-300"
+          />
+
+<label htmlFor="email">email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
             onChange={handleChange}
             className="w-full p-2 mb-4 border border-gray-300"
           />

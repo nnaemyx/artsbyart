@@ -58,6 +58,7 @@ const Track = () => {
           // Close the modal on successful login
           if (response.ok) {
             closeModal();
+            router.push("/track")
             // router.reload(); // Reload the page or perform any other action as needed
           }
         } else {

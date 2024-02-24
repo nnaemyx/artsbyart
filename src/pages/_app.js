@@ -11,11 +11,23 @@ export default function App({
 }) {
   const router = useRouter();
   const isAdminPage = router.pathname.startsWith("/admin");
+  const isICPage = router.pathname.startsWith("/integratedC");
+
 
   if (isAdminPage) {
     return (
       <div>
         <AdminLayout session={session}>
+          <Component {...pageProps} />
+          <ToastContainer />
+        </AdminLayout>
+      </div>
+    );
+  }
+  if (isICPage) {
+    return (
+      <div>
+        <AdminLayout>
           <Component {...pageProps} />
           <ToastContainer />
         </AdminLayout>
