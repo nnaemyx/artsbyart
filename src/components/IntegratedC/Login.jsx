@@ -3,9 +3,10 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import "react-toastify/dist/ReactToastify.css";
 import Link from 'next/link'
+import { account } from "@/utils/appwrite";
 
 const Login = () => {
-  const [phoneNumber1, setPhoneNumber1] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [focusedInput, setFocusedInput] = useState(null);
 
@@ -17,24 +18,16 @@ const Login = () => {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch("/api/integratedC/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          phoneNumber1,
-          password,
-        }),
-      });
-
-      if (response.ok) {
+      // Call Appwrite's login method
+      const response = await account.createEmailSession(email, password);
+  
+      // Check if the login was successful
+      if (response.$id) {
         // Login successful
         toast.success("IC logged in successfully");
-        router.push("/admin");
+        router.push("/integratedC");
       } else {
-        const data = await response.json();
-        console.error("Login failed:", data.message);
+        console.error("Login failed:", response.message);
       }
     } catch (error) {
       console.error("Error during login:", error);
@@ -48,27 +41,27 @@ const Login = () => {
         <form className="font-opensans mx-auto md:max-w-[478px] w-auto mt-[44px]">
           <div className="mt-4 relative">
             <input
-              type="number"
-              value={phoneNumber1}
+              type="email"
+              value={email}
               placeholder=" "
               className={`focus:outline-none w-[100%] border border-solid px-[18px] py-[18px] ${
-                focusedInput === "phoneNumber1"
+                focusedInput === "email"
                   ? "border-dark border-[1.5px]"
                   : "border-gray-300 "
               }`}
-              onClick={() => handleInputClick("phoneNumber1")}
-              onChange={(e) => setPhoneNumber1(e.target.value)}
+              onClick={() => handleInputClick("email")}
+              onChange={(e) => setEmail(e.target.value)}
             />
             <label
               htmlFor="
-              phoneNumber1"
+              email"
               className={`absolute left-4 text-[14px] text-[#9b9191] top-4 transition-all duration-300 ${
-                focusedInput === "phoneNumber1" || phoneNumber1
+                focusedInput === "email" || email
                   ? "translate-y-[-125%] text-[12px] bg-white"
                   : ""
               }`}
             >
-              phoneNumber1
+              email
             </label>
           </div>
           <br />

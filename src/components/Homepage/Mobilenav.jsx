@@ -36,12 +36,12 @@ const Mobilenav = () => {
             <p className=" text-[12px] ">Shop</p>
           </Link>
 
-          <div className="flex flex-col items-center">
+          <Link href="/profile" className="flex flex-col items-center">
             <span>
               <ProfileIcon />
             </span>
             <p className=" text-[12px] ">Profile</p>
-          </div>
+          </Link>
         </div>
       </div>
     </div>
