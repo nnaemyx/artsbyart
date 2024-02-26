@@ -1,18 +1,27 @@
-import { getUserFromLocalStorage } from "@/utils/Localstorage";
+import { getUserFromLocalStorage, removeUserFromLocalStorage } from "@/utils/Localstorage";
 import Head from "next/head";
 import React, { useState, useEffect } from "react";
+import { useRouter } from 'next/router';
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Profile = () => {
-  const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
+
+  const router = useRouter();
+
+
+  const handleSignOut = () => {
+    removeUserFromLocalStorage();
+    router.push('/'); // Redirect to home page after sign-out
+  };
 
   useEffect(() => {
     const parsedUser = getUserFromLocalStorage();
     const userId = parsedUser?.newUser?._id;
     if (!userId) {
-      throw new Error("User ID not found in localStorage");
+      toast.error("Please login");
+      router.push('/')
     }
     // Fetch user data
     fetch(`/api/users/userdetails?userId=${userId}`)
@@ -31,7 +40,8 @@ const Profile = () => {
     const parsedUser = getUserFromLocalStorage();
     const userId = parsedUser?.newUser?._id;
     if (!userId) {
-      throw new Error("User ID not found in localStorage");
+      toast.error("Please login");
+      router.push('/')
     }
     // Update user data
     fetch(`/api/users/userdetails?userId=${userId}`, {
@@ -41,13 +51,13 @@ const Profile = () => {
       },
       body: JSON.stringify({
         userId,
-        password,
         phone,
       }),
     })
       .then((response) => response.json())
       .then(() => {
         toast.success("User information updated successfully");
+        handleSignOut();
       })
       .catch((error) => {
         console.error(error);
@@ -63,19 +73,10 @@ const Profile = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="px-12 mt-8">
+      <div className="px-12 mt-[12rem]">
         <h1 className="font-gilmerbold md:text-[25px]">Edit Account</h1>
         <form className="font-gilmermedium" onSubmit={handleUpdate}>
           <div className="flex md:flex-row flex-col md:mt-6 items-center justify-between">
-            <div className="text-start md:mt-0 mt-4 flex flex-col">
-              <label>New Password</label>
-              <input
-                type="password"
-                value={password}
-                readOnly
-                className="md:w-[500px] w-[320px] focus:outline-none border border-solid py-3 mt-2 px-4"
-              />
-            </div>
             <div className="text-start md:mt-0 mt-4 flex flex-col">
               <label>Phone Number</label>
               <input
