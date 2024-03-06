@@ -4,6 +4,7 @@ import { CustomContextProvider } from "@/context/Customcontext";
 import { ToastContainer } from "react-toastify";
 import AdminLayout from "@/components/Layouts/Adminlayout";
 import { useRouter } from "next/router";
+import ICLayout from "@/components/Layouts/IClayout";
 
 export default function App({
   Component,
@@ -27,10 +28,10 @@ export default function App({
   if (isICPage) {
     return (
       <div>
-        <AdminLayout>
+        <ICLayout>
           <Component {...pageProps} />
           <ToastContainer />
-        </AdminLayout>
+        </ICLayout>
       </div>
     );
   }
