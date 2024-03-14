@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { db } from "@/utils/appwrite";
 import Select from "react-select";
-
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Orders = () => {
   const [completedTickets, setCompletedTickets] = useState([]);
@@ -36,22 +37,23 @@ const Orders = () => {
         process.env.NEXT_PUBLIC_DB_ID,
         process.env.NEXT_PUBLIC_REGISTRATION_COLLECTION_ID
       );
-  
+
       // Filter documents based on the 'verified' status
-      const verifiedICs = response.documents.filter((ic) => ic.is_verified === true);
-  
+      const verifiedICs = response.documents.filter(
+        (ic) => ic.is_verified === true
+      );
+
       setAvailableICs(verifiedICs);
     } catch (error) {
       console.error("Error fetching verified ICs:", error);
     }
   };
 
- 
-  
-
   // Function to render ticket rows with dropdown and assignment button
-  const renderCompletedTicketRows = (tickets) => {
-    return tickets.map((ticket) => (
+  const CompletedTicketRow = ({ ticket }) => {
+    const [selectedICForTicket, setSelectedICForTicket] = useState(null);
+
+    return (
       <tr key={ticket.$id}>
         <td>{ticket.$id}</td>
         <td>{ticket.name}</td>
@@ -61,37 +63,55 @@ const Orders = () => {
           <Select
             options={options}
             isMulti
-            value={selectedIC}
-            onChange={(selectedOptions) => setSelectedIC(selectedOptions)}
+            value={selectedICForTicket}
+            onChange={(selectedOptions) =>
+              setSelectedICForTicket(selectedOptions)
+            }
           />
           <div className="flex gap-2 mt-2">
-            <button className="bg-blue-500 px-4 text-light py-1" onClick={() => handleAssignJob(ticket)}>Assign</button>
-            <button className="bg-blue-500 px-4 text-light py-1" onClick={() => handleSendToAll(ticket)}>Send to All</button>
+            <button
+              className="bg-blue-500 px-4 text-light py-1"
+              onClick={() => handleAssignJob(ticket, selectedICForTicket)}
+            >
+              Assign
+            </button>
+            <button
+              className="bg-blue-500 px-4 text-light py-1"
+              onClick={() => handleSendToAll(ticket)}
+            >
+              Send to All
+            </button>
           </div>
         </td>
       </tr>
+    );
+  };
+
+  const renderCompletedTicketRows = (tickets) => {
+    return tickets.map((ticket) => (
+      <CompletedTicketRow key={ticket.$id} ticket={ticket} />
     ));
   };
 
-  const handleAssignJob = async (ticket) => {
+  const handleAssignJob = async (ticket, selectedICForTicket) => {
     try {
-        // Extracting necessary fields from the ticket data
-        const { $id, name, email, content, productName } = ticket;
-
-        // Update the ticket document with assigned ICs and selected fields
+      // Extracting necessary fields from the ticket data
+      const { $id, name, email, content, productName } = ticket;
+      if (selectedICForTicket && selectedICForTicket.length > 0) {
+        const selectedICObjects = selectedICForTicket.map((ic) =>`${ic.value}:${ic.label}`);
         const updatedTicket = {
-            assignedICs: selectedIC.map((ic) => ic.value),
-            name,
-            email,
-            content,
-            productName,
+          assignedICs: selectedICObjects,
+          name,
+          email,
+          content,
+          productName,
         };
 
-        await db.updateDocument(
-            process.env.NEXT_PUBLIC_DB_ID,
-            process.env.NEXT_PUBLIC_TICKETS_COLLECTION_ID,
-            $id,
-            updatedTicket
+        await db.createDocument(
+          process.env.NEXT_PUBLIC_DB_ID,
+          process.env.NEXT_PUBLIC_COMPLETEDTICKETS_COLLECTION_ID,
+          $id,
+          updatedTicket
         );
 
         // Send SMS to the assigned ICs using Twilio
@@ -101,43 +121,47 @@ const Orders = () => {
         //     })
         // );
 
-        console.log("Ticket assigned successfully!");
+        toast.success("Ticket assigned successfully!");
+      } else {
+        console.log("No ICs selected. Ticket assignment skipped.");
+      }
     } catch (error) {
-        console.error("Error assigning ticket:", error);
+      toast.error("Error assigning ticket:", error);
     }
-};
+  };
 
-
-const handleSendToAll = async (ticket) => {
-  try {
-    // Update the ticket document with assigned ICs
-    const updatedTicket = {
-      ...ticket,
-      assignedICs: availableICs.map((ic) => ({
-        icId: ic.$id,
-        projectName: ticket.content,
-      })),
-    };
-
-    await db.updateDocument(
-      process.env.NEXT_PUBLIC_DB_ID,
-      process.env.NEXT_PUBLIC_TICKETS_COLLECTION_ID,
-      ticket.$id,
-      updatedTicket
-    );
-
-    // Send SMS to all available ICs using Twilio
-    // await Promise.all(
-    //   availableICs.map(async (ic) => {
-    //     await sendSMSToIC(ic.phone_num1, `You have a new job: ${ticket.name}`);
-    //   })
-    // );
-
-    console.log("Ticket sent to all ICs successfully!");
-  } catch (error) {
-    console.error("Error sending ticket to all ICs:", error);
-  }
-};
+  const handleSendToAll = async (ticket) => {
+    try {
+      // Update the ticket document with assigned ICs
+      const { $id, name, email, content, productName } = ticket;
+      const updatedTicket = {
+        assignedICs: availableICs.map((ic) => `${ic.$id}:${ic.label}`),
+        name,
+        email,
+        content,
+        productName,
+      };
+  
+      await db.createDocument(
+        process.env.NEXT_PUBLIC_DB_ID,
+        process.env.NEXT_PUBLIC_COMPLETEDTICKETS_COLLECTION_ID,
+        $id,
+        updatedTicket
+      );
+  
+      // Send SMS to all available ICs using Twilio
+      // await Promise.all(
+      //   availableICs.map(async (ic) => {
+      //     await sendSMSToIC(ic.phone_num1, `You have a new job: ${ticket.name}`);
+      //   })
+      // );
+  
+      console.log("Ticket sent to all ICs successfully!");
+    } catch (error) {
+      console.error("Error sending ticket to all ICs:", error);
+    }
+  };
+  
 
   const options = availableICs.map((ic) => ({
     value: ic.$id,
