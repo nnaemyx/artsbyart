@@ -1,10 +1,10 @@
 import Head from "next/head";
-import {  useState } from "react";
+import { useState } from "react";
 import { startMessage } from "@/utils/functions";
 import Processing from "./Processing";
 import AuthNav from "./AuthNav";
 
-export default function Chat() {
+export default function Chat({ productName }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [subject, setSubject] = useState("");
@@ -14,7 +14,7 @@ export default function Chat() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
-    startMessage(name, email, subject, message,  setLoading);
+    startMessage(name, email, subject, productName, message, setLoading);
     setName("");
     setEmail("");
     setMessage("");
@@ -32,7 +32,6 @@ export default function Chat() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="w-full min-h-[100vh] overflow-hidden  ">
-       
         <div className="w-full min-h-[90vh]  ">
           <div className="md:w-[60%] w-full h-full flex flex-col py-6 md:px-10 px-4 overflow-y-auto">
             <h2 className="font-bold text-2xl mb-2">Create Ticket</h2>
@@ -65,6 +64,17 @@ export default function Chat() {
                 />
               </div>
 
+              <div className="">
+                <label htmlFor="productName">Product Name</label>
+                <input
+                  type="text"
+                  id="productName"
+                  className="w-full border-[1px] border-gray-200 px-4 py-2 rounded mb-4"
+                  value={productName}
+                  readOnly
+                />
+              </div>
+
               <label htmlFor="subject">Subject</label>
               <input
                 type="text"
@@ -84,8 +94,6 @@ export default function Chat() {
                 onChange={(e) => setMessage(e.target.value)}
                 className="mb-4 border-[1px] border-gray-200 px-4 py-2 w-full"
               ></textarea>
-
-            
 
               <button className="p-3 bg-[#314484] rounded text-[#F4F8FB] w-[200px] hover:bg-[#2267D3]">
                 Send message

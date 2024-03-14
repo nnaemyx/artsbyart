@@ -205,6 +205,7 @@ export const startMessage = async (
   email,
   subject,
   message,
+  productName,
   setLoading
 ) => {
   try {
@@ -217,6 +218,7 @@ export const startMessage = async (
         email,
         subject,
         content: message,
+        productName,
         status: "open",
         messages: [
           JSON.stringify({

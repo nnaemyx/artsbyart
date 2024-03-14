@@ -71,7 +71,7 @@ const Ticket = ({ ticketObject }) => {
       <main>
         <div className=" w-full flex items-center">
           <div className=" md:w-[80%] w-full min-h-[90vh] py-10 md:px-4 px-8">
-            <h2 className="font-bold text-2xl mb-3">{ticketObject.subject}</h2>
+            <h2 className="font-bold text-2xl mb-3">{ticketObject.content}</h2>
 
             <p className="mb-2">
               Date:{" "}
@@ -100,7 +100,7 @@ const Ticket = ({ ticketObject }) => {
 
             <p className="mt-8 font-bold text-blue-600 mb-2">Message</p>
             <div className="w-full border-[1px] rounded-md p-6 shadow">
-              <p>{ticketObject.content}</p>
+              <p>{ticketObject.productName}</p>
             </div>
             <Link
               href={`/admin/chat/${router.query.id}`}

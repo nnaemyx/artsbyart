@@ -30,11 +30,10 @@ const ICheader = ({ clickedTitle }) => {
 
   const isUserVerified = () => {
     if (!user || !ics.length) {
-      return false; // User object or ics array is missing
+      return false; 
     }
 
-    const userId = user.id; // Replace 'id' with the actual property representing the user ID
-
+    const userId = user.id; 
     const currentUserData = ics.find((ic) => ic.id === userId);
     return currentUserData ? currentUserData.is_verified : false;
   };

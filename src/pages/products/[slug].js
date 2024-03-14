@@ -89,14 +89,14 @@ const ProductDetail = () => {
           {showChat && (
             <div className="absolute z-10 w-1/2 hidden lg:block right-0 h-[700px]  bottom-0 overflow-hidden  bg-light border-r">
               {/* Your chat component content goes here */}
-              <Chat product={product} />
+              <Chat productName={product.slug} />
             </div>
           )}
 
           {showChat && (
             <div className="absolute z-10 w-[90%] lg:hidden block mx-auto bottom-0 h-[600px] top-20 overflow-hidden  bg-light border-r">
               {/* Your chat component content goes here */}
-              <Chat product={product} />
+              <Chat productName={product.slug} />
             </div>
           )}
         </div>
