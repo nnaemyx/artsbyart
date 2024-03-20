@@ -1,3 +1,4 @@
+"use client"
 import React, { useState, useEffect } from "react";
 import { db } from "@/utils/appwrite";
 import Select from "react-select";
@@ -8,12 +9,53 @@ const Orders = () => {
   const [completedTickets, setCompletedTickets] = useState([]);
   const [availableICs, setAvailableICs] = useState([]); // ICs dropdown data
   const [selectedIC, setSelectedIC] = useState(null); // Selected IC for assignment
+  const [ics, setIcs] = useState([]);
+
+  useEffect(() => {
+    const fetchIcs = async () => {
+      try {
+        const response = await db.listDocuments(
+          process.env.NEXT_PUBLIC_DB_ID,
+          process.env.NEXT_PUBLIC_REGISTRATION_COLLECTION_ID
+        );
+        setIcs(response.documents);
+      } catch (error) {
+        console.error("Error fetching ICs:", error);
+      }
+    };
+    fetchIcs();
+  }, []);
 
   useEffect(() => {
     // Fetch tickets and available ICs when the component mounts
     fetchCompletedTickets();
     fetchICs();
   }, []);
+
+  const sendSMS = async (phoneNumber) => {
+    try {
+      const response = await fetch("/api/sms", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          phoneNumber: phoneNumber,
+        })
+      });
+  
+      // Handle response
+      if (response.ok) {
+        console.log("SMS sent successfully!");
+      } else {
+        console.error("Failed to send SMS");
+      }
+    } catch (error) {
+      console.error("Error sending SMS:", error);
+    }
+  };
+  
+
 
   const fetchCompletedTickets = async () => {
     try {
@@ -98,29 +140,35 @@ const Orders = () => {
       // Extracting necessary fields from the ticket data
       const { $id, name, email, content, productName } = ticket;
       if (selectedICForTicket && selectedICForTicket.length > 0) {
-        const selectedICObjects = selectedICForTicket.map((ic) =>`${ic.value}:${ic.label}`);
+        const selectedIC = selectedICForTicket[0];
+        const selectedICObject = availableICs.find(ic => ic.$id === selectedIC.value);
+  
+        if (!selectedICObject) {
+          console.error("Selected IC not found");
+          return;
+        }
+  
+        // Fetch the phone number of the selected IC
+        const phoneNumber = selectedICObject.phone_num1;
+  
         const updatedTicket = {
-          assignedICs: selectedICObjects,
+          assignedICs: selectedIC.value, // Assuming assignedICs expects an ID
           name,
           email,
           content,
           productName,
         };
-
+  
         await db.createDocument(
           process.env.NEXT_PUBLIC_DB_ID,
           process.env.NEXT_PUBLIC_COMPLETEDTICKETS_COLLECTION_ID,
           $id,
           updatedTicket
         );
-
-        // Send SMS to the assigned ICs using Twilio
-        // await Promise.all(
-        //     selectedIC.map(async (ic) => {
-        //         await sendSMSToIC(ic.phone, `You have a new job: ${productName}`);
-        //     })
-        // );
-
+  
+        // Send SMS to the assigned IC
+        await sendSMS(phoneNumber);
+  
         toast.success("Ticket assigned successfully!");
       } else {
         console.log("No ICs selected. Ticket assignment skipped.");
@@ -129,6 +177,7 @@ const Orders = () => {
       toast.error("Error assigning ticket:", error);
     }
   };
+  
 
   const handleSendToAll = async (ticket) => {
     try {

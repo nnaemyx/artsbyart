@@ -1,41 +1,23 @@
 import { SearchIcon } from "@/icon";
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { logOut } from "@/utils/functions";
 import { account, db } from "@/utils/appwrite";
+import { getICFromLocalStorage } from "@/utils/Localstorage";
 
 const ICheader = ({ clickedTitle }) => {
   const router = useRouter();
   const [user, setUser] = useState({});
-  const [ics, setIcs] = useState([]);
-
-  useEffect(() => {
-    const fetchICs = async () => {
-      try {
-        const response = await db.listDocuments(
-          process.env.NEXT_PUBLIC_DB_ID,
-          process.env.NEXT_PUBLIC_REGISTRATION_COLLECTION_ID
-        );
-        setIcs(response.documents);
-        console.log(response.documents);
-      } catch (error) {
-        console.error("Error fetching ICs:", error);
-      }
-    };
-
-    fetchICs();
-  }, []);
 
   const isUserVerified = () => {
-    if (!user || !ics.length) {
-      return false; 
+    if (!user) {
+      return false;
     }
 
-    const userId = user.id; 
-    const currentUserData = ics.find((ic) => ic.id === userId);
-    return currentUserData ? currentUserData.is_verified : false;
+    const verifiedIC = getICFromLocalStorage(); // Retrieve user data from local storage
+
+    return verifiedIC !== null ? verifiedIC : false;
   };
 
   useEffect(() => {

@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import "react-toastify/dist/ReactToastify.css";
 import Link from 'next/link'
 import { account } from "@/utils/appwrite";
+import { saveICToLocalStorage } from "@/utils/Localstorage";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -24,6 +25,7 @@ const Login = () => {
       // Check if the login was successful
       if (response.$id) {
         // Login successful
+        saveICToLocalStorage(response);
         toast.success("IC logged in successfully");
         router.push("/integratedC");
       } else {

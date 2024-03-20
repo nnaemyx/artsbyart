@@ -1,10 +1,11 @@
-import {  useState } from "react";
+import { useState } from "react";
 import Modal from "react-modal";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import "react-toastify/dist/ReactToastify.css";
-import Link from 'next/link'
+import Link from "next/link";
 import { ID, account, db } from "@/utils/appwrite";
+import { saveICToLocalStorage } from "@/utils/Localstorage";
 
 const Register = () => {
   const [step, setStep] = useState(1);
@@ -14,10 +15,10 @@ const Register = () => {
     bank_account: "",
     smart_phone: "",
     password: "",
-    email:"",
+    email: "",
     bus_name: "",
-    phone_num1: "",
-    phone_num2: "",
+    phone_num1: "+234",
+    phone_num2: "+234",
     branches: "",
     services: [],
   });
@@ -32,7 +33,6 @@ const Register = () => {
 
   const submitForm = async () => {
     try {
-
       await account.create(
         generateID(),
         formData.email, // Use phone number as the email (you may want to change this)
@@ -59,6 +59,7 @@ const Register = () => {
 
       if (response.$id) {
         toast.success("Form submitted successfully!");
+        saveICToLocalStorage(response);
         setSuccessModalOpen(true);
       } else {
         toast.error("Error submitting form");
@@ -66,7 +67,7 @@ const Register = () => {
       }
     } catch (error) {
       toast.error("Error submitting form", error);
-      console.log(error)
+      console.log(error);
     }
   };
 
@@ -189,17 +190,18 @@ const Register = () => {
 
           <label htmlFor="phone_num1">Phone Number 1:</label>
           <input
-            type="number"
+            type="text"
             id="phone_num1"
             name="phone_num1"
             value={formData.phone_num1}
             onChange={handleChange}
+            pattern="^[0-9]{10}$"
             className="w-full p-2 mb-4 border border-gray-300"
           />
 
           <label htmlFor="phone_num2">Phone Number 2 (optional):</label>
           <input
-            type="number"
+            type="text"
             id="phone_num2"
             name="phone_num2"
             value={formData.phone_num2}
@@ -229,7 +231,7 @@ const Register = () => {
             className="w-full p-2 mb-4 border border-gray-300"
           />
 
-<label htmlFor="email">email</label>
+          <label htmlFor="email">email</label>
           <input
             type="email"
             id="email"
@@ -310,7 +312,12 @@ const Register = () => {
         </div>
       </Modal>
       <div className="mb-16">
-        <p className="text-center">Already have an account,<Link href ="/ICregister/AccountLogin"className="text-primary">Login</Link></p>
+        <p className="text-center">
+          Already have an account,
+          <Link href="/ICregister/AccountLogin" className="text-primary">
+            Login
+          </Link>
+        </p>
       </div>
     </div>
   );
