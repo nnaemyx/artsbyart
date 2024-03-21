@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import { account, db } from "@/utils/appwrite";
 import { getICsFromLocalStorage } from "@/utils/Localstorage";
 
-
 const Projects = () => {
   const [assignedTickets, setAssignedTickets] = useState([]);
   const [user, setUser] = useState({});
-  const ic = getICsFromLocalStorage(); // Get IC from local storage
+  const ic = getICsFromLocalStorage();
+
   useEffect(() => {
     async function fetchAssignedTickets() {
       try {
@@ -16,9 +16,13 @@ const Projects = () => {
         );
 
         // Filter assigned tickets based on IC ID
-        const filteredTickets = response.documents.filter((ticket) =>
-          ticket.assignedICs.includes(ic.$id)
-        );
+        const filteredTickets = response.documents.filter((ticket) => {
+          console.log("Ticket ID:", ticket.assignedICs); // Log ticket ID
+          return ticket.assignedICs === ic.$id;
+        });
+
+        console.log("Filtered Tickets:", filteredTickets); // Log filtered tickets
+
 
         setAssignedTickets(filteredTickets);
       } catch (error) {
@@ -29,9 +33,8 @@ const Projects = () => {
     if (ic) {
       fetchAssignedTickets();
     }
-  }, [ic]);
+  }, []);
 
-  
   useEffect(() => {
     async function authStatus() {
       try {
@@ -53,7 +56,7 @@ const Projects = () => {
               className="border-b py-4 flex justify-between items-center"
             >
               <div>
-                <p>{ticket.content}</p>
+                <p className="text-black">{ticket.content}</p>
                 {/* Render other ticket details as needed */}
               </div>
               <div className="flex items-center space-x-4">

@@ -59,7 +59,7 @@ const Register = () => {
 
       if (response.$id) {
         toast.success("Form submitted successfully!");
-        saveICToLocalStorage(response);
+        saveICToLocalStorage(response, ID.unique());
         setSuccessModalOpen(true);
       } else {
         toast.error("Error submitting form");
