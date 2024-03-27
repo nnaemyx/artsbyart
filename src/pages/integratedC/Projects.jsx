@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { account, db } from "@/utils/appwrite";
-import { getICsFromLocalStorage } from "@/utils/Localstorage";
+import { useAuth } from "@/utils/AuthContent";
+import Link from "next/link";
 
 const Projects = () => {
   const [assignedTickets, setAssignedTickets] = useState([]);
-  const [user, setUser] = useState({});
-  const ic = getICsFromLocalStorage();
-
+  const { user } = useAuth();
   useEffect(() => {
     async function fetchAssignedTickets() {
       try {
@@ -18,11 +17,10 @@ const Projects = () => {
         // Filter assigned tickets based on IC ID
         const filteredTickets = response.documents.filter((ticket) => {
           console.log("Ticket ID:", ticket.assignedICs); // Log ticket ID
-          return ticket.assignedICs === ic.$id;
+          return ticket.assignedICs.includes(user.$id);
         });
 
         console.log("Filtered Tickets:", filteredTickets); // Log filtered tickets
-
 
         setAssignedTickets(filteredTickets);
       } catch (error) {
@@ -30,20 +28,10 @@ const Projects = () => {
       }
     }
 
-    if (ic) {
+    if (user) {
       fetchAssignedTickets();
     }
-  }, []);
-
-  useEffect(() => {
-    async function authStatus() {
-      try {
-        const user = await account.get();
-        setUser(user);
-      } catch (err) {}
-    }
-    authStatus();
-  }, []);
+  }, [user]);
 
   return (
     <div>
@@ -59,10 +47,10 @@ const Projects = () => {
                 <p className="text-black">{ticket.content}</p>
                 {/* Render other ticket details as needed */}
               </div>
-              <div className="flex items-center space-x-4">
+              <Link href="/integratedC/Chat" className="flex items-center space-x-4">
                 <button className="focus:outline-none">Chat</button>
                 {/* Add progress bar here */}
-              </div>
+              </Link>
             </li>
           ))}
         </ul>

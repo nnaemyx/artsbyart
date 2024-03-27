@@ -49,6 +49,7 @@ const IntegratedC = () => {
               : ic
           )
         );
+        setIsVerified(newValue);
       }
     }
   };

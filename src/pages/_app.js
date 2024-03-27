@@ -5,6 +5,7 @@ import { ToastContainer } from "react-toastify";
 import AdminLayout from "@/components/Layouts/Adminlayout";
 import { useRouter } from "next/router";
 import ICLayout from "@/components/Layouts/IClayout";
+import { AuthProvider } from "@/utils/AuthContent";
 
 export default function App({
   Component,
@@ -14,24 +15,27 @@ export default function App({
   const isAdminPage = router.pathname.startsWith("/admin");
   const isICPage = router.pathname.startsWith("/integratedC");
 
-
   if (isAdminPage) {
     return (
       <div>
-        <AdminLayout session={session}>
-          <Component {...pageProps} />
-          <ToastContainer />
-        </AdminLayout>
+        <AuthProvider>
+          <AdminLayout session={session}>
+            <Component {...pageProps} />
+            <ToastContainer />
+          </AdminLayout>
+        </AuthProvider>
       </div>
     );
   }
   if (isICPage) {
     return (
       <div>
-        <ICLayout>
-          <Component {...pageProps} />
-          <ToastContainer />
-        </ICLayout>
+        <AuthProvider>
+          <ICLayout>
+            <Component {...pageProps} />
+            <ToastContainer />
+          </ICLayout>
+        </AuthProvider>
       </div>
     );
   }
