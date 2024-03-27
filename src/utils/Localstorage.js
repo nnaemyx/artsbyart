@@ -35,6 +35,12 @@ export const saveICToLocalStorage = (ic) => {
   }
 };
 
+export const saveICsToLocalStorage = (is_verified) => {
+  if (typeof window !== "undefined") {
+    localStorage.setItem("is_verified", JSON.stringify(is_verified));
+  }
+};
+
 export const getICFromLocalStorage = () => {
   if (typeof window !== "undefined") {
     const storedValue = localStorage.getItem("is_verified");

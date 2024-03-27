@@ -1,6 +1,9 @@
 import { Client, Account, Databases } from "appwrite";
+import { toast } from "react-toastify";
 
 export const client = new Client();
+export const COLLECTION_ID_MESSAGES = process.env.NEXT_PUBLIC_MESSAGES_COLLECTION_ID
+export const DATABASE_ID = process.env.NEXT_PUBLIC_DB_ID
 
 client
   .setEndpoint("https://cloud.appwrite.io/v1")
@@ -33,7 +36,7 @@ export const updateIsVerified = async (documentId, newValue) => {
     );
 
     // Assuming you have a success response handling logic
-    console.log("Update successful:", response);
+    toast.success("Update successful");
 
     // Update is_verified in localStorage
     setIsVerified(newValue);

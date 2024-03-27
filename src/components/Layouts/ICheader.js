@@ -9,16 +9,33 @@ import { getICFromLocalStorage } from "@/utils/Localstorage";
 const ICheader = ({ clickedTitle }) => {
   const router = useRouter();
   const [user, setUser] = useState({});
+  const [isVerified, setIsVerified] = useState(false);
 
-  const isUserVerified = () => {
-    if (!user) {
-      return false;
-    }
 
-    const verifiedIC = getICFromLocalStorage(); // Retrieve user data from local storage
+  useEffect(() => {
+    const fetchICData = async () => {
+      try {
+        // Get authenticated user data
+        const user = await account.get();
+        setUser(user);
 
-    return verifiedIC !== null ? verifiedIC : false;
-  };
+        // Fetch IC documents from the database
+        const response = await db.listDocuments(
+          process.env.NEXT_PUBLIC_DB_ID,
+          process.env.NEXT_PUBLIC_REGISTRATION_COLLECTION_ID
+        );
+
+        // Check if the authenticated user ID matches the user_id attribute in any of the IC documents
+        const verifiedIC = response.documents.find(ic => ic.user_id === user.$id);
+        setIsVerified(verifiedIC ? verifiedIC.is_verified : false);
+        console.log(verifiedIC)
+      } catch (error) {
+        console.error("Error fetching IC data:", error);
+      }
+    };
+
+    fetchICData();
+  }, []);
 
   useEffect(() => {
     async function authStatus() {
@@ -36,7 +53,7 @@ const ICheader = ({ clickedTitle }) => {
           <h1 className="text-[25px] font-semibold">{clickedTitle}</h1>
         </div>
         <div className="flex items-center space-x-5">
-          {isUserVerified() ? (
+          {isVerified ? (
             <div className="flex gap-2">
               <p>Verified</p>
               <svg

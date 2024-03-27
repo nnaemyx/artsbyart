@@ -9,5 +9,11 @@ export const menuItems = [
     icon:<ProjectIcon />,
  
   },  
+  {
+    href: '/integratedC/Chat',
+    title: 'Chat',
+    icon:<ChatIcon />,
+ 
+  },
 
 ];

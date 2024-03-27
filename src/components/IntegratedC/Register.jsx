@@ -29,22 +29,25 @@ const Register = () => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const generateID = () => Math.random().toString(36).substring(2, 24);
 
   const submitForm = async () => {
     try {
+      const generateID = Math.random().toString(36).substring(2, 24);
+
       await account.create(
-        generateID(),
-        formData.email, // Use phone number as the email (you may want to change this)
-        formData.password
+        generateID,
+        formData.email, 
+        formData.password,
+        formData.bus_name
       );
 
       // Assuming you have a collection named 'registrations' in your Appwrite database
       const response = await db.createDocument(
         process.env.NEXT_PUBLIC_DB_ID,
         process.env.NEXT_PUBLIC_REGISTRATION_COLLECTION_ID,
-        ID.unique(),
+        generateID,
         {
+          
           office_address: formData.office_address,
           reg_num: formData.reg_num,
           bank_account: formData.bank_account,
@@ -54,12 +57,13 @@ const Register = () => {
           phone_num2: formData.phone_num2,
           branches: formData.branches,
           services: formData.services,
+          user_id: generateID,
         }
       );
 
       if (response.$id) {
         toast.success("Form submitted successfully!");
-        saveICToLocalStorage(response, ID.unique());
+        saveICToLocalStorage(response, generateID);
         setSuccessModalOpen(true);
       } else {
         toast.error("Error submitting form");

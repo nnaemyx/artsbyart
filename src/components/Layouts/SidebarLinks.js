@@ -63,6 +63,11 @@ export const menuItems = [
         title: 'Staff List',
         icon: <AccountIcon2/>
       },
+      {
+        href: '/admin/chat/Chat',
+        title: 'IC Chat',
+        icon: <AccountIcon2/>
+      },
     ],
   },
   {
