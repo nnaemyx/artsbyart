@@ -8,14 +8,15 @@ const Addproduct = () => {
     title: "",
     description: "",
     price: 0,
-    category: "",
     brand: "",
     tags: "",
+    color: "",
   });
 
   const [images, setImages] = useState([]);
+  const [category, setCategory] = useState([]);
+  const [color, setColor] = useState("");
   const [thumbnailUrls, setThumbnailUrls] = useState([]);
-
   useEffect(() => {
     const generateThumbnailUrls = async () => {
       const urls = await Promise.all(
@@ -34,6 +35,45 @@ const Addproduct = () => {
 
     generateThumbnailUrls();
   }, [images]);
+
+  useEffect(() => {
+    // Fetch the colors when the component mounts
+    const fetchColors = async () => {
+      try {
+        const response = await fetch("/api/products/color");
+        if (!response.ok) {
+          throw new Error("Failed to fetch colors");
+        }
+        const data = await response.json();
+       
+        // Set the colors in the state
+        if (data.length > 0) {
+          // Set the color state to the first color
+          setColor(data[0].id);
+        }
+console.log(color);
+      } catch (error) {
+        console.error("Error fetching colors:", error);
+      }
+    };
+    fetchColors();
+
+    // Fetch the product categories when the component mounts
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch("/api/products/category");
+        if (!response.ok) {
+          throw new Error("Failed to fetch categories");
+        }
+        const data = await response.json();
+        // Set the categories in the state
+        setCategory(data); // Assuming you want to select the first category by default
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   const onDrop = (acceptedFiles) => {
     setImages([...images, ...acceptedFiles]);
@@ -76,11 +116,12 @@ const Addproduct = () => {
         title: "",
         description: "",
         price: 0,
-        category: "",
         brand: "",
         tags: "",
+        
       });
-
+      setColor([])
+      setCategory([]);
       setImages([]);
       setThumbnailUrls([]);
     } catch (error) {
@@ -117,7 +158,7 @@ const Addproduct = () => {
 
       <div className="mt-6">
         <input
-          type="number"
+          type="text"
           id="price"
           name="price"
           placeholder="price"
@@ -128,18 +169,55 @@ const Addproduct = () => {
       </div>
 
       <div className="mt-6">
-        <input
-          type="text"
-          id="category"
+        <select
           name="category"
-          placeholder="Category"
-          value={formData.category}
-          onChange={handleInputChange}
-          className="w-[800px] px-4 py-4 focus:outline-none  border border-dark border-solid"
-        />
+          onChange={(e) => {
+            const selectedCategoryId = e.target.value;
+            const selectedCategory = category.find(
+              (cat) => cat.id === selectedCategoryId
+            );
+            if (selectedCategory) {
+              setCategory((prevCategory) => [
+                ...prevCategory,
+                selectedCategory,
+              ]);
+            }
+          }}
+          className="w-[800px] px-4 py-4 focus:outline-none border border-dark border-solid"
+        >
+          <option value="" disabled>
+            Select Category
+          </option>
+          {category &&
+            category.map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.title}
+              </option>
+            ))}
+        </select>
       </div>
 
-      <div className="mt-6">
+      {/* <div className="mt-6">
+        <select
+          name="color"
+          onChange={(e) => setColor(e.target.value)} 
+          value={color}
+          className="w-[800px] px-4 py-4 focus:outline-none border border-dark border-solid"
+        >
+          <option value="" disabled>
+            Select Color
+          </option>
+          {color &&
+            color.map((col) => (
+              <option key={col.id} value={col.id}>
+              {col.title} - {col.hex}
+            </option>
+
+            ))}
+        </select>
+      </div> */}
+
+      {/* <div className="mt-6">
         <input
           type="text"
           id="brand"
@@ -149,9 +227,9 @@ const Addproduct = () => {
           onChange={handleInputChange}
           className="w-[800px] px-4 py-4 focus:outline-none  border border-dark border-solid"
         />
-      </div>
+      </div> */}
 
-      <div className="mt-6">
+      {/* <div className="mt-6">
         <input
           type="text"
           id="tags"
@@ -161,7 +239,7 @@ const Addproduct = () => {
           onChange={handleInputChange}
           className="w-[800px] px-4 py-4 focus:outline-none  border border-dark border-solid"
         />
-      </div>
+      </div> */}
 
       <div {...getRootProps()} style={dropzoneStyle} className="mx-auto">
         <input {...getInputProps()} />

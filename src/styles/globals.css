@@ -136,7 +136,7 @@ padding: 0.5em 0;
 
 /* Form Input Styling */
 
-input[type="text"], input[type="password"], input[type="email"], textarea{
+/* input[type="text"], input[type="password"], input[type="email"], textarea{
 background: var(--mainBgColor);
 border: none;
 border-bottom: 1px solid var(--borderColor1);
@@ -147,7 +147,7 @@ color: "#fff";
 outline: none;
 font-size: 18px;
 text-shadow: none !important;
-}
+} */
 
 
 /* Button Styling */

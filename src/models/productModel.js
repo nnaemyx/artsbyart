@@ -21,7 +21,7 @@ if (!mongoose.models.Product) {
         required: true,
       },
       price: {
-        type: Number,
+        type: String,
         required: true,
       },
       category: {
@@ -31,6 +31,18 @@ if (!mongoose.models.Product) {
       brand: {
         type: String,
       },
+      color: [
+        {
+          hex: {
+            type: String,
+            required: true,
+          },
+          title: {
+            type: String,
+            required: true,
+          },
+        },
+      ],
       sold: {
         type: Number,
         default: 0,
