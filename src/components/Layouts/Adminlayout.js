@@ -3,12 +3,10 @@ import "react-toastify/dist/ReactToastify.css";
 import Header from "./Header";
 import Head from "next/head";
 import Image from "next/image";
-import useAdminStore from "@/store/admin/adminStore";
 import Sidebar from "./Sidebar";
 
 export default function AdminLayout({ children }) {
   const [isLoading, setIsLoading] = useState(true);
-  const { isAdmin } = useAdminStore();
   const [clickedTitle, setClickedTitle] = useState("");
 
   const handleTitleClick = (title) => {

@@ -46,6 +46,16 @@ export const menuItems = [
         title: 'Color List',
         icon: <AccountIcon2/>
       },
+      {
+        href: '/admin/catalog/Procedures',
+        title: 'Procedures',
+        icon: <AccountIcon2/>
+      },
+      {
+        href: '/admin/catalog/Procedurelist',
+        title: 'Procedure List',
+        icon: <AccountIcon2/>
+      },
     ],
   },
   {

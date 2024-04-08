@@ -24,33 +24,11 @@ if (!mongoose.models.Product) {
         type: String,
         required: true,
       },
-      category: {
-        type: String,
-        required: true,
-      },
-      brand: {
-        type: String,
-      },
-      color: [
-        {
-          hex: {
-            type: String,
-            required: true,
-          },
-          title: {
-            type: String,
-            required: true,
-          },
-        },
-      ],
-      sold: {
-        type: Number,
-        default: 0,
-      },
+      category: String,
       images: {
         type: [String],
       },
-      tags: String,
+      procedures: [{ type: String }],
     },
     { timestamps: true }
   );
