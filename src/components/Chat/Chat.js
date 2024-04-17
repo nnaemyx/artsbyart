@@ -72,7 +72,7 @@ export default function Chat({ productName, procedures,images }) {
                   readOnly
                 />
               </div>
-              <div className="">
+              {/* <div className="">
                 <label htmlFor="productName">Procedures</label>
                 <input
                   type="text"
@@ -81,7 +81,7 @@ export default function Chat({ productName, procedures,images }) {
                   value={procedures}
                   readOnly
                 />
-              </div>
+              </div> */}
               <label htmlFor="message">Message</label>
               <textarea
                 rows={5}
