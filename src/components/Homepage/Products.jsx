@@ -9,8 +9,7 @@ import "swiper/css/pagination";
 import Modal from "react-modal";
 import Link from "next/link";
 
-
-const ProductCard = ({slug, images, title, price, button }) => {
+const ProductCard = ({ slug, images, title, price, button }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
@@ -120,7 +119,7 @@ const Products = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch("/api/products/product"); 
+        const response = await fetch("/api/products/product");
         const data = await response.json();
         setProducts(data.slice(0, 6));
       } catch (error) {
@@ -142,7 +141,11 @@ const Products = () => {
             <ProductCard key={index} {...product} />
           ))}
         </div>
-        <button className="mt-[64px] mx-auto  flex justify-center  text-[12px] md:text-[14px] font-semibold bg-primary text-white px-[50px] tracking-[1.5px] py-[18px]">View All</button>
+        <Link href="/shop">
+          <button className="mt-[64px] mx-auto  flex justify-center  text-[12px] md:text-[14px] font-semibold bg-primary text-white px-[50px] tracking-[1.5px] py-[18px]">
+            View All
+          </button>
+        </Link>
       </div>
     </div>
   );

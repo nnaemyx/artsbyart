@@ -61,7 +61,7 @@ const DashContent = ({ openTickets, inprogressTickets, completedTickets }) => {
 									key={ticket.$id}
 									className='text-blue-600 block hover:underline'
 								>
-									⚠️ {ticket.subject}
+									⚠️ {ticket.content}
 								</Link>
 							))}
 					</div>
@@ -88,7 +88,7 @@ const DashContent = ({ openTickets, inprogressTickets, completedTickets }) => {
 									key={ticket.$id}
 									className='text-blue-600 block hover:underline'
 								>
-									🙋🏻‍♀️ {ticket.subject}
+									🙋🏻‍♀️ {ticket.content}
 								</Link>
 							))}
 					</div>
@@ -115,7 +115,7 @@ const DashContent = ({ openTickets, inprogressTickets, completedTickets }) => {
 									key={ticket.$id}
 									className='text-blue-600 block hover:underline'
 								>
-									✅ {ticket.subject}
+									✅ {ticket.content}
 								</Link>
 							))}
 					</div>

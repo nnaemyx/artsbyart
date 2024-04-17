@@ -4,21 +4,19 @@ import { startMessage } from "@/utils/functions";
 import Processing from "./Processing";
 import AuthNav from "./AuthNav";
 
-export default function Chat({ productName }) {
+export default function Chat({ productName, procedures,images }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
-    startMessage(name, email, subject, productName, message, setLoading);
+    startMessage(name, email, subject, productName,procedures,images, message, setLoading);
     setName("");
     setEmail("");
     setMessage("");
-    setSubject("");
   };
 
   if (loading) return <Processing />;
@@ -74,23 +72,23 @@ export default function Chat({ productName }) {
                   readOnly
                 />
               </div>
-
-              <label htmlFor="subject">Subject</label>
-              <input
-                type="text"
-                name="subject"
-                id="subject"
-                required
-                value={subject}
-                onChange={(e) => setSubject(e.target.value)}
-                className="w-full border-[1px] border-gray-200 px-4 py-2 rounded mb-4"
-              />
+              <div className="">
+                <label htmlFor="productName">Procedures</label>
+                <input
+                  type="text"
+                  id="procedures"
+                  className="w-full border-[1px] border-gray-200 px-4 py-2 rounded mb-4"
+                  value={procedures}
+                  readOnly
+                />
+              </div>
               <label htmlFor="message">Message</label>
               <textarea
                 rows={5}
                 id="message"
                 required
                 value={message}
+                placeholder="Customize your order"
                 onChange={(e) => setMessage(e.target.value)}
                 className="mb-4 border-[1px] border-gray-200 px-4 py-2 w-full"
               ></textarea>

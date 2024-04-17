@@ -19,7 +19,7 @@ const emailTicketCreation = (user, ticketID, email, date_created, title) => {
       },
       (error) => {
         errorMessage(error.text);
-        console.log(error)
+        console.log(error);
       }
     );
 };
@@ -203,7 +203,6 @@ export const deleteUser = async (id) => {
 export const startMessage = async (
   name,
   email,
-  subject,
   message,
   productName,
   setLoading
@@ -216,7 +215,6 @@ export const startMessage = async (
       {
         name,
         email,
-        subject,
         content: message,
         productName,
         status: "open",
@@ -237,14 +235,14 @@ export const startMessage = async (
       response.$id,
       email,
       convertDateTime(response.$createdAt),
-      subject
+      productName
     );
     newTicketStaff(name);
     setLoading(false);
     successMessage("Ticket created 🎉");
   } catch (error) {
     errorMessage("Encountered saving ticket ❌");
-    console.log(error)
+    console.log(error);
   }
 };
 
@@ -348,7 +346,7 @@ export const sendMessage = async (text, docId) => {
     } else {
       errorMessage("Error! Try resending your message❌");
     }
-    console.log(error)
+    console.log(error);
   }
 };
 

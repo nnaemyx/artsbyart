@@ -24,11 +24,25 @@ if (!mongoose.models.Product) {
         type: String,
         required: true,
       },
+      // color: [
+      //   {
+      //     hex: {
+      //       type: String,
+      //       required: true,
+      //     },
+      //     title: {
+      //       type: String,
+      //       required: true,
+      //     },
+      //   },
+      // ],
       category: String,
       images: {
         type: [String],
       },
-      procedures: [{ type: String }],
+      procedures: {
+        type: [String],
+      },
     },
     { timestamps: true }
   );

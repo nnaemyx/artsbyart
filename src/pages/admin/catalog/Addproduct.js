@@ -70,8 +70,8 @@ const Addproduct = () => {
     formData.append("description", description);
     formData.append("price", price);
     formData.append("category", category);
-    formData.append("procedures", JSON.stringify(procedures));
-    formData.append("color", JSON.stringify(selectedColor));
+    formData.append("procedures", procedures);
+    // formData.append("color", [JSON.parse(selectedColor)]);
     images.forEach((image) => {
       formData.append("images", image);
     });
@@ -187,7 +187,7 @@ const Addproduct = () => {
           </select>
         </div>
 
-        <div className="mt-6">
+        {/* <div className="mt-6">
           <select
             value={selectedColor}
             onChange={(e) => setSelectedColor(e.target.value)}
@@ -203,7 +203,7 @@ const Addproduct = () => {
               </option>
             ))}
           </select>
-        </div>
+        </div> */}
 
         <div {...getRootProps()} style={dropzoneStyle} className="mx-auto">
           <input {...getInputProps()} />

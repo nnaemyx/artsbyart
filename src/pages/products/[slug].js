@@ -31,8 +31,6 @@ const ProductDetail = () => {
     setShowChat(!showChat); // Toggle the value
   };
 
- 
-
   const handleClickOutsideChat = (event) => {
     if (chatRef.current && !chatRef.current.contains(event.target)) {
       setShowChat(false);
@@ -89,14 +87,22 @@ const ProductDetail = () => {
           {showChat && (
             <div className="absolute z-10 w-1/2 hidden lg:block right-0 h-[700px]  bottom-0 overflow-hidden  bg-light border-r">
               {/* Your chat component content goes here */}
-              <Chat productName={product.slug} />
+              <Chat
+                productName={product.slug}
+                procedures={product.procedures[0]}
+                images={product.images[0]}
+              />
             </div>
           )}
 
           {showChat && (
             <div className="absolute z-10 w-[90%] lg:hidden block mx-auto bottom-0 h-[600px] top-20 overflow-hidden  bg-light border-r">
               {/* Your chat component content goes here */}
-              <Chat productName={product.slug} />
+              <Chat
+                productName={product.slug}
+                procedures={product.procedures.join(', ')}
+                images={product.images[0]}
+              />
             </div>
           )}
         </div>
