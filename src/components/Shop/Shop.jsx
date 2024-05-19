@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { useRouter } from "next/router";
+import {useRouter} from "next/router";
 import Modal from "react-modal";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Autoplay } from "swiper/modules";
@@ -21,7 +21,7 @@ const CollectionCard = ({ category, images, video, priceRange }) => {
     setModalIsOpen(false);
   };
 
-  const handleViewClick = () => {
+    const handleViewClick = () => {
     router.push(`/collection/${category}`);
   };
   return (
@@ -65,9 +65,7 @@ const CollectionCard = ({ category, images, video, priceRange }) => {
       <div className="flex items-center justify-between p-2 mt-4">
         <div>
           <h2 className="lg:text-lg font-semibold mt-2">{category}</h2>
-          <p className="text-gray-600 md:text-[15px] text-[12px]">
-            {priceRange}
-          </p>
+          <p className="text-gray-600 md:text-[15px] text-[12px]">{priceRange}</p>
         </div>
         <button
           onClick={handleViewClick}
@@ -123,7 +121,11 @@ const CollectionCard = ({ category, images, video, priceRange }) => {
             ))}
             {video.map((video, index) => (
               <div key={index} className="w-full h-full">
-                <video className="w-full h-auto" autoPlay muted>
+                <video
+                  className="w-full h-auto"
+                  autoPlay
+                  muted
+                >
                   <source src={video} type="video/mp4" />
                   Your browser does not support the video tag.
                 </video>
@@ -136,7 +138,7 @@ const CollectionCard = ({ category, images, video, priceRange }) => {
   );
 };
 
-const Products = () => {
+const Shop = () => {
   const [categories, setCategories] = useState({});
 
   useEffect(() => {
@@ -144,7 +146,7 @@ const Products = () => {
       try {
         const response = await fetch("/api/products/product");
         const data = await response.json();
-        setCategories(data.slice(0, 6));
+        setCategories(data);
       } catch (error) {
         console.error("Error fetching categories:", error);
       }
@@ -176,13 +178,8 @@ const Products = () => {
           />
         </div>
       ))}
-      <Link href="/shop">
-        <button className="mt-[64px] mx-auto  flex justify-center  text-[12px] md:text-[14px] font-semibold bg-primary text-white px-[50px] tracking-[1.5px] py-[18px]">
-          View All
-        </button>
-      </Link>
     </div>
   );
 };
 
-export default Products;
+export default Shop;

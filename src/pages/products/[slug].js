@@ -60,14 +60,6 @@ const ProductDetail = () => {
           />
         </div>
         <div className="flex-1" ref={chatRef}>
-          <p className="text-gray-600 font-opensans font-semibold">
-            {product.brand}
-          </p>
-          <h1 className="font-futura md:text-[56px]">{product.title}</h1>
-          <p className="font-opensans md:text-[26px]">N{product.price}</p>
-          <hr className="w-full" />
-          <p className="text-gray-600 mt-8 ">{product.description}</p>
-
           {/* Button to toggle chat, desktop */}
           <button
             onClick={handleToggleChat}
@@ -100,7 +92,7 @@ const ProductDetail = () => {
               {/* Your chat component content goes here */}
               <Chat
                 productName={product.slug}
-                procedures={product.procedures.join(', ')}
+                procedures={product.procedures.join(", ")}
                 images={product.images[0]}
               />
             </div>

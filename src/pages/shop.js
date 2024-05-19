@@ -11,10 +11,10 @@ const shop = () => {
         <Link href="/">
           <span className="text-gray-600">Home </span>
         </Link>
-         / All products
+         / Shop
       </div>
       <div className="mt-[3rem]">
-        <h1 className="text-center font-futura font-semibold uppercase md:text-[48px] text-[36px] lg:text-[56px]">Products</h1>
+        <h1 className="text-center font-futura font-semibold uppercase md:text-[48px] text-[36px] lg:text-[56px]">Shop</h1>
         <Allproducts/>
       </div>
     </div>

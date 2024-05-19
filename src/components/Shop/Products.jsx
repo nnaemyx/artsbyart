@@ -134,7 +134,6 @@ const Products = () => {
   return (
     <div>
       <div>
-        <p className="text-center text-[14px] lg:text-left">83 products</p>
         <div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
             {products.map((product, index) => (

@@ -38,7 +38,10 @@ if (!mongoose.models.Product) {
       // ],
       category: String,
       images: {
-        type: [String],
+        type: [String]
+      },
+      video: {
+        type: [String]
       },
       procedures: {
         type: [String],

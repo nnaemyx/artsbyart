@@ -16,6 +16,8 @@ const Addproduct = () => {
   const [selectedColor, setSelectedColor] = useState("");
   const [images, setImages] = useState([]);
   const [thumbnailUrls, setThumbnailUrls] = useState([]);
+  const [video, setVideo] = useState(null);
+  const [videoUrl, setVideoUrl] = useState("");
 
   const colorStore = useColorStore(); // Get the color store
   const categoryStore = useProductCategoryStore(); // Get the product category store
@@ -40,14 +42,40 @@ const Addproduct = () => {
     generateThumbnailUrls();
   }, [images]);
 
-  const onDrop = (acceptedFiles) => {
+  const onDropImages = (acceptedFiles) => {
     setImages([...images, ...acceptedFiles]);
   };
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
+  const onDropVideo = (acceptedFiles) => {
+    if (acceptedFiles.length > 0) {
+      const selectedVideo = acceptedFiles[0];
+      setVideo(selectedVideo);
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setVideoUrl(event.target.result);
+      };
+      reader.readAsDataURL(selectedVideo);
+    }
+  };
+
+  const {
+    getRootProps: getRootPropsImages,
+    getInputProps: getInputPropsImages,
+    isDragActive: isDragActiveImages,
+  } = useDropzone({
+    onDrop: onDropImages,
     accept: "image/*",
     multiple: true,
+  });
+
+  const {
+    getRootProps: getRootPropsVideo,
+    getInputProps: getInputPropsVideo,
+    isDragActive: isDragActiveVideo,
+  } = useDropzone({
+    onDrop: onDropVideo,
+    accept: "video/*",
+    multiple: false,
   });
 
   useEffect(() => {
@@ -55,7 +83,6 @@ const Addproduct = () => {
     colorStore.getColors();
     // Fetch the product categories when the component mounts
     categoryStore.getCategories();
-
     procedureStore.getProcedures();
   }, []);
 
@@ -71,7 +98,9 @@ const Addproduct = () => {
     formData.append("price", price);
     formData.append("category", category);
     formData.append("procedures", procedures);
-    // formData.append("color", [JSON.parse(selectedColor)]);
+    if (video) {
+      formData.append("video", video);
+    }
     images.forEach((image) => {
       formData.append("images", image);
     });
@@ -187,27 +216,9 @@ const Addproduct = () => {
           </select>
         </div>
 
-        {/* <div className="mt-6">
-          <select
-            value={selectedColor}
-            onChange={(e) => setSelectedColor(e.target.value)}
-            required
-            className="w-[800px] px-4 py-4 focus:outline-none border border-dark border-solid"
-          >
-            <option value="" disabled>
-              Select a Color
-            </option>
-            {colorStore.colors.map((color) => (
-              <option key={color.id} value={JSON.stringify(color)}>
-                {color.title} - {color.hex}
-              </option>
-            ))}
-          </select>
-        </div> */}
-
-        <div {...getRootProps()} style={dropzoneStyle} className="mx-auto">
-          <input {...getInputProps()} />
-          {isDragActive ? (
+        <div {...getRootPropsImages()} style={dropzoneStyle} className="mx-auto">
+          <input {...getInputPropsImages()} />
+          {isDragActiveImages ? (
             <p>Drop the images here ...</p>
           ) : (
             <p>Drag & drop images here, or click to select files</p>
@@ -235,6 +246,28 @@ const Addproduct = () => {
                 <li key={index}>{image.name}</li>
               ))}
             </ul>
+          </div>
+        )}
+
+        <div {...getRootPropsVideo()} style={dropzoneStyle} className="mx-auto">
+          <input {...getInputPropsVideo()} />
+          {isDragActiveVideo ? (
+            <p>Drop the video here ...</p>
+          ) : (
+            <p>Drag & drop a video here, or click to select a file</p>
+          )}
+        </div>
+
+        {video && (
+          <div>
+            <h4>Selected Video:</h4>
+            <p>{video.name}</p>
+            {videoUrl && (
+              <video controls style={videoPreviewStyle}>
+                <source src={videoUrl} type={video.type} />
+                Your browser does not support the video tag.
+              </video>
+            )}
           </div>
         )}
 
@@ -270,6 +303,13 @@ const thumbnailStyle = {
   width: "100px",
   height: "100px",
   marginRight: "10px",
+};
+
+const videoPreviewStyle = {
+  marginTop: "10px",
+  width: "100%",
+  maxWidth: "600px",
+  height: "auto",
 };
 
 export default Addproduct;
