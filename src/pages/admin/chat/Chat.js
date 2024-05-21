@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ID, Query, Permission, Role } from "appwrite";
+import { ID, Permission, Role } from "appwrite";
 import { Trash2 } from "react-feather";
 import {
   COLLECTION_ID_MESSAGES,
@@ -12,41 +12,42 @@ import { useAuth } from "@/utils/AuthContent";
 const Chat = () => {
   const [messageBody, setMessageBody] = useState("");
   const [messages, setMessages] = useState([]);
+  const [contacts, setContacts] = useState([]); // List of contacts (ICs or Admins)
+  const [activeContact, setActiveContact] = useState(null); // Currently selected contact
   const { user } = useAuth();
 
   useEffect(() => {
-    getMessages();
+    if (user) {
+      fetchMessages();
+      fetchContacts();
+      
+      const unsubscribe = client.subscribe(
+        `databases.${DATABASE_ID}.collections.${COLLECTION_ID_MESSAGES}.documents`,
+        (response) => {
+          if (response.events.includes("databases.*.collections.*.documents.*.create")) {
+            setMessages((prevState) => [response.payload, ...prevState]);
+          }
 
-    const unsubscribe = client.subscribe(
-      `db.${DATABASE_ID}.collections.${COLLECTION_ID_MESSAGES}.documents`,
-      (response) => {
-        if (response.events.includes("db.*.collections.*.documents.*.create")) {
-          console.log("A MESSAGE WAS CREATED");
-          setMessages((prevState) => [response.payload, ...prevState]);
+          if (response.events.includes("databases.*.collections.*.documents.*.delete")) {
+            setMessages((prevState) =>
+              prevState.filter((message) => message.$id !== response.payload.$id)
+            );
+          }
         }
+      );
 
-        if (response.events.includes("db.*.collections.*.documents.*.delete")) {
-          console.log("A MESSAGE WAS DELETED!!!");
-          setMessages((prevState) =>
-            prevState.filter((message) => message.$id !== response.payload.$id)
-          );
-        }
-      }
-    );
+      return () => {
+        unsubscribe();
+      };
+    }
+  }, [user]);
 
-    console.log("unsubscribe:", unsubscribe);
-
-    return () => {
-      unsubscribe();
-    };
-  }, []);
-
-  const getMessages = async () => {
+  const fetchMessages = async () => {
     try {
       const response = await db.listDocuments(DATABASE_ID, COLLECTION_ID_MESSAGES);
+      console.log("Fetched messages:", response.documents); // Log messages
       const filteredMessages = response.documents.filter(message => {
-        // Modify this condition based on your filtering criteria
-        return message.sender === "IC" || message.user_id === user.$id;
+        return message.receiver === user.$id || message.sender === user.$id;
       });
       setMessages(filteredMessages);
     } catch (error) {
@@ -54,136 +55,116 @@ const Chat = () => {
     }
   };
 
+  const fetchContacts = async () => {
+    try {
+      const response = await db.listDocuments(  process.env.NEXT_PUBLIC_DB_ID,
+        process.env.NEXT_PUBLIC_REGISTRATION_COLLECTION_ID);
+      console.log("Fetched contacts:", response.documents); // Log contacts
+      setContacts(response.documents);
+    } catch (error) {
+      console.error("Error fetching contacts:", error);
+    }
+  };
+
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    console.log("MESSAGE:", messageBody);
+    if (!activeContact) return;
+
     try {
-      // Send message with role set to "IC"
       const response = await db.createDocument(
         DATABASE_ID,
         COLLECTION_ID_MESSAGES,
         ID.unique(),
         {
-          sender: "admin",
-          user_id: user?.$id,
-          username: user?.name,
-          receiver: "IC",
+          sender: user.$id,
+          user_id: user.$id,
+          username: user.name,
+          receiver: activeContact.$id,
           body: messageBody,
           timestamp: new Date().toISOString(),
-          role: "admin",
+          role: user.role,
         },
       );
-      console.log("RESPONSE:", response);
-      // Refetch messages after sending
       setMessageBody("");
-      getMessages();
+      fetchMessages();
     } catch (error) {
       console.error("Error sending message:", error);
     }
   };
 
-  // const handleSubmit = async (e) => {
-  //     e.preventDefault()
-  //     console.log('MESSAGE:', messageBody)
-
-  //     const permissions = [
-  //         Permission.write(Role.user(user?.$id)),
-  //       ]
-
-  //     const payload = {
-  //         user_id:user?.$id,
-  //         username:user?.name,
-  //         body:messageBody
-  //     }
-
-  //     const response = await db.createDocument(
-  //             DATABASE_ID,
-  //             COLLECTION_ID_MESSAGES,
-  //             ID.unique(),
-  //             payload,
-  //             permissions
-  //         )
-
-  //     console.log('RESPONSE:', response)
-
-  //     // setMessages(prevState => [response, ...prevState])
-
-  //     setMessageBody('')
-
-  // }
-
   const deleteMessage = async (id) => {
     await db.deleteDocument(DATABASE_ID, COLLECTION_ID_MESSAGES, id);
-    //setMessages(prevState => prevState.filter(message => message.$id !== message_id))
   };
 
+  // Debugging: Log messages and activeContact
+  useEffect(() => {
+    console.log("Current user:", user);
+    console.log("Active contact:", activeContact);
+    console.log("Messages:", messages);
+  }, [user, activeContact, messages]);
+
+  const filteredMessages = messages.filter(
+    (message) =>
+      (message.sender === user.$id && message.receiver === activeContact?.$id) ||
+      (message.receiver === user.$id && message.sender === activeContact?.$id)
+  );
+  console.log("Filtered messages:", filteredMessages);
+
   return (
-    <main className="container">
-      <div className="room--container">
-
-
-        <div>
-          {messages.map((message) => (
-            <div key={message.$id} className={"message--wrapper"}>
-              <div className="message--header">
-                <p>
-                  {message?.username ? (
-                    <span className="text-blue-300"> {message?.username}</span>
-                  ) : (
-                    "Anonymous user"
-                  )}
-
-                  <small className="message-timestamp">
-                    {" "}
-                    {new Date(message.$createdAt).toLocaleString()}
-                  </small>
-                </p>
-
-                {message.$permissions.includes(
-                  `delete(\"user:${user?.$id}\")`
-                ) && (
-                  <Trash2
-                    className="delete--btn"
-                    onClick={() => {
-                      deleteMessage(message.$id);
-                    }}
-                  />
-                )}
-              </div>
-
-              <div
-                className={
-                  "message--body" +
-                  (message?.user_id === user?.$id
-                    ? " message--body--owner"
-                    : "")
-                }
-              >
-                <span>{message.body}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <form id="message--form" onSubmit={handleSendMessage}>
-          <div>
-            <textarea
-              required
-              maxLength="250"
-              placeholder="Say something..."
-              onChange={(e) => {
-                setMessageBody(e.target.value);
-              }}
-              value={messageBody}
-            ></textarea>
+    <div className="chat-container flex">
+      <div className="users-sidebar w-1/4 border-r p-4">
+        {contacts.map((contact) => (
+          <div
+            key={contact.$id}
+            className={`user-item p-4 cursor-pointer ${activeContact?.$id === contact.$id ? "bg-gray-200" : ""}`}
+            onClick={() => setActiveContact(contact)}
+          >
+            {contact.bus_name}
           </div>
-
-          <div className="send-btn--wrapper">
-            <input className="btn btn--secondary" type="submit" value="send" />
-          </div>
-        </form>
+        ))}
       </div>
-    </main>
+      <div className="chat-content w-3/4 p-4">
+        {activeContact ? (
+          <>
+            <div className="messages-list">
+              {filteredMessages.map((message) => (
+                <div key={message.$id} className={"message--wrapper"}>
+                  <div className="message--header">
+                    <p>
+                      <span className="text-blue-300">{message?.username || "Anonymous user"}</span>
+                      <small className="message-timestamp"> {new Date(message.$createdAt).toLocaleString()}</small>
+                    </p>
+                    {message.$permissions.includes(`delete(\"user:${user.$id}\")`) && (
+                      <Trash2 className="delete--btn" onClick={() => deleteMessage(message.$id)} />
+                    )}
+                  </div>
+                  <div className={"message--body" + (message?.user_id === user.$id ? " message--body--owner" : "")}>
+                    <span>{message.body}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <form id="message--form" onSubmit={handleSendMessage} className="mt-4">
+              <div>
+                <textarea
+                  required
+                  maxLength="250"
+                  placeholder="Say something..."
+                  onChange={(e) => setMessageBody(e.target.value)}
+                  value={messageBody}
+                  className="w-full p-2 border rounded"
+                ></textarea>
+              </div>
+              <div className="send-btn--wrapper mt-2">
+                <button type="submit" className="btn btn--secondary">Send</button>
+              </div>
+            </form>
+          </>
+        ) : (
+          <div>Please select a contact to start the conversation</div>
+        )}
+      </div>
+    </div>
   );
 };
 
