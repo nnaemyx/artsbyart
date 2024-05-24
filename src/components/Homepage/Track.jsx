@@ -113,7 +113,7 @@ const Track = () => {
 
                 <button
                   type="button"
-                  className="bg-primary md:px-12 text-[12px] md:text-[18px] md:rounded-md md:py-4 py-2 px-6 text-white absolute right-[0rem] 425:right-[3.4rem]"
+                  className="bg-primary md:px-12 text-[12px] md:text-[18px] md:rounded-md md:py-4 py-2 px-6 text-white absolute  right-[0rem] 425:right-[0.1rem]"
                   onClick={() => {
                     openModal(userExists ? "login" : "register");
                   }}

@@ -3,10 +3,18 @@ import React, { useEffect, useState } from "react";
 import { useCustomContext } from "@/context/Customcontext";
 import Link from "next/link";
 import { SearchIcon } from "@/icon";
+import MobileSearch from "./MobileSearch";
 
 const Mobileheader = () => {
   const [bg, setBg] = useState(false);
-  const { isLeftOpen, openLeft, closeLeft, isBottomOpen,openBottom,closeBottom } = useCustomContext();
+  const {
+    isLeftOpen,
+    openLeft,
+    closeLeft,
+    isBottomOpen,
+    openBottom,
+    closeBottom,
+  } = useCustomContext();
 
   useEffect(() => {
     // add event listener
@@ -40,11 +48,14 @@ const Mobileheader = () => {
               ...you imagine we create
             </p>
           </div>
-          <div onClick={openLeft} className="flex items-center gap-4">
-            <div>
+          <div className="flex items-center gap-4">
+            <div onClick={openBottom}>
               <SearchIcon className="fill-white" />
             </div>
-            <button className="text-[20px] rounded-full px-3 py-1.5  border border-solid ">
+            <button
+              onClick={openLeft}
+              className="text-[20px] rounded-full px-3 py-1.5  border border-solid "
+            >
               &#9776;
             </button>
           </div>
@@ -119,6 +130,7 @@ const Mobileheader = () => {
           </div>
         </div>
       )}
+      {isBottomOpen && <MobileSearch />}
     </div>
   );
 };
