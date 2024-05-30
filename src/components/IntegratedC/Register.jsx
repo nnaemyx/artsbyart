@@ -12,13 +12,13 @@ const Register = () => {
   const [formData, setFormData] = useState({
     office_address: "",
     reg_num: "",
-    bank_account: "",
+    // bank_account: "",
     smart_phone: "",
     password: "",
     email: "",
     bus_name: "",
-    phone_num1: "+234",
-    phone_num2: "+234",
+    phone_num1: "",
+    phone_num2: "",
     branches: "",
     services: [],
   });
@@ -50,7 +50,7 @@ const Register = () => {
           
           office_address: formData.office_address,
           reg_num: formData.reg_num,
-          bank_account: formData.bank_account,
+          // bank_account: formData.bank_account,
           smart_phone: formData.smart_phone,
           bus_name: formData.bus_name,
           phone_num1: formData.phone_num1,
@@ -137,14 +137,14 @@ const Register = () => {
             Registered Business with CAC (Business Registration Number):
           </label>
           <input
-            type="number"
+            type="text"
             id="reg_num"
             name="reg_num"
             value={formData.reg_num}
             onChange={handleChange}
             className="w-full p-2 mb-4 border border-gray-300"
           />
-
+{/* 
           <label htmlFor="bank_account">Business Bank Account:</label>
           <input
             type="number"
@@ -153,7 +153,7 @@ const Register = () => {
             value={formData.bank_account}
             onChange={handleChange}
             className="w-full p-2 mb-4 border border-gray-300"
-          />
+          /> */}
 
           <label htmlFor="smart_phone">Do you have a smartphone?</label>
           <select

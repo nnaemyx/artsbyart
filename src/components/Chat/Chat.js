@@ -13,7 +13,7 @@ export default function Chat({ productName, procedures,images }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
-    startMessage(name, email, subject, productName,procedures,images, message, setLoading);
+    startMessage(name, email,message, productName,  setLoading);
     setName("");
     setEmail("");
     setMessage("");

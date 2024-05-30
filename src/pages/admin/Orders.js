@@ -32,28 +32,30 @@ const Orders = () => {
     fetchICs();
   }, []);
 
-  const sendSMS = async (phoneNumber) => {
+  const sendSMS = async (phoneNumber, message) => {
     try {
       const response = await fetch("/api/sms", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           phoneNumber: phoneNumber,
-        })
+          message: message || "Hello, you have a job to work on, visit the link and get started, www.artsbyart.com and login to your account.",
+        }),
       });
   
-      // Handle response
       if (response.ok) {
         console.log("SMS sent successfully!");
       } else {
-        console.error("Failed to send SMS");
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to send SMS");
       }
     } catch (error) {
       console.error("Error sending SMS:", error);
     }
   };
+  
   
 
 
@@ -159,6 +161,7 @@ const Orders = () => {
   
         // Fetch the phone numbers of the selected ICs
         const phoneNumbers = selectedICObjects.map((ic) => ic.phone_num1);
+        console.log(phoneNumbers)
   
         // Combine current and newly selected ICs
         const updatedAssignedICs = [...new Set([...currentAssignedICs, ...selectedIC])];
@@ -213,11 +216,11 @@ const Orders = () => {
     );
 
     // Send SMS notifications to each assigned IC
-    // await Promise.all(
-    //   availableICs.map(async (ic) => {
-    //     await sendSMSToIC(ic.phone_num1, `You have a new job: ${ticket.name}`);
-    //   })
-    // );
+    await Promise.all(
+      availableICs.map(async (ic) => {
+        await sendSMSToIC(ic.phone_num1, `You have a new job: ${ticket.name}`);
+      })
+    );
 
     console.log("Ticket sent to all ICs successfully!");
   } catch (error) {
@@ -251,11 +254,11 @@ const handleUpdate = async (ticket, selectedICForTicket) => {
     );
 
     // Send SMS notifications to newly assigned ICs
-    // await Promise.all(
-    //   selectedICsForTicket.map(async (ic) => {
-    //     await sendSMSToIC(ic.phone_num1, `You have a new job: ${ticket.name}`);
-    //   })
-    // );
+    await Promise.all(
+      selectedICForTicket.map(async (ic) => {
+        await sendSMSToIC(ic.phone_num1, `You have a new job: ${ticket.name}`);
+      })
+    );
 
     toast.success("Ticket updated and sent to newly assigned ICs successfully!");
   } catch (error) {
