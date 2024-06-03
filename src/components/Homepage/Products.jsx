@@ -162,20 +162,19 @@ const Products = () => {
   };
 
   return (
-    <div className="px-12 mt-12 mb-20">
-      {Object.keys(categories).map((category) => (
-        <div
-          key={category}
-          className="grid grid-cols-1 font-opensans sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-8"
-        >
-          <CollectionCard
-            category={category}
-            images={categories[category].images}
-            video={categories[category].video}
-            priceRange={calculatePriceRange(categories[category].price)}
-          />
-        </div>
-      ))}
+    <div className="px-12 mt-12 mb-20 ">
+      <div className="grid grid-cols-1 font-opensans sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {Object.keys(categories).map((category) => (
+          <div key={category} className="">
+            <CollectionCard
+              category={category}
+              images={categories[category].images}
+              video={categories[category].video}
+              priceRange={calculatePriceRange(categories[category].price)}
+            />
+          </div>
+        ))}
+      </div>
       <Link href="/shop">
         <button className="mt-[64px] mx-auto  flex justify-center  text-[12px] md:text-[14px] font-semibold bg-primary text-white px-[50px] tracking-[1.5px] py-[18px]">
           View All

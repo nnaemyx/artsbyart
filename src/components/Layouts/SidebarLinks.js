@@ -7,11 +7,11 @@ export const menuItems = [
     title: 'Dashboard',
     icon: <DashboardIcon/>
   },
-  {
-    href: '/admin/Customers',
-    title: 'Customers',
-    icon: <AccountIcon2/>
-  },
+  // {
+  //   href: '/admin/Customers',
+  //   title: 'Customers',
+  //   icon: <AccountIcon2/>
+  // },
   {
     title: 'Catalog',
     icon: <CatalogIcon />,

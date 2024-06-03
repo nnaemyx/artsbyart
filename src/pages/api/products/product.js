@@ -69,11 +69,15 @@ async function handler(req, res) {
         req.body.slug = slugify(req.body.title);
       }
 
-      // Create a new product with images and video URLs
+      // Ensure procedures are saved as an array
+      const procedures = req.body.procedures ? req.body.procedures.split(',').map(proc => proc.trim()) : [];
+
+      // Create a new product with images, video URLs, and procedures
       const newProduct = await Product.create({
         ...req.body,
         images: imageURLs,
         video: videoURL,
+        procedures: procedures
       });
 
       res.json(newProduct);
@@ -88,9 +92,9 @@ async function handler(req, res) {
       const products = await Product.find();
 
       // Group products by category
-       const groupedProducts = products.reduce((acc, product) => {
+      const groupedProducts = products.reduce((acc, product) => {
         if (!acc[product.category]) {
-          acc[product.category] = { products: [], images: [], video: [], price: [] };
+          acc[product.category] = { products: [], images: [], video: [], price: [], procedures: [] };
         }
 
         acc[product.category].products.push(product);
@@ -99,6 +103,7 @@ async function handler(req, res) {
           acc[product.category].video.push(product.video);
         }
         acc[product.category].price.push(product.price);
+        acc[product.category].procedures.push(...product.procedures); // Include procedures
 
         return acc;
       }, {});
