@@ -7,6 +7,7 @@ const ProductDetail = () => {
   const router = useRouter();
   const { slug } = router.query;
   const [product, setProduct] = useState(null);
+  const [mainMedia, setMainMedia] = useState(null);
   const [showChat, setShowChat] = useState(false);
   const chatRef = useRef(null);
   const { isBottomOpen, openBottom, closeBottom } = useCustomContext();
@@ -17,6 +18,7 @@ const ProductDetail = () => {
         const response = await fetch(`/api/${slug}`);
         const data = await response.json();
         setProduct(data);
+        setMainMedia(data.images[0]);
       } catch (error) {
         console.error("Error fetching product details:", error);
       }
@@ -28,7 +30,7 @@ const ProductDetail = () => {
   }, [slug]);
 
   const handleToggleChat = () => {
-    setShowChat(!showChat); // Toggle the value
+    setShowChat(!showChat);
   };
 
   const handleClickOutsideChat = (event) => {
@@ -52,15 +54,51 @@ const ProductDetail = () => {
   return (
     <div className="container mx-auto mt-4 lg:mt-[11rem]">
       <div className="flex flex-col px-6 md:px-0 md:flex-row gap-12">
-        <div className="">
-          <img
-            src={product.images[0]}
-            alt={product.title}
-            className="w-full h-[400px] lg:h-[800px]"
-          />
+        <div className="flex flex-col items-center">
+          <div className="w-full h-auto">
+            {mainMedia && (
+              <>
+                {typeof mainMedia === "string" && mainMedia.endsWith(".mp4") ? (
+                  <video
+                    src={mainMedia}
+                    controls
+                    className="max-w-full max-h-full"
+                  />
+                ) : (
+                  <img
+                    src={mainMedia}
+                    alt={product.title}
+                    className="max-w-full max-h-full"
+                  />
+                )}
+              </>
+            )}
+          </div>
+          <div className="flex mt-4 space-x-2">
+            {product.images.map((image, index) => (
+              <img
+                key={index}
+                src={image}
+                alt={`Thumbnail ${index + 1}`}
+                className="w-20 h-20 object-cover cursor-pointer"
+                onClick={() => setMainMedia(image)}
+              />
+            ))}
+            {product.video && product.video.map((video, index) => (
+              <video
+                key={index}
+                className="w-20 h-20 object-cover cursor-pointer"
+                onClick={() => setMainMedia(video)}
+              >
+                <source src={video} type="video/mp4" />
+              </video>
+            ))}
+          </div>
         </div>
-        <div className="flex-1" ref={chatRef}>
-          {/* Button to toggle chat, desktop */}
+        <div className="w-[50%]" ref={chatRef}>
+          <h1 className="text-2xl font-semibold">{product.title}</h1>
+          <p className="text-gray-700 mt-2">{product.description}</p>
+          <p className="text-xl font-bold mt-2">${product.price}</p>
           <button
             onClick={handleToggleChat}
             className="bg-blue-500 hidden lg:block text-white p-2 mb-[8rem] rounded mt-4"
@@ -75,10 +113,8 @@ const ProductDetail = () => {
             Create Order
           </button>
 
-          {/* Display chat component based on showChat state */}
           {showChat && (
-            <div className="absolute z-10 w-1/2 hidden lg:block right-0 h-[700px]  bottom-0 overflow-hidden  bg-light border-r">
-              {/* Your chat component content goes here */}
+            <div className="absolute z-10 w-1/2 hidden lg:block right-0 h-[700px] bottom-0 overflow-hidden bg-light border-r">
               <Chat
                 productName={product.slug}
                 procedures={product.procedures[0]}
@@ -88,8 +124,7 @@ const ProductDetail = () => {
           )}
 
           {showChat && (
-            <div className="absolute z-10 w-[90%] lg:hidden block mx-auto bottom-0 h-[600px] top-20 overflow-hidden  bg-light border-r">
-              {/* Your chat component content goes here */}
+            <div className="absolute z-10 w-[90%] lg:hidden block mx-auto bottom-0 h-[600px] top-20 overflow-hidden bg-light border-r">
               <Chat
                 productName={product.slug}
                 procedures={product.procedures.join(", ")}

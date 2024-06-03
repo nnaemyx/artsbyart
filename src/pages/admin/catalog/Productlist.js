@@ -79,7 +79,7 @@ const Productlist = () => {
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
-          {products.map((product, index) => (
+          {products?.map((product, index) => (
             <tr key={product._id}>
               <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
               <div className="flex items-center">

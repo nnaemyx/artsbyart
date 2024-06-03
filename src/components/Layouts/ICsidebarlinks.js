@@ -15,5 +15,11 @@ export const menuItems = [
     icon:<ChatIcon />,
  
   },
+  {
+    href: '/integratedC/Reviews',
+    title: 'Reviews',
+    icon:<ChatIcon />,
+ 
+  },
 
 ];

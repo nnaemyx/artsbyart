@@ -90,14 +90,19 @@ export const menuItems = [
       },
     ],
   },
-  {
-    href: '/admin/Suppliers',
-    title: 'Suppliers',
-    icon: <CompanyIcon/>,
-  },
+  // {
+  //   href: '/admin/Suppliers',
+  //   title: 'Suppliers',
+  //   icon: <CompanyIcon/>,
+  // },
   {
     href: '/admin/IntegratedC',
     title: 'ICS',
+    icon: <IntegratedIcon/>,
+  },
+  {
+    href: '/admin/Reviews',
+    title: 'Reviews',
     icon: <IntegratedIcon/>,
   },
 ];
