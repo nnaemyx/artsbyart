@@ -2,11 +2,25 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useCustomContext } from "@/context/Customcontext";
 import Link from "next/link";
-import { SearchIcon } from "@/icon";
+import { AccountIcon2, SearchIcon } from "@/icon";
 import MobileSearch from "./MobileSearch";
+import { useRouter } from "next/router";
+import { getUserFromLocalStorage, removeUserFromLocalStorage } from "@/utils/Localstorage";
 
 const Mobileheader = () => {
   const [bg, setBg] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
+  const loggedInUser = getUserFromLocalStorage();
+
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const handleSignOut = () => {
+    removeUserFromLocalStorage();
+    router.push("/"); // Redirect to home page after sign-out
+  };
   const {
     isLeftOpen,
     openLeft,
@@ -48,10 +62,50 @@ const Mobileheader = () => {
               ...you imagine we create
             </p>
           </div>
+      
           <div className="flex items-center gap-4">
             <div onClick={openBottom}>
               <SearchIcon className="fill-white" />
             </div>
+            {loggedInUser ? (
+              <div className="relative group">
+                <button
+                  type="button"
+                  className=" focus:outline-none"
+                  onClick={toggleDropdown}
+                >
+                  <AccountIcon2 className="" />
+                </button>
+                {isOpen && (
+                  <div className="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                    <div className="py-1">
+                      <Link
+                        href="/profile"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        Profile
+                      </Link>
+                      <Link
+                        href="/orders"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        My Orders
+                      </Link>
+                      <button
+                        onClick={handleSignOut}
+                        className="block w-full text-left px-4 py-2 text-sm text-red-700 hover:bg-gray-100"
+                      >
+                        Sign Out
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link href="/">
+                <AccountIcon2 className="fill-white" />
+              </Link>
+            )}
             <button
               onClick={openLeft}
               className="text-[20px] rounded-full px-3 py-1.5  border border-solid "
@@ -119,13 +173,13 @@ const Mobileheader = () => {
               >
                 <p className="text-[15px]">Team</p>
               </Link>
-              <Link
+              {/* <Link
                 href="/authentication/login"
                 onClick={closeLeft}
                 className="relative group"
               >
                 <p className="text-[15px]">Admin</p>
-              </Link>
+              </Link> */}
             </div>
           </div>
         </div>

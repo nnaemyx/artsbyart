@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import Chat from "@/components/Chat/Chat";
 import { useCustomContext } from "@/context/Customcontext";
-import { getPhoneFromLocalStorage } from "@/utils/Localstorage";
+import { getPhoneFromLocalStorage, getPhoneFromLocalStorageLogin } from "@/utils/Localstorage";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -33,7 +33,7 @@ const ProductDetail = () => {
   }, [slug]);
 
   const handleToggleChat = () => {
-    const storedPhone = getPhoneFromLocalStorage();
+    const storedPhone = getPhoneFromLocalStorage() || getPhoneFromLocalStorageLogin();
     if (!storedPhone) {
       toast.error("Please log in to create an order.");
       router.push("/"); // Navigate to the homepage
@@ -107,7 +107,7 @@ const ProductDetail = () => {
         <div className="w-[50%]" ref={chatRef}>
           <h1 className="text-2xl font-semibold">{product.title}</h1>
           <p className="text-gray-700 mt-2">{product.description}</p>
-          <p className="text-xl font-bold mt-2">${product.price}</p>
+          <p className="text-xl font-bold mt-2">N{product.price}</p>
           <button
             onClick={handleToggleChat}
             className="bg-blue-500 hidden lg:block text-white p-2 mb-[8rem] rounded mt-4"
@@ -128,18 +128,18 @@ const ProductDetail = () => {
                 productName={product.slug}
                 procedures={product.procedures[0]}
                 images={product.images[0]}
-                phoneNumber={getPhoneFromLocalStorage()}
+                phoneNumber={getPhoneFromLocalStorage() || getPhoneFromLocalStorageLogin()}
               />
             </div>
           )}
 
           {showChat && (
-            <div className="absolute z-10 w-[90%] lg:hidden block mx-auto bottom-0 h-[600px] top-20 overflow-hidden bg-light border-r">
+            <div className="absolute z-10 w-[90%] lg:hidden block mx-auto bottom-0 h-[700px] top-20 overflow-hidden bg-light border-r">
               <Chat
                 productName={product.slug}
                 procedures={product.procedures.join(", ")}
                 images={product.images[0]}
-                phoneNumber={getPhoneFromLocalStorage()}
+                phoneNumber={getPhoneFromLocalStorage()|| getPhoneFromLocalStorageLogin()}
               />
             </div>
           )}

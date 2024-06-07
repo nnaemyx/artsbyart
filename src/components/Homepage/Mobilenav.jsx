@@ -22,12 +22,14 @@ const Mobilenav = () => {
             <p className=" text-[12px] ">Home</p>
           </Link>
 
-          <div className="flex flex-col items-center">
+
+          
+          <Link href="/orders" className="flex flex-col items-center">
             <span className="text-center ">
               <ContactIcon />
             </span>
-            <p className=" text-[12px] ">Contact us</p>
-          </div>
+            <p className=" text-[12px] ">Orders</p>
+          </Link>
 
           <Link href="/shop" className="flex flex-col items-center">
             <span>

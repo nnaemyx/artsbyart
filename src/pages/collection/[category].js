@@ -45,7 +45,7 @@ const CollectionDetail = ({ slug }) => {
   }
 
   return (
-    <div className=" mt-[12rem] mx-6">
+    <div className="mt-[5rem] mb-[5rem] lg:mt-[12rem] mx-6">
       <h1 className="text-2xl font-semibold mb-4">{category}</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {products.map((product) => (
