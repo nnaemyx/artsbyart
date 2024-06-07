@@ -8,14 +8,30 @@ import {
   removeUserFromLocalStorage,
 } from "@/utils/Localstorage";
 import { useCustomContext } from "@/context/Customcontext"; // Adjust the import path accordingly
-import SearchPanel from "./SearchPanel";
+import dynamic from "next/dynamic";
+
+const SearchPanel = dynamic(() => import("./SearchPanel"), { ssr: false });
 
 const Navbar = () => {
   const [bg, setBg] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [loggedInUser, setLoggedInUser] = useState(null);
   const router = useRouter();
-  const loggedInUser = getUserFromLocalStorage();
   const { isRightOpen, openRight } = useCustomContext();
+
+  useEffect(() => {
+    setLoggedInUser(getUserFromLocalStorage());
+
+    const handleScroll = () => {
+      setBg(window.scrollY > 50);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -25,12 +41,6 @@ const Navbar = () => {
     removeUserFromLocalStorage();
     router.push("/"); // Redirect to home page after sign-out
   };
-
-  useEffect(() => {
-    window.addEventListener("scroll", () => {
-      setBg(window.scrollY > 50);
-    });
-  }, []);
 
   return (
     <>
@@ -53,37 +63,27 @@ const Navbar = () => {
           <div className="font-opensans flex gap-[30px] ">
             <Link href="/" className="relative group">
               <p className="text-[15px]">Home</p>
-              <span className="absolute inset-x-0  bottom-0  bg-primary transition-transform transform translate-y-full group-hover:border boder-solid border-primary group-hover:translate-x-0 ease-in-out "></span>
+              <span className="absolute inset-x-0 bottom-0 bg-primary transition-transform transform translate-y-full group-hover:border border-solid border-primary group-hover:translate-x-0 ease-in-out"></span>
             </Link>
 
             <Link href="/shop" className="relative group">
               <p className="text-[15px]">Shop</p>
-              <span className="absolute inset-x-0  bottom-0  bg-primary transition-transform transform translate-y-full group-hover:border boder-solid border-primary group-hover:translate-x-0 ease-in-out "></span>
+              <span className="absolute inset-x-0 bottom-0 bg-primary transition-transform transform translate-y-full group-hover:border border-solid border-primary group-hover:translate-x-0 ease-in-out"></span>
             </Link>
 
             <Link href="/contact" className="relative group">
               <p className="text-[15px]">Contact Us</p>
-              <span className="absolute inset-x-0  bottom-0  bg-primary transition-transform transform translate-y-full group-hover:border boder-solid border-primary group-hover:translate-x-0 ease-in-out "></span>
+              <span className="absolute inset-x-0 bottom-0 bg-primary transition-transform transform translate-y-full group-hover:border border-solid border-primary group-hover:translate-x-0 ease-in-out"></span>
             </Link>
-            {/* <Link href="/suppliers" className="relative group">
-              <p className="text-[15px]">Become a Supplier</p>
-              <span className="absolute inset-x-0  bottom-0  bg-primary transition-transform transform translate-y-full group-hover:border boder-solid border-primary group-hover:translate-x-0 ease-in-out "></span>
-            </Link> */}
+            
             <Link href="/ICregister/Registration" className="relative group">
               <p className="text-[15px]">Become an IC</p>
-              <span className="absolute inset-x-0  bottom-0  bg-primary transition-transform transform translate-y-full group-hover:border boder-solid border-primary group-hover:translate-x-0 ease-in-out "></span>
+              <span className="absolute inset-x-0 bottom-0 bg-primary transition-transform transform translate-y-full group-hover:border border-solid border-primary group-hover:translate-x-0 ease-in-out"></span>
             </Link>
-            {/* <Link href="/authentication/login" className="relative group">
-              <p className="text-[15px]">Admin</p>
-              <span className="absolute inset-x-0  bottom-0  bg-primary transition-transform transform translate-y-full group-hover:border boder-solid border-primary group-hover:translate-x-0 ease-in-out "></span>
-            </Link> */}
-            {/* <Link href="/contact" className="relative group">
-              <p className="text-[15px]">Mission</p>
-              <span className="absolute inset-x-0  bottom-0  bg-primary transition-transform transform translate-y-full group-hover:border boder-solid border-primary group-hover:translate-x-0 ease-in-out "></span>
-            </Link> */}
+            
             <Link href="/contact" className="relative group">
               <p className="text-[15px]">Team</p>
-              <span className="absolute inset-x-0  bottom-0  bg-primary transition-transform transform translate-y-full group-hover:border boder-solid border-primary group-hover:translate-x-0 ease-in-out "></span>
+              <span className="absolute inset-x-0 bottom-0 bg-primary transition-transform transform translate-y-full group-hover:border border-solid border-primary group-hover:translate-x-0 ease-in-out"></span>
             </Link>
           </div>
           <div className="hidden lg:flex items-center justify-end gap-[28px]">
@@ -94,7 +94,7 @@ const Navbar = () => {
               <div className="relative group">
                 <button
                   type="button"
-                  className=" focus:outline-none"
+                  className="focus:outline-none"
                   onClick={toggleDropdown}
                 >
                   <AccountIcon2 className="" />

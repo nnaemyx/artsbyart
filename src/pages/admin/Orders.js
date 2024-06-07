@@ -33,6 +33,11 @@ const Orders = () => {
   }, []);
 
   const sendSMS = async (phoneNumber) => {
+    // Remove the first zero and add +234
+    const formattedPhoneNumber = phoneNumber.startsWith('0')
+      ? `+234${phoneNumber.slice(1)}`
+      : phoneNumber;
+  
     try {
       const response = await fetch("/api/sms", {
         method: "POST",
@@ -40,7 +45,7 @@ const Orders = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          phoneNumber: phoneNumber,
+          phoneNumber: formattedPhoneNumber,
         }),
       });
   
@@ -54,6 +59,7 @@ const Orders = () => {
       console.error("Error sending SMS:", error);
     }
   };
+  
   
   
 
