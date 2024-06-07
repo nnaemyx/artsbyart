@@ -1,4 +1,3 @@
-// pages/api/auth.js
 import connectDb from "@/lib/connectDB";
 import User from "@/models/userModel";
 
@@ -14,14 +13,13 @@ export default async function handler(req, res) {
       const passwordIsCorrect = await (password, existingUser.password);
 
       if (existingUser) {
-        const newUser = await User.findOne({ password });
-        res.status(201).json(newUser);
         if (passwordIsCorrect) {
+          // Wrap user data in newUser object
+          const newUser = { phone: existingUser.phone, password: existingUser.password };
+          res.status(201).json(newUser);
           res.json({ message: "Login successful." });
         } else {
-          res
-            .status(401)
-            .json({ message: "Incorrect password. Please try again." });
+          res.status(401).json({ message: "Incorrect password. Please try again." });
         }
       } else {
         res.json({ message: "User does not exist. Please create an account." });

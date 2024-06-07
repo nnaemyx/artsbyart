@@ -91,13 +91,13 @@ const Mobileheader = () => {
               >
                 <p className="text-[15px]">Contact Us</p>
               </Link>
-              <Link
+              {/* <Link
                 href="/contact"
                 onClick={closeLeft}
                 className="relative group"
               >
                 <p className="text-[15px]">Become a Supplier</p>
-              </Link>
+              </Link> */}
               <Link
                 href="/ICregister/Registration"
                 onClick={closeLeft}
@@ -105,13 +105,13 @@ const Mobileheader = () => {
               >
                 <p className="text-[15px]">Become an IC</p>
               </Link>
-              <Link
+              {/* <Link
                 href="/contact"
                 onClick={closeLeft}
                 className="relative group"
               >
                 <p className="text-[15px]">Mission</p>
-              </Link>
+              </Link> */}
               <Link
                 href="/contact"
                 onClick={closeLeft}

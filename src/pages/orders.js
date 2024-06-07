@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { db } from '@/utils/appwrite';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { getPhoneFromLocalStorage } from '@/utils/Localstorage';
+import { getPhoneFromLocalStorage, getPhoneFromLocalStorageLogin } from '@/utils/Localstorage';
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -10,7 +10,7 @@ const Orders = () => {
 
   useEffect(() => {
     const fetchOrders = async () => {
-      const phoneNumber = getPhoneFromLocalStorage();
+      const phoneNumber = getPhoneFromLocalStorage() || getPhoneFromLocalStorageLogin();
       if (!phoneNumber) {
         toast.error('Please log in to view your orders.');
         return;

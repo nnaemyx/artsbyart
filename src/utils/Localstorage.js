@@ -23,6 +23,16 @@ export const getPhoneFromLocalStorage = () => {
   return null;
 };
 
+export const getPhoneFromLocalStorageLogin = () => {
+  if (typeof window !== "undefined") {
+    const storedUser = localStorage.getItem("users");
+    const parsedUser = storedUser ? JSON.parse(storedUser) : null;
+    // Extract and return only the phone number
+    return parsedUser ? parsedUser?.phone : null;
+  }
+  return null;
+};
+
 export const removeUserFromLocalStorage = () => {
   if (typeof window !== "undefined") {
     localStorage.removeItem("users");

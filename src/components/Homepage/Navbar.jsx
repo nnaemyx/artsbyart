@@ -65,22 +65,22 @@ const Navbar = () => {
               <p className="text-[15px]">Contact Us</p>
               <span className="absolute inset-x-0  bottom-0  bg-primary transition-transform transform translate-y-full group-hover:border boder-solid border-primary group-hover:translate-x-0 ease-in-out "></span>
             </Link>
-            <Link href="/suppliers" className="relative group">
+            {/* <Link href="/suppliers" className="relative group">
               <p className="text-[15px]">Become a Supplier</p>
               <span className="absolute inset-x-0  bottom-0  bg-primary transition-transform transform translate-y-full group-hover:border boder-solid border-primary group-hover:translate-x-0 ease-in-out "></span>
-            </Link>
+            </Link> */}
             <Link href="/ICregister/Registration" className="relative group">
               <p className="text-[15px]">Become an IC</p>
               <span className="absolute inset-x-0  bottom-0  bg-primary transition-transform transform translate-y-full group-hover:border boder-solid border-primary group-hover:translate-x-0 ease-in-out "></span>
             </Link>
-            <Link href="/authentication/login" className="relative group">
+            {/* <Link href="/authentication/login" className="relative group">
               <p className="text-[15px]">Admin</p>
               <span className="absolute inset-x-0  bottom-0  bg-primary transition-transform transform translate-y-full group-hover:border boder-solid border-primary group-hover:translate-x-0 ease-in-out "></span>
-            </Link>
-            <Link href="/contact" className="relative group">
+            </Link> */}
+            {/* <Link href="/contact" className="relative group">
               <p className="text-[15px]">Mission</p>
               <span className="absolute inset-x-0  bottom-0  bg-primary transition-transform transform translate-y-full group-hover:border boder-solid border-primary group-hover:translate-x-0 ease-in-out "></span>
-            </Link>
+            </Link> */}
             <Link href="/contact" className="relative group">
               <p className="text-[15px]">Team</p>
               <span className="absolute inset-x-0  bottom-0  bg-primary transition-transform transform translate-y-full group-hover:border boder-solid border-primary group-hover:translate-x-0 ease-in-out "></span>
@@ -109,10 +109,10 @@ const Navbar = () => {
                         Profile
                       </Link>
                       <Link
-                        href="/track"
+                        href="/orders"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       >
-                        Dashboard
+                        My Orders
                       </Link>
                       <button
                         onClick={handleSignOut}
