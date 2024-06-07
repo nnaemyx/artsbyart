@@ -21,7 +21,7 @@ const Header = ({ clickedTitle }) => {
     authStatus();
   }, []);
   return (
-    <div className="w-full">
+    <div className="w-full hidden lg:block">
       <div className="flex justify-between">
         <div>
         <h1 className='text-[25px] font-semibold'>{clickedTitle}</h1>

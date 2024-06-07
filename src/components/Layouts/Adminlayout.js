@@ -4,6 +4,7 @@ import Header from "./Header";
 import Head from "next/head";
 import Image from "next/image";
 import Sidebar from "./Sidebar";
+import AdminHeader from "./AdminHeaderMobile";
 
 export default function AdminLayout({ children }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -47,8 +48,9 @@ export default function AdminLayout({ children }) {
           />
           <Sidebar onTitleClick={handleTitleClick} />
         </aside>
-        <main className="flex-1 mt-8 px-6 flex flex-col">
+        <main className="flex-1 mt-2 lg:mt-8 px-4 lg:px-6 flex flex-col">
           <Header clickedTitle={clickedTitle} />
+          <AdminHeader onTitleClick={handleTitleClick}/>
           {children}
         </main>
       </div>
