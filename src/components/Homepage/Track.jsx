@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
@@ -14,11 +14,16 @@ const Track = () => {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
-  const [userExists, setUserExists] = useState(
-    getPhoneFromLocalStorage() !== null
-  );
+  const [userExists, setUserExists] = useState(false);
   const [focusedInput, setFocusedInput] = useState(null);
   const router = useRouter();
+
+  useEffect(() => {
+    const storedPhone = getPhoneFromLocalStorage();
+    if (storedPhone) {
+      setPhone(storedPhone);
+    }
+  }, []);
 
   const handleInputClick = (inputName) => {
     setFocusedInput(inputName);
@@ -34,57 +39,71 @@ const Track = () => {
     setIsModalOpen(false);
     setMessage(""); // Clear the message when closing the modal
   };
+
+  const checkUserExists = async (phone) => {
+    const response = await fetch(`/api/users/check-phone`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ phone }),
+    });
+    const data = await response.json();
+    return data.exists;
+  };
+
+  const handleTrack = async () => {
+    const exists = await checkUserExists(phone);
+    setUserExists(exists);
+
+    if (exists) {
+      const storedPhone = getPhoneFromLocalStorage();
+      if (storedPhone === phone) {
+        router.push("/orders");
+      } else {
+        openModal("login");
+      }
+    } else {
+      openModal("register");
+    }
+  };
+
   const handleAction = async () => {
     try {
-      // Extract the phone number from localStorage
-      const storedPhone = getPhoneFromLocalStorage();
+      if (authMode === "login") {
+        const response = await fetch("/api/users/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ phone, password }),
+        });
 
-      // If the user exists, perform login action
-      if (storedPhone) {
-        // Compare the stored phone number with the input phone number
-        if (storedPhone === phone) {
-          const response = await fetch("/api/users/login", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ phone: phone, password }),
-          });
+        const data = await response.json();
+        setMessage(data.message);
 
-          const data = await response.json();
-
-          setMessage(data.message);
-
-          // Close the modal on successful login
-          if (response.ok) {
-            closeModal();
-            router.push("/track")
-            // router.reload(); // Reload the page or perform any other action as needed
-          }
-        } else {
-          setMessage("Phone number does not match. Please try again.");
+        if (response.ok) {
+          saveUserToLocalStorage(data);
+          closeModal();
+          router.push("/orders");
         }
       } else {
-        // If the user doesn't exist, perform registration action
         const response = await fetch("/api/users/signup", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ phone: phone, password }),
+          body: JSON.stringify({ phone, password }),
         });
 
         const data = await response.json();
-
-        // Save user to localStorage
         saveUserToLocalStorage(data);
-
-        // Update userExists state based on the response
         setUserExists(response.ok);
+
         if (response.ok) {
-          toast.success("Account created successfully")
+          toast.success("Account created successfully");
           closeModal();
-          // router.reload(); // Reload the page or perform any other action as needed
+          router.push("/orders");
         }
       }
     } catch (error) {
@@ -95,28 +114,25 @@ const Track = () => {
   return (
     <div className="">
       <div className="relative">
-      
-        <div className=" font-opensan 2xl:px-[30rem] xl:px-[20rem] md:px-[4rem] px-[1.5rem] h-full  text-center mx-auto  w-full">
-          <div className=" md:mt-36 mt-8 lg:h-[220px]  ">
+        <div className="font-opensan 2xl:px-[30rem] xl:px-[20rem] md:px-[4rem] px-[1.5rem] h-full text-center mx-auto w-full">
+          <div className="md:mt-36 mt-8 lg:h-[220px]">
             <h1 className="uppercase md:text-[30px] font-futura font-semibold">
               Track your orders
             </h1>
             <form className="md:mt-8 mt-4">
-              <div className=" relative gap-6">
+              <div className="relative gap-6">
                 <input
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   type="number"
                   placeholder="Phone Number"
-                  className="focus:outline-none w-full border border-solid border-dark md:px-4 px-2 md:w-[32rem] rounded-md py-[0.27rem] md:py-[1.06rem] "
+                  className="focus:outline-none w-full border border-solid border-dark md:px-4 px-2 md:w-[32rem] rounded-md py-[0.27rem] md:py-[1.06rem]"
                 />
 
                 <button
                   type="button"
-                  className="bg-primary md:px-12 text-[12px] md:text-[18px] md:rounded-md md:py-4 py-2 px-6 text-white absolute  right-[0rem] 425:right-[0.1rem]"
-                  onClick={() => {
-                    openModal(userExists ? "login" : "register");
-                  }}
+                  className="bg-primary md:px-12 text-[12px] md:text-[18px] md:rounded-md md:py-4 py-2 px-6 text-white absolute right-[0rem] 425:right-[0.1rem]"
+                  onClick={handleTrack}
                 >
                   Track
                 </button>
@@ -158,79 +174,33 @@ const Track = () => {
               </svg>
             </button>
           </div>
-          {/* Display different forms based on authMode and userExists */}
-          {authMode === "register" && (
-            <div className="w-full px-[1rem] md:px-[4rem] py-[2rem]">
-              {/* New user registration form */}
-              <div className="w-full relative">
-                <input
-                  type="password"
-                  value={password}
-                  className={`focus:outline-none w-[100%] border border-solid px-[18px] py-[18px] ${
-                    focusedInput === "password"
-                      ? "border-dark border-[1.5px]"
-                      : "border-gray-300 "
-                  }`}
-                  onClick={() => handleInputClick("password")}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-                <label
-                  htmlFor="name"
-                  className={`absolute left-4 text-[14px] text-[#9b9191] top-4 transition-all duration-300 ${
-                    focusedInput === "password" || password
-                      ? "translate-y-[-125%] text-[12px] bg-white"
-                      : ""
-                  }`}
-                >
-                  Create Password
-                </label>
-              </div>
-              {/* <label>
-              Confirm Password:
+          <div className="w-full px-[1rem] md:px-[4rem] py-[2rem]">
+            <div className="w-full relative">
               <input
                 type="password"
-                // Add validation or confirmation logic as needed
+                value={password}
+                className={`focus:outline-none w-[100%] border border-solid px-[18px] py-[18px] ${
+                  focusedInput === "password"
+                    ? "border-dark border-[1.5px]"
+                    : "border-gray-300"
+                }`}
+                onClick={() => handleInputClick("password")}
+                onChange={(e) => setPassword(e.target.value)}
               />
-            </label> */}
+              <label
+                htmlFor="name"
+                className={`absolute left-4 text-[14px] text-[#9b9191] top-4 transition-all duration-300 ${
+                  focusedInput === "password" || password
+                    ? "translate-y-[-125%] text-[12px] bg-white"
+                    : ""
+                }`}
+              >
+                {authMode === "register" ? "Create Password" : "Enter Password"}
+              </label>
             </div>
-          )}
-          {authMode === "login" && (
-         <div className="w-full px-[1rem] md:px-[4rem] py-[2rem]">
-         {/* New user registration form */}
-         <div className="w-full relative">
-           <input
-             type="password"
-             value={password}
-             className={`focus:outline-none w-[100%] border border-solid px-[18px] py-[18px] ${
-               focusedInput === "password"
-                 ? "border-dark border-[1.5px]"
-                 : "border-gray-300 "
-             }`}
-             onClick={() => handleInputClick("password")}
-             onChange={(e) => setPassword(e.target.value)}
-           />
-           <label
-             htmlFor="name"
-             className={`absolute left-4 text-[14px] text-[#9b9191] top-4 transition-all duration-300 ${
-               focusedInput === "password" || password
-                 ? "translate-y-[-125%] text-[12px] bg-white"
-                 : ""
-             }`}
-           >
-             Enter Password
-           </label>
-         </div>
-         {/* <label>
-         Confirm Password:
-         <input
-           type="password"
-           // Add validation or confirmation logic as needed
-         />
-       </label> */}
-       </div>
-          )}
+          </div>
           <button
-            className="mt-[14px]  text-[12px] md:text-[14px] font-semibold bg-primary text-white px-[4rem] tracking-[1.5px] py-[18px] flex justify-center w-[50%] mx-auto"
+            className="mt-[14px] text-[12px] md:text-[14px] font-semibold bg-primary text-white px-[4rem] tracking-[1.5px] py-[18px] flex justify-center w-[50%] mx-auto"
             type="submit"
             onClick={handleAction}
           >

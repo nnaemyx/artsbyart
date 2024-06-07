@@ -32,7 +32,7 @@ const Orders = () => {
     fetchICs();
   }, []);
 
-  const sendSMS = async (phoneNumber, message) => {
+  const sendSMS = async (phoneNumber) => {
     try {
       const response = await fetch("/api/sms", {
         method: "POST",
@@ -41,7 +41,6 @@ const Orders = () => {
         },
         body: JSON.stringify({
           phoneNumber: phoneNumber,
-          message: message || "Hello, you have a job to work on, visit the link and get started, www.artsbyart.com and login to your account.",
         }),
       });
   
@@ -102,6 +101,7 @@ const Orders = () => {
         <td>{ticket.name}</td>
         <td>{ticket.content}</td>
         <td>{ticket.email}</td>
+        <td>{ticket.phoneNumber}</td>
         <td>
           <Select
             options={options}
@@ -145,7 +145,7 @@ const Orders = () => {
   const handleAssignJob = async (ticket, selectedICForTicket) => {
     try {
       // Extracting necessary fields from the ticket data
-      const { $id, name, email, content, productName, assignedICs } = ticket;
+      const { $id, name, email, content, productName, assignedICs,phoneNumber } = ticket;
   
       // Extract IDs of already assigned ICs, if any
       const currentAssignedICs = assignedICs || [];
@@ -161,7 +161,7 @@ const Orders = () => {
   
         // Fetch the phone numbers of the selected ICs
         const phoneNumbers = selectedICObjects.map((ic) => ic.phone_num1);
-        console.log(phoneNumbers)
+        
   
         // Combine current and newly selected ICs
         const updatedAssignedICs = [...new Set([...currentAssignedICs, ...selectedIC])];
@@ -172,6 +172,7 @@ const Orders = () => {
           email,
           content,
           productName,
+          phoneNumber,
         };
   
         await db.createDocument(
@@ -198,13 +199,14 @@ const Orders = () => {
 
  const handleSendToAll = async (ticket) => {
   try {
-    const { $id, name, email, content, productName } = ticket;
+    const { $id, name, email, content, productName, phoneNumber } = ticket;
     const updatedTicket = {
       assignedICs: availableICs.map((ic) => ic.$id), // Assign all available ICs
       name,
       email,
       content,
       productName,
+      phoneNumber,
     };
 
     // Update the ticket document with assigned ICs
@@ -231,7 +233,7 @@ const Orders = () => {
 // Function to update the assigned ICs for a ticket and send SMS notifications
 const handleUpdate = async (ticket, selectedICForTicket) => {
   try {
-    const { $id, name, email, content, productName, assignedICs } = ticket;
+    const { $id, name, email, content, productName, assignedICs, phoneNumber } = ticket;
     const selectedIC = selectedICForTicket.map((ic) => ic.value);
 
     // Combine current and newly selected ICs
@@ -243,6 +245,7 @@ const handleUpdate = async (ticket, selectedICForTicket) => {
       email,
       content,
       productName,
+      phoneNumber,
     };
 
     // Update the ticket document with newly assigned ICs
@@ -285,6 +288,7 @@ const handleUpdate = async (ticket, selectedICForTicket) => {
             <th>Name</th>
             <th>ProductName</th>
             <th>Email</th>
+            <th>Phone Number</th>
             <th>Action</th>
             {/* Add more columns as needed */}
           </tr>

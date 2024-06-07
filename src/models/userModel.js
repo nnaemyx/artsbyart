@@ -9,12 +9,6 @@ if (!mongoose.models.User) {
         required: [true, "Please enter a valid password"],
         minLength: [6, "Password must be at least 6 characters"],
       },
-      role: {
-        type: String,
-        required: [true],
-        default: "customer",
-        enum: ["customer", "admin", "supplier", "integrated"],
-      },
       phone: {
         type: String,
         required: [true],

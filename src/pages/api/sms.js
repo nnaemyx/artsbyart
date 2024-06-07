@@ -1,32 +1,31 @@
 // /pages/api/sms.js
-import { NextResponse } from "next/server";
-import twilio from "twilio";
+import twilio from 'twilio';
 
-export const config = {
-  runtime: "edge",
-};
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
 
-export default async function POST(request) {
   try {
-    const { phoneNumber, message } = await request.body();
+    const { phoneNumber } = req.body;
 
     // Twilio credentials and configuration
-    const accountSid = process.env.NEXT_PUBLIC_TWILIO_ACCOUNT_SID;
-    const authToken = process.env.NEXT_PUBLIC_TWILIO_AUTH_TOKEN;
-    const from = process.env.NEXT_PUBLIC_TWILIO_PHONE_NUMBER;
+    const accountSid = process.env.YOUR_TWILIO_ACCOUNT_SID;
+    const authToken = process.env.YOUR_TWILIO_AUTH_TOKEN;
+    const from = process.env.YOUR_TWILIO_PHONE_NUMBER;
     const client = twilio(accountSid, authToken);
 
     // Send SMS using Twilio
     const result = await client.messages.create({
-      body: message || "Hello, you have a job to work on, visit the link and get started",
+      body: 'Hello, you have a job to work on, visit the link and get started',
       from: from,
       to: phoneNumber,
     });
 
     // Return success response
-    return NextResponse.json({ message: "success" }, { status: 200 });
+    return res.status(200).json({ message: 'success' });
   } catch (error) {
-    console.error("Error sending SMS:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error('Error sending SMS:', error);
+    return res.status(500).json({ error: error.message });
   }
 }

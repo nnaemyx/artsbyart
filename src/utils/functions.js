@@ -205,6 +205,7 @@ export const startMessage = async (
   email,
   message,
   productName,
+  phoneNumber,
   setLoading
 ) => {
   try {
@@ -217,6 +218,7 @@ export const startMessage = async (
         email,
         content: message,
         productName,
+        phoneNumber,
         status: "open",
         messages: [
           JSON.stringify({
@@ -235,7 +237,8 @@ export const startMessage = async (
       response.$id,
       email,
       convertDateTime(response.$createdAt),
-      productName
+      productName,
+      phoneNumber
     );
     newTicketStaff(name);
     setLoading(false);

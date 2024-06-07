@@ -4,7 +4,7 @@ import { startMessage } from "@/utils/functions";
 import Processing from "./Processing";
 import AuthNav from "./AuthNav";
 
-export default function Chat({ productName, procedures,images }) {
+export default function Chat({ productName, phoneNumber }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
@@ -13,7 +13,7 @@ export default function Chat({ productName, procedures,images }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
-    startMessage(name, email,message, productName,  setLoading);
+    startMessage(name, email,message, productName,phoneNumber,  setLoading);
     setName("");
     setEmail("");
     setMessage("");
@@ -29,7 +29,7 @@ export default function Chat({ productName, procedures,images }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="w-full min-h-[100vh] overflow-hidden  ">
+      <main className="w-full min-h-[200vh] overflow-hidden  ">
         <div className="w-full min-h-[90vh]  ">
           <div className="md:w-[60%] w-full h-full flex flex-col py-6 md:px-10 px-4 overflow-y-auto">
             <h2 className="font-bold text-2xl mb-2">Create Ticket</h2>
@@ -69,6 +69,16 @@ export default function Chat({ productName, procedures,images }) {
                   id="productName"
                   className="w-full border-[1px] border-gray-200 px-4 py-2 rounded mb-4"
                   value={productName}
+                  readOnly
+                />
+              </div>
+              <div className="">
+                <label htmlFor="productName">Phone Number</label>
+                <input
+                  type="text"
+                  id="phoneNumber"
+                  className="w-full border-[1px] border-gray-200 px-4 py-2 rounded mb-4"
+                  value={phoneNumber}
                   readOnly
                 />
               </div>

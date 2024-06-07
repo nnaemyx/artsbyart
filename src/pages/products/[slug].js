@@ -2,6 +2,9 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import Chat from "@/components/Chat/Chat";
 import { useCustomContext } from "@/context/Customcontext";
+import { getPhoneFromLocalStorage } from "@/utils/Localstorage";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ProductDetail = () => {
   const router = useRouter();
@@ -30,7 +33,13 @@ const ProductDetail = () => {
   }, [slug]);
 
   const handleToggleChat = () => {
-    setShowChat(!showChat);
+    const storedPhone = getPhoneFromLocalStorage();
+    if (!storedPhone) {
+      toast.error("Please log in to create an order.");
+      router.push("/"); // Navigate to the homepage
+    } else {
+      setShowChat(!showChat);
+    }
   };
 
   const handleClickOutsideChat = (event) => {
@@ -105,7 +114,7 @@ const ProductDetail = () => {
           >
             Create Order
           </button>
-          {/* moibile  */}
+          {/* mobile */}
           <button
             onClick={handleToggleChat}
             className="bg-blue-500 lg:hidden block text-white p-2 mb-[8rem] rounded mt-4"
@@ -119,6 +128,7 @@ const ProductDetail = () => {
                 productName={product.slug}
                 procedures={product.procedures[0]}
                 images={product.images[0]}
+                phoneNumber={getPhoneFromLocalStorage()}
               />
             </div>
           )}
@@ -129,6 +139,7 @@ const ProductDetail = () => {
                 productName={product.slug}
                 procedures={product.procedures.join(", ")}
                 images={product.images[0]}
+                phoneNumber={getPhoneFromLocalStorage()}
               />
             </div>
           )}

@@ -32,23 +32,29 @@ const Projects = () => {
 
         setIcs(icData);
 
-        // Fetch product images and progress for each ticket
+        // Fetch product images and procedures for each ticket
         const projectsWithDetails = await Promise.all(tickets.map(async (ticket) => {
           try {
             const productResponse = await fetch(`/api/products/product?name=${ticket.productName}`);
             const productData = await productResponse.json();
             const productKey = Object.keys(productData)[0];
-            const productImages = productData[productKey]?.images || [];
-            const progress = ticket.progress || 0; // Fetch the progress
+            const product = productData[productKey] || {};
+
+            const proceduresArray = product.procedures?.map(proc => {
+              const existingProcedure = JSON.parse(ticket.procedures || '[]').find(p => p.description === proc);
+              return { description: proc, completed: existingProcedure ? existingProcedure.completed : false };
+            }) || [];
+            const image = product.images?.[0] || null; // Fetch only the first image
 
             return { 
               ...ticket, 
-              productImage: productImages[0] || null,
-              progress
+              procedures: proceduresArray,
+              image,
+              progress: ticket.progress || 0
             };
           } catch (error) {
             console.error('Error fetching product details:', error);
-            return ticket;
+            return { ...ticket, procedures: [], progress: ticket.progress || 0 };
           }
         }));
 
@@ -64,7 +70,47 @@ const Projects = () => {
   }, []);
 
   const handleChat = (icId) => {
-    router.push('/admin/chat/Chat'); // Adjust the route as per your chat page setup
+    router.push('/admin/chat/Chat');
+  };
+
+  const handleProcedureChange = async (ticketId, procedureIndex) => {
+    setProjects(prevProjects =>
+      prevProjects.map(project => {
+        if (project.$id === ticketId) {
+          const updatedProcedures = project.procedures.map((proc, index) => {
+            if (index === procedureIndex) {
+              return { ...proc, completed: !proc.completed };
+            }
+            return proc;
+          });
+
+          const completedCount = updatedProcedures.filter(proc => proc.completed).length;
+          const progress = (completedCount / updatedProcedures.length) * 100;
+
+          // Update progress and procedures in the database
+          updateProgressToDatabase(ticketId, JSON.stringify(updatedProcedures), progress.toString());
+
+          return { ...project, procedures: updatedProcedures, progress };
+        }
+        return project;
+      })
+    );
+  };
+
+  const updateProgressToDatabase = async (ticketId, updatedProcedures, newProgress) => {
+    try {
+      await db.updateDocument(
+        process.env.NEXT_PUBLIC_DB_ID,
+        process.env.NEXT_PUBLIC_COMPLETEDTICKETS_COLLECTION_ID,
+        ticketId,
+        { procedures: updatedProcedures, progress: newProgress }
+      );
+
+      toast.success('Progress updated successfully');
+    } catch (error) {
+      console.error('Error updating progress:', error);
+      toast.error('Failed to update progress');
+    }
   };
 
   if (loading) {
@@ -76,9 +122,9 @@ const Projects = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {projects.map((project) => (
           <div key={project.$id} className="border p-4 rounded shadow-md bg-white">
-            {project.productImage ? (
+            {project.image ? (
               <img
-                src={project.productImage}
+                src={project.image}
                 alt={project.productName}
                 className="w-full h-40 object-cover rounded"
               />
@@ -96,6 +142,26 @@ const Projects = () => {
               ></div>
               <span className="absolute right-0 top-8 text-sm text-gray-800">{`${project.progress}% completed`}</span>
             </div>
+            <p className="text-gray-700 mt-1">Procedures:</p>
+            {project.procedures && project.procedures.length > 0 ? (
+              <ul className="list-disc ml-5">
+                {project.procedures.map((procedure, index) => (
+                  <li key={index}>
+                    <label className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={procedure.completed}
+                        onChange={() => handleProcedureChange(project.$id, index)}
+                        className="mr-2"
+                      />
+                      {procedure.description}
+                    </label>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>No procedures available</p>
+            )}
             <button
               onClick={() => handleChat(project.assignedICs)}
               className="mt-4 bg-blue-500 text-white py-2 px-4 rounded"

@@ -84,6 +84,10 @@ const Ticket = ({ ticketObject }) => {
               User: <span className="opacity-60">{ticketObject.name}</span>
             </p>
 
+            <p className="mb-2">
+              Phone number: <span className="opacity-60">{ticketObject.phoneNumber}</span>
+            </p>
+
             <div className="flex md:items-center mb-2 md:flex-row flex-col">
               <p className="pr-[60px] md:mb-auto mb-2">
                 Email: <span className="opacity-60"> {ticketObject.email}</span>
