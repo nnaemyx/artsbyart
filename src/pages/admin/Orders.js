@@ -4,40 +4,26 @@ import { db } from "@/utils/appwrite";
 import Select from "react-select";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import CustomOption from "@/components/Admin/CustomOption";
 
 const Orders = () => {
   const [completedTickets, setCompletedTickets] = useState([]);
-  const [availableICs, setAvailableICs] = useState([]); // ICs dropdown data
-  const [selectedIC, setSelectedIC] = useState(null); // Selected IC for assignment
+  const [availableICs, setAvailableICs] = useState([]);
+  const [selectedIC, setSelectedIC] = useState(null);
   const [ics, setIcs] = useState([]);
+  const [reviews, setReviews] = useState({}); // State to store reviews
 
   useEffect(() => {
-    const fetchIcs = async () => {
-      try {
-        const response = await db.listDocuments(
-          process.env.NEXT_PUBLIC_DB_ID,
-          process.env.NEXT_PUBLIC_REGISTRATION_COLLECTION_ID
-        );
-        setIcs(response.documents);
-      } catch (error) {
-        console.error("Error fetching ICs:", error);
-      }
-    };
-    fetchIcs();
-  }, []);
-
-  useEffect(() => {
-    // Fetch tickets and available ICs when the component mounts
     fetchCompletedTickets();
     fetchICs();
+    fetchReviews();
   }, []);
 
   const sendSMS = async (phoneNumber) => {
-    // Remove the first zero and add +234
-    const formattedPhoneNumber = phoneNumber.startsWith('0')
+    const formattedPhoneNumber = phoneNumber.startsWith("0")
       ? `+234${phoneNumber.slice(1)}`
       : phoneNumber;
-  
+
     try {
       const response = await fetch("/api/sms", {
         method: "POST",
@@ -48,7 +34,7 @@ const Orders = () => {
           phoneNumber: formattedPhoneNumber,
         }),
       });
-  
+
       if (response.ok) {
         console.log("SMS sent successfully!");
       } else {
@@ -59,10 +45,6 @@ const Orders = () => {
       console.error("Error sending SMS:", error);
     }
   };
-  
-  
-  
-
 
   const fetchCompletedTickets = async () => {
     try {
@@ -87,7 +69,6 @@ const Orders = () => {
         process.env.NEXT_PUBLIC_REGISTRATION_COLLECTION_ID
       );
 
-      // Filter documents based on the 'verified' status
       const verifiedICs = response.documents.filter(
         (ic) => ic.is_verified === true
       );
@@ -98,7 +79,30 @@ const Orders = () => {
     }
   };
 
-  // Function to render ticket rows with dropdown and assignment button
+  const fetchReviews = async () => {
+    try {
+      const response = await db.listDocuments(
+        process.env.NEXT_PUBLIC_DB_ID,
+        process.env.NEXT_PUBLIC_REVIEWS_COLLECTION_ID
+      );
+      const reviewDocs = response.documents;
+
+      // Organize reviews by IC ID for easy lookup
+      const reviewsData = {};
+      reviewDocs.forEach((review) => {
+        if (!reviewsData[review.integratedID]) {
+          reviewsData[review.integratedID] = [];
+        }
+        reviewsData[review.integratedID].push(review.reviewtext);
+      });
+      console.log(reviewsData);
+
+      setReviews(reviewsData);
+    } catch (error) {
+      console.error("Error fetching reviews:", error);
+    }
+  };
+
   const CompletedTicketRow = ({ ticket }) => {
     const [selectedICForTicket, setSelectedICForTicket] = useState(null);
 
@@ -116,6 +120,7 @@ const Orders = () => {
             onChange={(selectedOptions) =>
               setSelectedICForTicket(selectedOptions)
             }
+            components={{ Option: CustomOption }}
           />
           <div className="flex gap-2 mt-2">
             <button
@@ -132,7 +137,7 @@ const Orders = () => {
             </button>
             <button
               className="bg-blue-500 px-4 text-light py-1"
-              onClick={() => handleUpdate(ticket,selectedICForTicket)}
+              onClick={() => handleUpdate(ticket, selectedICForTicket)}
             >
               Update
             </button>
@@ -150,49 +155,47 @@ const Orders = () => {
 
   const handleAssignJob = async (ticket, selectedICForTicket) => {
     try {
-      // Extracting necessary fields from the ticket data
-      const { $id, name, email, content, productName, assignedICs,phoneNumber } = ticket;
-  
-      // Extract IDs of already assigned ICs, if any
+      const {
+        $id,
+        name,
+        email,
+        content,
+        productName,
+        assignedICs,
+        phoneNumber,
+      } = ticket;
       const currentAssignedICs = assignedICs || [];
-  
+
       if (selectedICForTicket && selectedICForTicket.length > 0) {
-        // Extract IDs of selected ICs
         const selectedIC = selectedICForTicket.map((ic) => ic.value);
-  
-        // Fetch IC objects for selected IC IDs
         const selectedICObjects = availableICs.filter((ic) =>
           selectedIC.includes(ic.$id)
         );
-  
-        // Fetch the phone numbers of the selected ICs
         const phoneNumbers = selectedICObjects.map((ic) => ic.phone_num1);
-        
-  
-        // Combine current and newly selected ICs
-        const updatedAssignedICs = [...new Set([...currentAssignedICs, ...selectedIC])];
-  
+        const updatedAssignedICs = [
+          ...new Set([...currentAssignedICs, ...selectedIC]),
+        ];
+
         const updatedTicket = {
-          assignedICs: updatedAssignedICs, // Assigning an array of IC IDs
+          assignedICs: updatedAssignedICs,
           name,
           email,
           content,
           productName,
           phoneNumber,
         };
-  
+
         await db.createDocument(
           process.env.NEXT_PUBLIC_DB_ID,
           process.env.NEXT_PUBLIC_COMPLETEDTICKETS_COLLECTION_ID,
           $id,
           updatedTicket
         );
-  
-        // Send SMS to each newly assigned IC
+
         for (const phoneNumber of phoneNumbers) {
           await sendSMS(phoneNumber);
         }
-  
+
         toast.success("Ticket assigned successfully!");
       } else {
         console.log("No ICs selected. Ticket assignment skipped.");
@@ -201,86 +204,89 @@ const Orders = () => {
       toast.error("Error assigning ticket:", error);
     }
   };
-  
 
- const handleSendToAll = async (ticket) => {
-  try {
-    const { $id, name, email, content, productName, phoneNumber } = ticket;
-    const updatedTicket = {
-      assignedICs: availableICs.map((ic) => ic.$id), // Assign all available ICs
-      name,
-      email,
-      content,
-      productName,
-      phoneNumber,
-    };
+  const handleSendToAll = async (ticket) => {
+    try {
+      const { $id, name, email, content, productName, phoneNumber } = ticket;
+      const updatedTicket = {
+        assignedICs: availableICs.map((ic) => ic.$id),
+        name,
+        email,
+        content,
+        productName,
+        phoneNumber,
+      };
 
-    // Update the ticket document with assigned ICs
-    await db.createDocument(
-      process.env.NEXT_PUBLIC_DB_ID,
-      process.env.NEXT_PUBLIC_COMPLETEDTICKETS_COLLECTION_ID,
-      $id,
-      updatedTicket
-    );
+      await db.createDocument(
+        process.env.NEXT_PUBLIC_DB_ID,
+        process.env.NEXT_PUBLIC_COMPLETEDTICKETS_COLLECTION_ID,
+        $id,
+        updatedTicket
+      );
 
-    // Send SMS notifications to each assigned IC
-    await Promise.all(
-      availableICs.map(async (ic) => {
-        await sendSMSToIC(ic.phone_num1, `You have a new job: ${ticket.name}`);
-      })
-    );
+      await Promise.all(
+        availableICs.map(async (ic) => {
+          await sendSMS(ic.phone_num1, `You have a new job: ${ticket.name}`);
+        })
+      );
 
-    console.log("Ticket sent to all ICs successfully!");
-  } catch (error) {
-    console.error("Error sending ticket to all ICs:", error);
-  }
-};
+      console.log("Ticket sent to all ICs successfully!");
+    } catch (error) {
+      console.error("Error sending ticket to all ICs:", error);
+    }
+  };
 
-// Function to update the assigned ICs for a ticket and send SMS notifications
-const handleUpdate = async (ticket, selectedICForTicket) => {
-  try {
-    const { $id, name, email, content, productName, assignedICs, phoneNumber } = ticket;
-    const selectedIC = selectedICForTicket.map((ic) => ic.value);
+  const handleUpdate = async (ticket, selectedICForTicket) => {
+    try {
+      const {
+        $id,
+        name,
+        email,
+        content,
+        productName,
+        assignedICs,
+        phoneNumber,
+      } = ticket;
+      const selectedIC = selectedICForTicket.map((ic) => ic.value);
 
-    // Combine current and newly selected ICs
-    const updatedAssignedICs = [...new Set([...assignedICs, ...selectedIC])];
+      const updatedAssignedICs = [...new Set([...assignedICs, ...selectedIC])];
 
-    const updatedTicket = {
-      assignedICs: updatedAssignedICs, // Assign newly selected ICs
-      name,
-      email,
-      content,
-      productName,
-      phoneNumber,
-    };
+      const updatedTicket = {
+        assignedICs: updatedAssignedICs,
+        name,
+        email,
+        content,
+        productName,
+        phoneNumber,
+      };
 
-    // Update the ticket document with newly assigned ICs
-    await db.updateDocument(
-      process.env.NEXT_PUBLIC_DB_ID,
-      process.env.NEXT_PUBLIC_COMPLETEDTICKETS_COLLECTION_ID,
-      $id,
-      updatedTicket
-    );
+      await db.updateDocument(
+        process.env.NEXT_PUBLIC_DB_ID,
+        process.env.NEXT_PUBLIC_COMPLETEDTICKETS_COLLECTION_ID,
+        $id,
+        updatedTicket
+      );
 
-    // Send SMS notifications to newly assigned ICs
-    await Promise.all(
-      selectedICForTicket.map(async (ic) => {
-        await sendSMSToIC(ic.phone_num1, `You have a new job: ${ticket.name}`);
-      })
-    );
+      await Promise.all(
+        selectedICForTicket.map(async (ic) => {
+          await sendSMS(ic.phone_num1, `You have a new job: ${ticket.name}`);
+        })
+      );
 
-    toast.success("Ticket updated and sent to newly assigned ICs successfully!");
-  } catch (error) {
-    toast.error("Error updating and sending ticket to newly assigned ICs:", error);
-  }
-};
-
-
-  
+      toast.success(
+        "Ticket updated and sent to newly assigned ICs successfully!"
+      );
+    } catch (error) {
+      toast.error(
+        "Error updating and sending ticket to newly assigned ICs:",
+        error
+      );
+    }
+  };
 
   const options = availableICs.map((ic) => ({
     value: ic.$id,
-    label: ic.bus_name,
+    label: `${ic.bus_name} (${reviews[ic.$id] ? reviews[ic.$id].join(", ") : "No reviews"})`,
   }));
 
   return (
@@ -296,7 +302,6 @@ const handleUpdate = async (ticket, selectedICForTicket) => {
             <th>Email</th>
             <th>Phone Number</th>
             <th>Action</th>
-            {/* Add more columns as needed */}
           </tr>
         </thead>
         <tbody>{renderCompletedTicketRows(completedTickets)}</tbody>

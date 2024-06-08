@@ -70,6 +70,54 @@ const Chat = ({ ticketObject }) => {
     setText("");
   };
 
+  const sendSMS = async (phoneNumber, message) => {
+    // Check if phoneNumber is defined and starts with '0'
+    if (phoneNumber && phoneNumber.startsWith('0')) {
+      // Remove the first zero and add +234
+      phoneNumber = `+234${phoneNumber.slice(1)}`;
+    } else {
+      console.error("Invalid phone number format");
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/sms", { // Change this to your Twilio API endpoint
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          phoneNumber: phoneNumber,
+          message: message,
+        }),
+      });
+
+      if (response.ok) {
+        console.log("SMS sent successfully!");
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to send SMS");
+      }
+    } catch (error) {
+      console.error("Error sending SMS:", error);
+    }
+  };
+
+  const handleSendSMS = async () => {
+    if (!text) {
+      console.error("Message body is empty");
+      return;
+    }
+
+    const phoneNumber = ticketObject.phoneNumber; // Get phone number from ticketObject
+    console.log(phoneNumber)
+    if (phoneNumber) {
+      sendSMS(phoneNumber, text);
+    } else {
+      console.error("Phone number not found for the selected ticket");
+    }
+  };
+
   return (
     <div>
       <Head>
@@ -130,7 +178,14 @@ const Chat = ({ ticketObject }) => {
                   type="submit"
                   className="px-4 py-2 bg-blue-400 text-white rounded hover:bg-[#314484]"
                 >
-                  SEND{" "}
+                  SEND
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSendSMS}
+                  className="px-4 py-2 bg-green-400 text-white rounded hover:bg-[#317844] ml-2"
+                >
+                  SEND SMS
                 </button>
               </form>
             </footer>

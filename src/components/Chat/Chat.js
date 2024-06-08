@@ -13,13 +13,40 @@ export default function Chat({ productName, phoneNumber }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
-    startMessage(name, email,message, productName,phoneNumber,  setLoading);
+    startMessage(name, email, message, productName, phoneNumber, setLoading);
     setName("");
     setEmail("");
     setMessage("");
   };
 
   if (loading) return <Processing />;
+
+  const sendSMS = async () => {
+    try {
+      const response = await fetch("/api/sms", {
+        // Change this to your Twilio API endpoint
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          phoneNumber: "+2347042906747",
+          message:
+            "Hello Admin, there is a new order, log in now and chat with the user",
+        }),
+      });
+
+      if (response.ok) {
+        console.log("SMS sent successfully!");
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to send SMS");
+      }
+    } catch (error) {
+      console.error("Error sending SMS:", error);
+    }
+  };
+
 
   return (
     <>
@@ -103,7 +130,10 @@ export default function Chat({ productName, phoneNumber }) {
                 className="mb-4 border-[1px] border-gray-200 px-4 py-2 w-full"
               ></textarea>
 
-              <button className="p-3 bg-[#314484] rounded text-[#F4F8FB] w-[200px] hover:bg-[#2267D3]">
+              <button
+                onClick={sendSMS}
+                className="p-3 bg-[#314484] rounded text-[#F4F8FB] w-[200px] hover:bg-[#2267D3]"
+              >
                 Send message
               </button>
             </form>
