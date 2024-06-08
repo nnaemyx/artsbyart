@@ -20,7 +20,7 @@ const Chat = () => {
     if (user) {
       fetchMessages();
       fetchContacts();
-      
+
       const unsubscribe = client.subscribe(
         `databases.${DATABASE_ID}.collections.${COLLECTION_ID_MESSAGES}.documents`,
         (response) => {
@@ -57,8 +57,10 @@ const Chat = () => {
 
   const fetchContacts = async () => {
     try {
-      const response = await db.listDocuments(  process.env.NEXT_PUBLIC_DB_ID,
-        process.env.NEXT_PUBLIC_REGISTRATION_COLLECTION_ID);
+      const response = await db.listDocuments(
+        process.env.NEXT_PUBLIC_DB_ID,
+        process.env.NEXT_PUBLIC_REGISTRATION_COLLECTION_ID
+      );
       console.log("Fetched contacts:", response.documents); // Log contacts
       setContacts(response.documents);
     } catch (error) {
@@ -94,6 +96,55 @@ const Chat = () => {
 
   const deleteMessage = async (id) => {
     await db.deleteDocument(DATABASE_ID, COLLECTION_ID_MESSAGES, id);
+  };
+
+  // Function to send SMS via Twilio
+  const sendSMS = async (phoneNumber, message) => {
+    // Check if phoneNumber is defined and starts with '0'
+    if (phoneNumber && phoneNumber.startsWith('0')) {
+      // Remove the first zero and add +234
+      phoneNumber = `+234${phoneNumber.slice(1)}`;
+    } else {
+      console.error("Invalid phone number format");
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/sms", { // Change this to your Twilio API endpoint
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          phoneNumber: phoneNumber,
+          message: message,
+        }),
+      });
+
+      if (response.ok) {
+        console.log("SMS sent successfully!");
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to send SMS");
+      }
+    } catch (error) {
+      console.error("Error sending SMS:", error);
+    }
+  };
+
+  // Handler for the "Send SMS" button
+  const handleSendSMS = async () => {
+    if (!activeContact || !messageBody) {
+      console.error("No active contact or message body is empty");
+      return;
+    }
+
+    const phoneNumber = activeContact.phone_num1; // Get phone number from activeContact
+    if (phoneNumber) {
+      sendSMS(phoneNumber, messageBody);
+    } else {
+      console.error("Phone number not found for the selected contact");
+    }
   };
 
   // Debugging: Log messages and activeContact
@@ -157,6 +208,7 @@ const Chat = () => {
               </div>
               <div className="send-btn--wrapper mt-2">
                 <button type="submit" className="btn btn--secondary">Send</button>
+                <button type="button" onClick={handleSendSMS} className="btn btn--primary ml-2">Send SMS</button>
               </div>
             </form>
           </>

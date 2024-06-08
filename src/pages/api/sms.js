@@ -7,7 +7,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { phoneNumber } = req.body;
+    const { phoneNumber, message } = req.body;
 
     // Twilio credentials and configuration
     const accountSid = process.env.YOUR_TWILIO_ACCOUNT_SID;
@@ -15,9 +15,13 @@ export default async function handler(req, res) {
     const from = process.env.YOUR_TWILIO_PHONE_NUMBER;
     const client = twilio(accountSid, authToken);
 
+    // Set default message if not provided
+    const defaultMessage = "Hello, you have a job to work on, visit the link and get started";
+    const finalMessage = message ? `${message}` : defaultMessage;
+
     // Send SMS using Twilio
     const result = await client.messages.create({
-      body: 'Hello, you have a job to work on, visit the link and get started',
+      body: finalMessage,  // Use the final message
       from: from,
       to: phoneNumber,
     });
