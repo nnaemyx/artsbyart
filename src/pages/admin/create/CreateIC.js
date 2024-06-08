@@ -7,7 +7,7 @@ import Link from "next/link";
 import { ID, account, db } from "@/utils/appwrite";
 import { saveICToLocalStorage } from "@/utils/Localstorage";
 
-const Register = () => {
+const CreateIC = () => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     office_address: "",
@@ -294,7 +294,7 @@ const Register = () => {
           </button>
         </div>
       )}
-      <Modal
+      {/* <Modal
         isOpen={isSuccessModalOpen}
         onRequestClose={closeModal}
         contentLabel="Success Modal"
@@ -315,16 +315,9 @@ const Register = () => {
           </button>
         </div>
       </Modal>
-      <div className="mb-16">
-        <p className="text-center">
-          Already have an account,
-          <Link href="/ICregister/AccountLogin" className="text-primary">
-            Login
-          </Link>
-        </p>
-      </div>
+     */}
     </div>
   );
 };
 
-export default Register;
+export default CreateIC;

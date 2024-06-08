@@ -54,7 +54,7 @@ const Sidebar = ({onTitleClick}) => {
                           <li key={subTitle}>
                             <Link href={subHref}>
                               <div
-                                className={`flex items-center justify-start gap-2 px-16 w-full cursor-pointer ${
+                                className={`flex items-center justify-start gap-2 px-14 w-full cursor-pointer ${
                                   isSubItemActive({ href: subHref }, title)
                                     ? "bg-primary  text-white"
                                     : ""

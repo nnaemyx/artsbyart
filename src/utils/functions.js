@@ -319,7 +319,7 @@ export const sendMessage = async (text, docId) => {
       successMessage("Message Sent! ✅");
       emailStaffMessage(
         doc.name,
-        `https://artsbyart.vercel.app//chat/${doc.$id}`,
+        `https://www.artsbyart.com/chat/${doc.$id}`,
         doc.email,
         doc.access_code
       );

@@ -65,7 +65,6 @@ const IntegratedC = () => {
               <tr className="bg-gray-100">
                 <th className="py-2 px-4">Office Address</th>
                 <th className="py-2 px-4">CAC num</th>
-                <th className="py-2 px-4">Bank Account</th>
                 <th className="py-2 px-4">Business Name</th>
                 <th className="py-2 px-4">Phonenum1</th>
                 <th className="py-2 px-4">Phonenum2</th>
@@ -80,7 +79,6 @@ const IntegratedC = () => {
                 <tr key={ic.$id}>
                   <td className="py-2 px-4">{ic.office_address}</td>
                   <td className="py-2 px-4">{ic.reg_num}</td>
-                  <td className="py-2 px-4">{ic.bank_account}</td>
                   <td className="py-2 px-4">{ic.bus_name}</td>
                   <td className="py-2 px-4">{ic.phone_num1}</td>
                   <td className="py-2 px-4">{ic.phone_num2}</td>

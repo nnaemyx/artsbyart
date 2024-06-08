@@ -109,7 +109,7 @@ const Orders = () => {
     return (
       <tr key={ticket.$id}>
         <td>{ticket.name}</td>
-        <td>{ticket.content}</td>
+        <td>{ticket.productName}</td>
         <td>{ticket.email}</td>
         <td>{ticket.phoneNumber}</td>
         <td>

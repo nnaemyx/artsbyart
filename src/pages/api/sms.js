@@ -16,7 +16,7 @@ export default async function handler(req, res) {
     const client = twilio(accountSid, authToken);
 
     // Set default message if not provided
-    const defaultMessage = "Hello, you have a job to work on, visit the link and get started";
+    const defaultMessage = "Hello, you have a job to work on, visit the link,login to your account www.artsbyart.com/ICregister/AccountLogin and get started";
     const finalMessage = message ? `${message}` : defaultMessage;
 
     // Send SMS using Twilio

@@ -59,6 +59,27 @@ export const menuItems = [
     ],
   },
   {
+    title: 'Create Orders',
+    icon: <ChatIcon />,
+    subItems: [
+      {
+        href: '/admin/create/Createorder',
+        title: 'Create Order',
+        icon: <AccountIcon2/>
+      },
+      {
+        href: '/admin/create/CreateIC',
+        title: 'Create IC',
+        icon: <AccountIcon2/>
+      },
+      {
+        href: '/admin/create/CreateCustomer',
+        title: 'Create Customers',
+        icon: <AccountIcon2/>
+      },
+    ],
+  },
+  {
     href: '/admin/Orders',
     title: 'Orders',
     icon: <AccountIcon2/>

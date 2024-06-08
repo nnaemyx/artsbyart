@@ -164,7 +164,7 @@ const Shop = () => {
   };
 
   return (
-    <div className="px-12 mt-12 mb-20 grid grid-cols-1 font-opensans sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div className=" mt-12 mb-20 grid grid-cols-1 font-opensans sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-8">
       
       {Object.keys(categories).map((category) => (
         <div
