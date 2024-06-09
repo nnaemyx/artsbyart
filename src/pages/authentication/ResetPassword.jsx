@@ -22,7 +22,7 @@ const ResetPassword = () => {
       // Log token before making the request
       console.log("Token used:", token);
 
-      const response = await fetch("/api/reset-password", {
+      const response = await fetch("/api/users/reset-password", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -33,7 +33,7 @@ const ResetPassword = () => {
       const data = await response.json();
       if (data.success) {
         toast.success("Password reset successfully");
-        router.push("/login");
+        router.push("/");
       } else {
         toast.error(data.message || "Failed to reset password");
       }
