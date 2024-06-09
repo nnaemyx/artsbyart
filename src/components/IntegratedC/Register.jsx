@@ -254,7 +254,7 @@ const Register = () => {
                 checked={formData.services.includes("service1")}
                 onChange={() => handleCheckboxChange("service1")}
               />
-              Service 1
+              flyer-indi
             </label>
 
             <label className="w-full md:w-1/2 lg:w-1/3">
@@ -264,7 +264,7 @@ const Register = () => {
                 checked={formData.services.includes("service2")}
                 onChange={() => handleCheckboxChange("service2")}
               />
-              Service 2
+              logo-indi
             </label>
 
             <label className="w-full md:w-1/2 lg:w-1/3">
