@@ -67,11 +67,11 @@ const Track = () => {
   };
 
   const handleTrack = async () => {
-    if (phone.charAt(0) === '0') {
+    if (phone.charAt(0) === "0") {
       setPhoneError("Please remove the first 0 from the phone number.");
       return;
     }
-  
+
     // Reset phone error if no issues
     setPhoneError("");
     const exists = await checkUserExists(phone);
@@ -90,14 +90,13 @@ const Track = () => {
   };
 
   const sendOtp = async () => {
-
     try {
       const response = await fetch("/api/otp", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({phone: `+234${phone}`, otp }),
+        body: JSON.stringify({ phone: `+234${phone}`, otp }),
       });
 
       const data = await response.json();
@@ -129,11 +128,11 @@ const Track = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ phone: `+234${phone}`, otp }),
-        });
-      console.log(phone, otp)
+      });
+      console.log(phone, otp);
 
       const data = await response.json();
-      console.log(data)
+      console.log(data);
       if (data.success) {
         toast.success("OTP validated successfully");
         closeOtpModal();
@@ -182,7 +181,7 @@ const Track = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ phone, password}),
+        body: JSON.stringify({ phone, password }),
       });
 
       const data = await response.json();
@@ -212,13 +211,13 @@ const Track = () => {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   type="number"
-                   placeholder="Phone Number (remove first 0)"
+                  placeholder="Phone Number (remove first 0)"
                   className="focus:outline-none w-full border border-solid border-dark md:px-4 px-2 md:w-[32rem] rounded-md py-[0.27rem] md:py-[1.06rem]"
                 />
 
-{phoneError && (
-                <p className="text-red-500 mt-2">{phoneError}</p>
-              )}
+                {phoneError && (
+                  <p className="text-red-500 mt-2">{phoneError}</p>
+                )}
 
                 <button
                   type="button"
@@ -289,6 +288,17 @@ const Track = () => {
                 {authMode === "register" ? "Create Password" : "Enter Password"}
               </label>
             </div>
+            {authMode === "login" && (
+        <div className="mt-4 text-center">
+          <a
+            href="#"
+            className="text-blue-500"
+            onClick={() => router.push("/authentication/ForgotPassword")}
+          >
+            Forgot Password?
+          </a>
+        </div>
+      )}
           </div>
           <button
             className="mt-[14px] text-[12px] md:text-[14px] font-semibold bg-primary text-white px-[4rem] tracking-[1.5px] py-[18px] flex justify-center w-[50%] mx-auto"
@@ -323,9 +333,7 @@ const Track = () => {
           }}
         >
           <div className="px-4 mt-6 flex justify-between items-center">
-            <h2 className="font-futura font-semibold text-[30px]">
-              Enter OTP
-            </h2>
+            <h2 className="font-futura font-semibold text-[30px]">Enter OTP</h2>
             <button onClick={closeOtpModal}>
               <svg viewBox="0 0 24 24" width="30" height="30">
                 <path d="M12.0007 10.5865L16.9504 5.63672L18.3646 7.05093L13.4149 12.0007L18.3646 16.9504L16.9504 18.3646L12.0007 13.4149L7.05093 18.3646L5.63672 16.9504L10.5865 12.0007L5.63672 7.05093L7.05093 5.63672L12.0007 10.5865Z"></path>

@@ -1,6 +1,7 @@
 // pages/api/auth.js
 import connectDb from "@/lib/connectDB";
 import User from "@/models/userModel";
+import { hash } from "bcryptjs";
 
 export default async function handler(req, res) {
   await connectDb();
@@ -11,6 +12,7 @@ export default async function handler(req, res) {
     try {
       // Check if the user already exists
       const existingUser = await User.findOne({ phone });
+      const hashedPassword = await hash(password, 12);
 
       if (existingUser) {
         // User already exists, ask for password
@@ -18,7 +20,7 @@ export default async function handler(req, res) {
         return;
       } else {
         // New user, create account
-        const newUser = new User({ phone, password });
+        const newUser = new User({ phone, password:hashedPassword });
         await newUser.save();
         res.json({ newUser });
       }
