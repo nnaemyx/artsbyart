@@ -10,13 +10,6 @@ const ResetPassword = () => {
   const router = useRouter();
   const { token } = router.query;
 
-  useEffect(() => {
-    if (!token) {
-      toast.error("Invalid or missing token");
-      router.push("/login");
-    }
-  }, [token]);
-
   const handleResetPassword = async () => {
     if (password !== confirmPassword) {
       setError("Passwords do not match");
