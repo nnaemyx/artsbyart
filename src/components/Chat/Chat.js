@@ -30,9 +30,9 @@ export default function Chat({ productName, phoneNumber }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          phoneNumber: "+2347042906747",
+          phoneNumber: "+2347069363614",
           message:
-            "Hello Admin, there is a new order, log in now and chat with the user",
+            "Hello Admin, there is a new order, log in now and chat with the Customer",
         }),
       });
 

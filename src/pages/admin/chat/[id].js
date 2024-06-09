@@ -71,23 +71,14 @@ const Chat = ({ ticketObject }) => {
   };
 
   const sendSMS = async (phoneNumber, message) => {
-    // Check if phoneNumber is defined and starts with '0'
-    if (phoneNumber && phoneNumber.startsWith('0')) {
-      // Remove the first zero and add +234
-      phoneNumber = `+234${phoneNumber.slice(1)}`;
-    } else {
-      console.error("Invalid phone number format");
-      return;
-    }
-
     try {
-      const response = await fetch("/api/sms", { // Change this to your Twilio API endpoint
+      const response = await fetch("/api/sms", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          phoneNumber: phoneNumber,
+          phoneNumber: `+234${phoneNumber}`,
           message: message,
         }),
       });
@@ -110,7 +101,7 @@ const Chat = ({ ticketObject }) => {
     }
 
     const phoneNumber = ticketObject.phoneNumber; // Get phone number from ticketObject
-    console.log(phoneNumber)
+    console.log(phoneNumber);
     if (phoneNumber) {
       sendSMS(phoneNumber, text);
     } else {
