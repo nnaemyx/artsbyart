@@ -51,22 +51,35 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="reset-password-form">
-      <h1>Reset Password</h1>
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="New Password"
-      />
-      <input
-        type="password"
-        value={confirmPassword}
-        onChange={(e) => setConfirmPassword(e.target.value)}
-        placeholder="Confirm New Password"
-      />
+    <div className=" font-opensans text-center ">
+      <h1 className="text-[36px]">Reset Password</h1>
+      <div className="font-opensans mx-auto md:max-w-[478px] w-auto mt-[44px]">
+        <div>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="New Password"
+            className="focus:outline-none w-[100%] border border-solid px-[18px] py-[18px]"
+          />
+        </div>
+        <div>
+          <input
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            placeholder="Confirm New Password"
+            className="focus:outline-none w-[100%] border border-solid px-[18px] py-[18px]"
+          />
+        </div>
+      </div>
       {error && <p className="error">{error}</p>}
-      <button onClick={handleResetPassword}>Reset Password</button>
+      <button
+        className="mt-[24px]  text-[12px] md:text-[14px] font-semibold bg-primary text-white px-[0px] tracking-[1.5px] py-[18px] w-[200px]"
+        onClick={handleResetPassword}
+      >
+        Reset Password
+      </button>
     </div>
   );
 };

@@ -46,16 +46,24 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="forgot-password-form">
-      <h1>Forgot Password</h1>
-      <input
-        type="text"
-        value={phone}
-        onChange={(e) => setPhone(e.target.value)}
-        placeholder="Phone Number (remove first 0 or +234)"
-      />
+    <div className=" items-center mx-auto font-opensans text-center justify-center mt-[6rem] lg:mt-[12rem]">
+      <h1 className="text-[36px]">Forgot Password</h1>
+      <div className=" mx-auto md:max-w-[478px] w-auto mt-[44px]">
+        <input
+          type="text"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          placeholder="Phone Number (remove first 0 or +234)"
+          className="focus:outline-none w-[100%] border border-solid px-[18px] py-[18px]"
+        />
+      </div>
       {phoneError && <p className="error">{phoneError}</p>}
-      <button onClick={handleForgotPassword}>Send Reset Link</button>
+      <button
+        className="mt-[24px]  text-[12px] md:text-[14px] font-semibold bg-primary text-white px-[0px] tracking-[1.5px] py-[18px] text-center w-[200px] "
+        onClick={handleForgotPassword}
+      >
+        Send Reset Link
+      </button>
     </div>
   );
 };
