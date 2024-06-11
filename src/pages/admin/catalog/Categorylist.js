@@ -1,40 +1,70 @@
-"use client"
 import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import { toast } from "react-toastify";
 
-const Categorylist = () => {
+const CategoryList = () => {
   const [categories, setCategories] = useState([]);
+  const [editingCategory, setEditingCategory] = useState(null);
+  const [newCategoryName, setNewCategoryName] = useState("");
 
-  const handleDeleteCategory = async (id) => {
+  const handleDeleteCategory = async (categoryId) => {
     if (window.confirm("Are you sure you want to delete this product category?")) {
       try {
-        const response = await fetch(`/api/products/category?id=${id}`, {
+        const response = await fetch(`/api/products/${categoryId}/category`, {
           method: "DELETE",
         });
         if (response.ok) {
-          // Handle successful deletion
           toast.success("Product category deleted successfully");
-          // Remove the deleted category from the state
-          setCategories(categories.filter(category => category.id !== id));
+          setCategories(categories.filter((cat) => cat._id !== categoryId));
         } else {
-          // Handle errors (e.g., show an error message)
           const errorMessage = await response.text();
           throw new Error(errorMessage || "Failed to delete product category");
         }
       } catch (error) {
-        // Handle any fetch-related errors
         console.error("Error deleting product category:", error.message);
         toast.error("Failed to delete product category");
       }
     }
   };
 
+  const handleUpdateCategory = async (categoryId) => {
+    if (newCategoryName.trim() === "") {
+      toast.error("Category name cannot be empty");
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/products/${categoryId}/category`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ newCategory: newCategoryName }),
+      });
+
+      if (response.ok) {
+        toast.success("Product category updated successfully");
+        setCategories(
+          categories.map((cat) =>
+            cat._id === categoryId ? { ...cat, title: newCategoryName } : cat
+          )
+        );
+        setEditingCategory(null);
+        setNewCategoryName("");
+      } else {
+        const errorMessage = await response.text();
+        throw new Error(errorMessage || "Failed to update product category");
+      }
+    } catch (error) {
+      console.error("Error updating product category:", error.message);
+      toast.error("Failed to update product category");
+    }
+  };
+
   useEffect(() => {
-    // Fetch the product categories when the component mounts
     const fetchCategories = async () => {
       try {
-        const response = await fetch("/api/products/category");
+        const response = await fetch('/api/products/category');
         if (response.ok) {
           const data = await response.json();
           setCategories(data);
@@ -42,7 +72,6 @@ const Categorylist = () => {
           throw new Error("Failed to fetch product categories");
         }
       } catch (error) {
-        // Handle any fetch-related errors
         console.error("Fetch error:", error);
         toast.error("Failed to fetch product categories");
       }
@@ -62,21 +91,67 @@ const Categorylist = () => {
         <table className="min-w-full divide-y divide-gray-200">
           <thead>
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Name
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {categories.map((category) => (
-              <tr key={category.id}>
-                <td className="px-6 py-4 whitespace-nowrap">{category.title}</td>
+              <tr key={category._id}>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <button
-                    onClick={() => handleDeleteCategory(category.id)}
-                    className="text-red-600 hover:text-red-900"
-                  >
-                    Delete
-                  </button>
+                  {editingCategory === category._id ? (
+                    <input
+                      type="text"
+                      value={newCategoryName}
+                      onChange={(e) => setNewCategoryName(e.target.value)}
+                      placeholder="New Category Name"
+                    />
+                  ) : (
+                    category.title
+                  )}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  {editingCategory === category._id ? (
+                    <>
+                      <button
+                        onClick={() => handleUpdateCategory(category._id)}
+                        className="text-green-600 hover:text-green-900"
+                      >
+                        Save
+                      </button>
+                      <button
+                        onClick={() => {
+                          setEditingCategory(null);
+                          setNewCategoryName("");
+                        }}
+                        className="text-red-600 hover:text-red-900 ml-4"
+                      >
+                        Cancel
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => {
+                          setEditingCategory(category._id);
+                          setNewCategoryName(category.title);
+                        }}
+                        className="text-blue-600 hover:text-blue-900"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteCategory(category._id)}
+                        className="text-red-600 hover:text-red-900 ml-4"
+                      >
+                        Delete
+                      </button>
+                    </>
+                  )}
                 </td>
               </tr>
             ))}
@@ -87,4 +162,4 @@ const Categorylist = () => {
   );
 };
 
-export default Categorylist;
+export default CategoryList;
