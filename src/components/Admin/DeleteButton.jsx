@@ -1,18 +1,18 @@
 import { HiOutlineTrash } from "react-icons/hi";
 
-export default function RemoveBtn({ id, onDelete }) {
+export default function RemoveBtn({ procedureId, onDelete }) {
   const removeProcedure = async () => {
     const confirmed = confirm("Are you sure?");
 
     if (confirmed) {
       try {
-        const res = await fetch(`/api/products/procedures?id=${id}`, {
+        const res = await fetch(`/api/products/${procedureId}/procedures`, {
           method: "DELETE",
         });
 
         if (res.ok) {
           // If deletion is successful, call the onDelete callback to update the UI
-          onDelete(id);
+          onDelete(procedureId);
         } else {
           console.error("Failed to delete procedure");
         }

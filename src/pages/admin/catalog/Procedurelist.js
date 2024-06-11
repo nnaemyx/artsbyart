@@ -18,8 +18,10 @@ async function getTopics() {
   }
 }
 
-export default function Procedurelist() {
+export default function ProcedureList() {
   const [topics, setTopics] = useState([]);
+  const [editingTopic, setEditingTopic] = useState(null);
+  const [newDescription, setNewDescription] = useState("");
 
   useEffect(() => {
     const fetchTopics = async () => {
@@ -35,6 +37,49 @@ export default function Procedurelist() {
     setTopics((prevTopics) => prevTopics.filter((topic) => topic._id !== id));
   };
 
+  const handleEdit = (topic) => {
+    setEditingTopic(topic._id);
+    setNewDescription(topic.description);
+  };
+
+  const handleUpdate = async (procedureId) => {
+    if (newDescription.trim() === "") {
+      alert("Description cannot be empty");
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/products/${procedureId}/procedures`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ newProcedure: newDescription }),
+      });
+
+      if (response.ok) {
+        const { updatedProcedure } = await response.json();
+        setTopics((prevTopics) =>
+          prevTopics.map((topic) =>
+            topic._id === procedureId ? updatedProcedure : topic
+          )
+        );
+        setEditingTopic(null);
+        setNewDescription("");
+      } else {
+        const errorMessage = await response.text();
+        throw new Error(errorMessage || "Failed to update procedure");
+      }
+    } catch (error) {
+      console.error("Error updating procedure:", error.message);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingTopic(null);
+    setNewDescription("");
+  };
+
   return (
     <>
       {topics.map((t) => (
@@ -43,12 +88,45 @@ export default function Procedurelist() {
           className="p-4 border border-slate-300 my-3 flex justify-between gap-5 items-start"
         >
           <div>
-            <div>{t.description}</div>
+            {editingTopic === t._id ? (
+              <input
+                type="text"
+                value={newDescription}
+                onChange={(e) => setNewDescription(e.target.value)}
+                className="border p-2"
+              />
+            ) : (
+              <div>{t.description}</div>
+            )}
           </div>
 
           <div className="flex gap-2">
-            {/* Pass the handleDelete callback to RemoveBtn */}
-            <RemoveBtn id={t._id} onDelete={handleDelete} />
+            {editingTopic === t._id ? (
+              <>
+                <button
+                  onClick={() => handleUpdate(t._id)}
+                  className="text-green-600 hover:text-green-900"
+                >
+                  Save
+                </button>
+                <button
+                  onClick={handleCancelEdit}
+                  className="text-red-600 hover:text-red-900"
+                >
+                  Cancel
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => handleEdit(t)}
+                  className="text-blue-600 hover:text-blue-900"
+                >
+                  Edit
+                </button>
+                <RemoveBtn procedureId={t._id} onDelete={handleDelete} />
+              </>
+            )}
           </div>
         </div>
       ))}
