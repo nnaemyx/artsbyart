@@ -46,6 +46,10 @@ if (!mongoose.models.Product) {
       procedures: {
         type: [String],
       },
+      available: {
+        type: Boolean,
+        default: true,
+      },
     },
     { timestamps: true }
   );

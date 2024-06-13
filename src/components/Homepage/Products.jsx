@@ -9,7 +9,8 @@ import "swiper/css";
 import "swiper/css/pagination";
 import Link from "next/link";
 
-const CollectionCard = ({ category, images, video, priceRange }) => {
+
+const CollectionCard = ({ category, images, video, priceRange, available }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const router = useRouter();
 
@@ -24,8 +25,9 @@ const CollectionCard = ({ category, images, video, priceRange }) => {
   const handleViewClick = () => {
     router.push(`/collection/${category}`);
   };
+
   return (
-    <div className="w-full shadow-md rounded-md">
+    <div className={`w-full shadow-md rounded-md ${!available ? 'bg-gray-200' : ''}`}>
       <Swiper
         spaceBetween={10}
         slidesPerView={1}
@@ -71,7 +73,8 @@ const CollectionCard = ({ category, images, video, priceRange }) => {
         </div>
         <button
           onClick={handleViewClick}
-          className="mt-2 bg-blue-500 text-white py-1 px-3 rounded"
+          className={`mt-2 py-1 px-3 rounded ${!available ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 text-white'}`}
+          disabled={!available}
         >
           View
         </button>
@@ -171,12 +174,13 @@ const Products = () => {
               images={categories[category].images}
               video={categories[category].video}
               priceRange={calculatePriceRange(categories[category].price)}
+              available={categories[category].available.every(Boolean)} // Ensure all products in the category are available
             />
           </div>
         ))}
       </div>
       <Link href="/shop">
-        <button className="mt-[64px] mx-auto  flex justify-center  text-[12px] md:text-[14px] font-semibold bg-primary text-white px-[50px] tracking-[1.5px] py-[18px]">
+        <button className="mt-[64px] mx-auto flex justify-center text-[12px] md:text-[14px] font-semibold bg-primary text-white px-[50px] tracking-[1.5px] py-[18px]">
           View All
         </button>
       </Link>

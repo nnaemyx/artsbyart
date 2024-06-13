@@ -7,7 +7,7 @@ import { NextResponse } from "next/server";
 const cors = initMiddleware(
   Cors({
     // Set allowed origins based on your requirements
-    origin: ["http://localhost:3000"],
+    origin: ["http://localhost:3000", "https://www.artsbyart.com"],
     methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );

@@ -10,7 +10,7 @@ import slugify from "slugify";
 // Initialize CORS middleware
 const cors = initMiddleware(
   Cors({
-    origin: ["http://localhost:3000"], // Set allowed origins based on your requirements
+    origin: ["http://localhost:3000", "https://www.artsbyart.com"],
     methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );
@@ -50,7 +50,6 @@ async function handler(req, res) {
     try {
       await connectDb();
 
-      // Handle file uploads
       const result = await new Promise((resolve, reject) => {
         upload.fields([{ name: "images", maxCount: 5 }, { name: "video", maxCount: 1 }])(req, res, (err) => {
           if (err) {
@@ -64,20 +63,18 @@ async function handler(req, res) {
       const imageURLs = result.images ? result.images.map((file) => file.path) : [];
       const videoURL = result.video ? result.video[0].path : null;
 
-      // Create slug from title if provided
       if (req.body.title) {
         req.body.slug = slugify(req.body.title);
       }
 
-      // Ensure procedures are saved as an array
       const procedures = req.body.procedures ? req.body.procedures.split(',').map(proc => proc.trim()) : [];
 
-      // Create a new product with images, video URLs, and procedures
       const newProduct = await Product.create({
         ...req.body,
         images: imageURLs,
         video: videoURL,
-        procedures: procedures
+        procedures: procedures,
+        available: req.body.available === "true" // Ensure this is properly handled
       });
 
       res.json(newProduct);
@@ -86,15 +83,13 @@ async function handler(req, res) {
       res.status(500).json({ error: "Error uploading product" });
     }
   } else if (req.method === "GET") {
-    // Handle GET requests
     try {
       await connectDb();
       const products = await Product.find();
 
-      // Group products by category
       const groupedProducts = products.reduce((acc, product) => {
         if (!acc[product.category]) {
-          acc[product.category] = { products: [], images: [], video: [], price: [], procedures: [] };
+          acc[product.category] = { products: [], images: [], video: [], price: [], procedures: [], available: [] };
         }
 
         acc[product.category].products.push(product);
@@ -103,7 +98,8 @@ async function handler(req, res) {
           acc[product.category].video.push(product.video);
         }
         acc[product.category].price.push(product.price);
-        acc[product.category].procedures.push(...product.procedures); // Include procedures
+        acc[product.category].procedures.push(...product.procedures);
+        acc[product.category].available.push(product.available); // Include availability
 
         return acc;
       }, {});

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import Image from "next/image";
@@ -6,34 +6,15 @@ import { toast } from "react-toastify";
 
 const Productlist = () => {
   const [products, setProducts] = useState([]);
-
-  const handleDeleteProduct = (id) => {
-    if (window.confirm("Are you sure you want to delete this product?")) {
-      fetch(`/api/product/product?id=${id}`, {
-        method: "DELETE",
-      })
-        .then((response) => {
-          if (response.ok) {
-            // Handle successful deletion
-            toast.success("Product deleted successfully");
-            // Remove the deleted product from the state
-            setProducts(products.filter((product) => product._id !== id));
-          } else {
-            // Handle errors (e.g., show an error message)
-            throw new Error(`Error deleting product: ${response.statusText}`);
-          }
-        })
-        .catch((error) => {
-          // Handle any fetch-related errors
-          console.error("Fetch error:", error);
-          toast.error("Failed to delete product");
-        });
-    }
-  };
+  const [editingProduct, setEditingProduct] = useState(null);
+  const [newTitle, setNewTitle] = useState("");
+  const [newCategory, setNewCategory] = useState("");
+  const [newPrice, setNewPrice] = useState("");
+  const [newAvailability, setNewAvailability] = useState(true);
 
   useEffect(() => {
     // Fetch the products when the component mounts
-    fetch("/api/products/product")
+    fetch("/api/products/products")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to fetch products");
@@ -49,6 +30,85 @@ const Productlist = () => {
       });
   }, []);
 
+  const handleDeleteProduct = (productId) => {
+    if (window.confirm("Are you sure you want to delete this product?")) {
+      fetch(`/api/products/${productId}/product`, {
+        method: "DELETE",
+      })
+        .then((response) => {
+          if (response.ok) {
+            toast.success("Product deleted successfully");
+            setProducts(products.filter((product) => product._id !== productId));
+          } else {
+            throw new Error(`Error deleting product: ${response.statusText}`);
+          }
+        })
+        .catch((error) => {
+          console.error("Fetch error:", error);
+          toast.error("Failed to delete product");
+        });
+    }
+  };
+
+  const handleEditProduct = (product) => {
+    setEditingProduct(product._id);
+    setNewTitle(product.title);
+    setNewCategory(product.category);
+    setNewPrice(product.price);
+    setNewAvailability(product.available);
+  };
+
+  const handleUpdateProduct = async (productId) => {
+    if (newTitle.trim() === "" || newCategory.trim() === "" || newPrice.trim() === "") {
+      toast.error("All fields are required");
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/products/${productId}/product`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          newProduct: {
+            title: newTitle,
+            category: newCategory,
+            price: newPrice,
+            available: newAvailability,
+          },
+        }),
+      });
+
+      if (response.ok) {
+        const { updatedProduct } = await response.json();
+        setProducts((prevProducts) =>
+          prevProducts.map((product) => (product._id === productId ? updatedProduct : product))
+        );
+        setEditingProduct(null);
+        setNewTitle("");
+        setNewCategory("");
+        setNewPrice("");
+        setNewAvailability(true);
+        toast.success("Product updated successfully");
+      } else {
+        const errorMessage = await response.text();
+        throw new Error(errorMessage || "Failed to update product");
+      }
+    } catch (error) {
+      console.error("Error updating product:", error.message);
+      toast.error("Failed to update product");
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingProduct(null);
+    setNewTitle("");
+    setNewCategory("");
+    setNewPrice("");
+    setNewAvailability(true);
+  };
+
   return (
     <div className="mt-12">
       <Head>
@@ -60,20 +120,19 @@ const Productlist = () => {
       <table className="min-w-full divide-y divide-gray-200">
         <thead>
           <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              S/No
-            </th>
+          
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Title
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Category
             </th>
-          
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Price
             </th>
-        
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Availability
+            </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Actions
             </th>
@@ -82,21 +141,97 @@ const Productlist = () => {
         <tbody className="bg-white divide-y divide-gray-200">
           {products?.map((product, index) => (
             <tr key={product._id}>
-              <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
-              <div className="flex items-center">
-                <Image src={product.images[0]} className="my-4 border rounded-[4px] border-solid border-dark" width={60} height={60} alt="image"/>
-                <td className="px-6 py-4 whitespace-nowrap">{product.title}</td> 
-              </div>
-              <td className="px-6 py-4 whitespace-nowrap">{product.category}</td>
-              <td className="px-6 py-4 whitespace-nowrap">{product.price}</td>
-             
               <td className="px-6 py-4 whitespace-nowrap">
-                <button
-                  className="text-red-600 hover:text-red-900"
-                  onClick={() => handleDeleteProduct(product._id)}
-                >
-                  Delete
-                </button>
+                {editingProduct === product._id ? (
+                  <input
+                    type="text"
+                    value={newTitle}
+                    onChange={(e) => setNewTitle(e.target.value)}
+                    className="border p-2"
+                  />
+                ) : (
+                  <div className="flex items-center">
+                    <Image
+                      src={product.images[0]}
+                      className="my-4 border rounded-[4px] border-solid border-dark"
+                      width={40}
+                      height={40}
+                      alt="image"
+                    />
+                    {product.title}
+                  </div>
+                )}
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                {editingProduct === product._id ? (
+                  <input
+                    type="text"
+                    value={newCategory}
+                    onChange={(e) => setNewCategory(e.target.value)}
+                    className="border p-2"
+                  />
+                ) : (
+                  product.category
+                )}
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                {editingProduct === product._id ? (
+                  <input
+                    type="text"
+                    value={newPrice}
+                    onChange={(e) => setNewPrice(e.target.value)}
+                    className="border p-2"
+                  />
+                ) : (
+                  product.price
+                )}
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                {editingProduct === product._id ? (
+                  <select
+                    value={newAvailability}
+                    onChange={(e) => setNewAvailability(e.target.value === "true")}
+                    className="border p-2"
+                  >
+                    <option value="true">Available</option>
+                    <option value="false">Not Available</option>
+                  </select>
+                ) : (
+                  product.available ? "Available" : "Not Available"
+                )}
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                {editingProduct === product._id ? (
+                  <>
+                    <button
+                      onClick={() => handleUpdateProduct(product._id)}
+                      className="text-green-600 hover:text-green-900"
+                    >
+                      Save
+                    </button>
+                    <button
+                      onClick={handleCancelEdit}
+                      className="text-red-600 hover:text-red-900 ml-4"
+                    >
+                      Cancel
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => handleEditProduct(product)}
+                      className="text-blue-600 hover:text-blue-900"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="text-red-600 hover:text-red-900 ml-4"
+                      onClick={() => handleDeleteProduct(product._id)}
+                    >
+                      Delete
+                    </button>
+                  </>
+                )}
               </td>
             </tr>
           ))}
