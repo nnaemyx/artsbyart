@@ -107,6 +107,7 @@ const ProductDetail = () => {
         <div className="lg:w-[50%]" ref={chatRef}>
           <h1 className="text-2xl font-semibold">{product.title}</h1>
           <p className="text-gray-700 mt-2">{product.description}</p>
+          <p className="text-gray-700 mt-2">{product.quantity} for N{product.price}</p>
           <p className="text-xl font-bold mt-2">N{product.price}</p>
           <button
             onClick={handleToggleChat}

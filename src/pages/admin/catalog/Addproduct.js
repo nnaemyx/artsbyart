@@ -19,6 +19,7 @@ const Addproduct = () => {
   const [thumbnailUrls, setThumbnailUrls] = useState([]);
   const [video, setVideo] = useState(null);
   const [videoUrl, setVideoUrl] = useState("");
+  const [loading, setLoading] = useState(false); // Loading state
 
   const colorStore = useColorStore(); // Get the color store
   const categoryStore = useProductCategoryStore(); // Get the product category store
@@ -91,6 +92,7 @@ const Addproduct = () => {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); // Set loading state to true
 
     const formData = new FormData();
     formData.append("title", title);
@@ -118,12 +120,17 @@ const Addproduct = () => {
         const data = await res.json();
         // Product uploaded successfully, navigate to the image upload page
         toast.success("Product uploaded successfully");
+      
       } else {
         // Handle errors
         console.error("Error uploading product:", res.statusText);
+        toast.error("Failed to upload product");
       }
     } catch (error) {
       console.error("Error uploading product:", error);
+      toast.error("Failed to upload product");
+    } finally {
+      setLoading(false); // Reset loading state
     }
   };
 
@@ -158,7 +165,7 @@ const Addproduct = () => {
             type="text"
             id="price"
             name="price"
-            placeholder="price"
+            placeholder="Price"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
             className="w-[800px] px-4 py-4 focus:outline-none  border border-dark border-solid"
@@ -185,7 +192,6 @@ const Addproduct = () => {
             className="w-[800px] px-4 py-4 focus:outline-none  border border-dark border-solid"
           />
         </div>
-
         <div className="mt-6">
           <select
             name="category"
@@ -203,7 +209,6 @@ const Addproduct = () => {
             ))}
           </select>
         </div>
-
         <div className="mt-6">
           <select
             name="procedures"
@@ -228,7 +233,6 @@ const Addproduct = () => {
             ))}
           </select>
         </div>
-
         <div {...getRootPropsImages()} style={dropzoneStyle} className="mx-auto">
           <input {...getInputPropsImages()} />
           {isDragActiveImages ? (
@@ -236,7 +240,6 @@ const Addproduct = () => {
           ) : (
             <p>Drag & drop images here, or click to select files</p>
           )}
-
           {thumbnailUrls.length > 0 && (
             <div style={thumbnailsContainerStyle}>
               {thumbnailUrls.map((thumbnail, index) => (
@@ -250,7 +253,6 @@ const Addproduct = () => {
             </div>
           )}
         </div>
-
         {images.length > 0 && (
           <div>
             <h4>Selected Images:</h4>
@@ -261,7 +263,6 @@ const Addproduct = () => {
             </ul>
           </div>
         )}
-
         <div {...getRootPropsVideo()} style={dropzoneStyle} className="mx-auto">
           <input {...getInputPropsVideo()} />
           {isDragActiveVideo ? (
@@ -270,7 +271,6 @@ const Addproduct = () => {
             <p>Drag & drop a video here, or click to select a file</p>
           )}
         </div>
-
         {video && (
           <div>
             <h4>Selected Video:</h4>
@@ -283,12 +283,12 @@ const Addproduct = () => {
             )}
           </div>
         )}
-
         <button
           type="submit"
-          className="mt-[24px]  text-[12px] md:text-[14px] font-semibold bg-dark text-white px-[0px] tracking-[1.5px] py-[18px] w-[800px]"
+          className="mt-[24px] text-[12px] md:text-[14px] font-semibold bg-dark text-white px-[0px] tracking-[1.5px] py-[18px] w-[800px]"
+          disabled={loading} // Disable button while loading
         >
-          Upload Product
+          {loading ? "Uploading..." : "Upload Product"} {/* Change button text */}
         </button>
       </form>
     </div>

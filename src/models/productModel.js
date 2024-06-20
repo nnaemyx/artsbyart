@@ -21,7 +21,7 @@ if (!mongoose.models.Product) {
         required: true,
       },
       quantity: {
-        type: number,
+        type: Number,
         required: true,
       },
       price: {
