@@ -11,6 +11,7 @@ const Addproduct = () => {
   const [slug, setSlug] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
+  const [quantity, setQuantity] = useState("");
   const [category, setCategory] = useState("");
   const [procedures, setProcedures] = useState([]);
   const [selectedColor, setSelectedColor] = useState("");
@@ -96,6 +97,7 @@ const Addproduct = () => {
     formData.append("slug", slug);
     formData.append("description", description);
     formData.append("price", price);
+    formData.append("quantity", quantity);
     formData.append("category", category);
     formData.append("procedures", procedures);
     if (video) {
@@ -159,6 +161,17 @@ const Addproduct = () => {
             placeholder="price"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
+            className="w-[800px] px-4 py-4 focus:outline-none  border border-dark border-solid"
+          />
+        </div>
+        <div className="mt-6">
+          <input
+            type="number"
+            id="quantity"
+            name="quantity"
+            placeholder="Quantity per price"
+            value={quantity}
+            onChange={(e) => setQuantity(e.target.value)}
             className="w-[800px] px-4 py-4 focus:outline-none  border border-dark border-solid"
           />
         </div>

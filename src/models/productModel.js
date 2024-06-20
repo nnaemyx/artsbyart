@@ -20,6 +20,10 @@ if (!mongoose.models.Product) {
         type: String,
         required: true,
       },
+      quantity: {
+        type: number,
+        required: true,
+      },
       price: {
         type: String,
         required: true,
