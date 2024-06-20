@@ -61,7 +61,7 @@ const ProductDetail = () => {
   }
 
   return (
-    <div className="container mx-auto mt-4 lg:mt-[11rem]">
+    <div className="mx-auto lg:px-6  mt-24 lg:mt-[11rem]">
       <div className="flex flex-col px-6 md:px-0 md:flex-row gap-12">
         <div className="flex flex-col items-center">
           <div className="w-full h-auto">
@@ -104,7 +104,7 @@ const ProductDetail = () => {
             ))}
           </div>
         </div>
-        <div className="w-[50%]" ref={chatRef}>
+        <div className="lg:w-[50%]" ref={chatRef}>
           <h1 className="text-2xl font-semibold">{product.title}</h1>
           <p className="text-gray-700 mt-2">{product.description}</p>
           <p className="text-xl font-bold mt-2">N{product.price}</p>
