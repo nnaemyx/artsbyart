@@ -12,7 +12,7 @@ const Orders = () => {
     const fetchOrders = async () => {
       const phoneNumber = getPhoneFromLocalStorage() || getPhoneFromLocalStorageLogin();
       if (!phoneNumber) {
-        toast.error('Please log in to view your orders.');
+        toast.error('Please insert your phone number to Register/Login.');
         return;
       }
 
