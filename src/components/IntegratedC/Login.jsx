@@ -2,14 +2,15 @@ import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import "react-toastify/dist/ReactToastify.css";
-import Link from 'next/link'
-import { ID, account } from "@/utils/appwrite";
-import { saveICToLocalStorage } from "@/utils/Localstorage";
+import Link from 'next/link';
+import { account } from "@/utils/appwrite";
+import Spinner from "@/components/Layouts/Spinner";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [focusedInput, setFocusedInput] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
 
@@ -18,13 +19,10 @@ const Login = () => {
   };
 
   const handleLogin = async () => {
+    setIsLoading(true);
     try {
-      // Call Appwrite's login method
       const response = await account.createEmailSession(email, password);
-  
-      // Check if the login was successful
       if (response.$id) {
-        // Login successful
         toast.success("IC logged in successfully");
         router.push("/integratedC");
       } else {
@@ -33,6 +31,7 @@ const Login = () => {
     } catch (error) {
       console.error("Error during login:", error);
     }
+    setIsLoading(false);
   };
 
   return (
@@ -54,8 +53,7 @@ const Login = () => {
               onChange={(e) => setEmail(e.target.value)}
             />
             <label
-              htmlFor="
-              email"
+              htmlFor="email"
               className={`absolute left-4 text-[14px] text-[#9b9191] top-4 transition-all duration-300 ${
                 focusedInput === "email" || email
                   ? "translate-y-[-125%] text-[12px] bg-white"
@@ -92,11 +90,12 @@ const Login = () => {
           </div>
           <br />
           <button
-            className="mt-[24px]  text-[12px] md:text-[14px] font-semibold bg-primary text-white px-[0px] tracking-[1.5px] py-[18px] w-full"
+            className="mt-[24px] text-[12px] md:text-[14px] font-semibold bg-primary text-white px-[0px] tracking-[1.5px] py-[18px] w-full"
             type="button"
             onClick={handleLogin}
+            disabled={isLoading}
           >
-            Login
+            {isLoading ? <Spinner /> : "Login"}
           </button>
         </form>
       </div>

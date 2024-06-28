@@ -14,6 +14,21 @@
   src: url('../fonts/OpenSans-Regular.ttf');
 }
 
+.spinner {
+  border: 4px solid rgb(255,255,255);
+  border-left-color: #333;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .productSlider .swiper-button-prev,
 .productSlider .swiper-button-next {
   background: #23262f;

@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Link from "next/link";
 import { ID, account, db } from "@/utils/appwrite";
 import { saveICToLocalStorage } from "@/utils/Localstorage";
+import Spinner from "@/components/Layouts/Spinner";
 
 const Register = () => {
   const [step, setStep] = useState(1);
@@ -23,31 +24,30 @@ const Register = () => {
     services: [],
   });
   const [isSuccessModalOpen, setSuccessModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-
   const submitForm = async () => {
+    setIsLoading(true);
     try {
       const generateID = Math.random().toString(36).substring(2, 24);
 
       await account.create(
         generateID,
-        formData.email, 
+        formData.email,
         formData.password,
         formData.bus_name
       );
 
-      // Assuming you have a collection named 'registrations' in your Appwrite database
       const response = await db.createDocument(
         process.env.NEXT_PUBLIC_DB_ID,
         process.env.NEXT_PUBLIC_REGISTRATION_COLLECTION_ID,
         generateID,
         {
-          
           office_address: formData.office_address,
           reg_num: formData.reg_num,
           // bank_account: formData.bank_account,
@@ -73,11 +73,11 @@ const Register = () => {
       toast.error("Error submitting form", error);
       console.log(error);
     }
+    setIsLoading(false);
   };
 
   const nextStep = () => {
     if (step === 2) {
-      // Submit the form data to the backend API
       submitForm();
     } else {
       setStep(step + 1);
@@ -92,8 +92,6 @@ const Register = () => {
 
   const closeModal = () => {
     setSuccessModalOpen(false);
-    // Navigate to the dashboard after closing the modal
-    // You can replace this with your actual navigation logic
     router.push("/ICregister/AccountLogin");
   };
 
@@ -101,13 +99,11 @@ const Register = () => {
     const isChecked = formData.services.includes(service);
 
     if (isChecked) {
-      // Remove service if already selected
       setFormData((prevData) => ({
         ...prevData,
         services: prevData.services.filter((s) => s !== service),
       }));
     } else {
-      // Add service if not selected
       setFormData((prevData) => ({
         ...prevData,
         services: [...prevData.services, service],
@@ -116,8 +112,8 @@ const Register = () => {
   };
 
   return (
-    <div className="container  mx-auto p-4">
-      <h1 className="text-2xl  md:mt-[5rem] font-futura font-semibold mb-4">
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl md:mt-[5rem] font-futura font-semibold mb-4">
         Business Information Form
       </h1>
       {step === 1 && (
@@ -144,16 +140,6 @@ const Register = () => {
             onChange={handleChange}
             className="w-full p-2 mb-4 border border-gray-300"
           />
-{/* 
-          <label htmlFor="bank_account">Business Bank Account:</label>
-          <input
-            type="number"
-            id="bank_account"
-            name="bank_account"
-            value={formData.bank_account}
-            onChange={handleChange}
-            className="w-full p-2 mb-4 border border-gray-300"
-          /> */}
 
           <label htmlFor="smart_phone">Do you have a smartphone?</label>
           <select
@@ -171,6 +157,7 @@ const Register = () => {
           <button
             onClick={nextStep}
             className="bg-blue-500 mb-8 text-white p-2 rounded"
+            disabled={isLoading}
           >
             Next
           </button>
@@ -228,14 +215,14 @@ const Register = () => {
           <label htmlFor="password">Create password</label>
           <input
             type="password"
-            id="passsword"
+            id="password"
             name="password"
             value={formData.password}
             onChange={handleChange}
             className="w-full p-2 mb-4 border border-gray-300"
           />
 
-          <label htmlFor="email">email</label>
+          <label htmlFor="email">Email</label>
           <input
             type="email"
             id="email"
@@ -254,7 +241,7 @@ const Register = () => {
                 checked={formData.services.includes("service1")}
                 onChange={() => handleCheckboxChange("service1")}
               />
-              flyer-indi
+              Flyer-indi
             </label>
 
             <label className="w-full md:w-1/2 lg:w-1/3">
@@ -264,7 +251,7 @@ const Register = () => {
                 checked={formData.services.includes("service2")}
                 onChange={() => handleCheckboxChange("service2")}
               />
-              logo-indi
+              Logo-indi
             </label>
 
             <label className="w-full md:w-1/2 lg:w-1/3">
@@ -276,21 +263,21 @@ const Register = () => {
               />
               Service 3
             </label>
-
-            {/* Add more services as needed */}
           </div>
           <button
             onClick={prevStep}
             className="bg-gray-500 text-white p-2 rounded mr-2"
+            disabled={isLoading}
           >
             Previous
           </button>
 
           <button
             onClick={nextStep}
-            className="bg-blue-500 md:mb-0  text-white p-2 rounded"
+            className="bg-blue-500 md:mb-0 text-white p-2 rounded"
+            disabled={isLoading}
           >
-            Submit
+            {isLoading ? <Spinner /> : "Submit"}
           </button>
         </div>
       )}
@@ -308,7 +295,7 @@ const Register = () => {
             Click the close button and login to navigate to your dashboard.
           </p>
           <button
-            className="bg-primary w-[10%] mt-6 mx-auto font-futura  text-white p-2 rounded"
+            className="bg-primary w-[10%] mt-6 mx-auto font-futura text-white p-2 rounded"
             onClick={closeModal}
           >
             Close
@@ -317,7 +304,7 @@ const Register = () => {
       </Modal>
       <div className="mb-16">
         <p className="text-center">
-          Already have an account,
+          Already have an account,{" "}
           <Link href="/ICregister/AccountLogin" className="text-primary">
             Login
           </Link>
