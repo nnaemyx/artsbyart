@@ -203,7 +203,7 @@ const Track = () => {
         <div className="font-opensan 2xl:px-[30rem] xl:px-[20rem] md:px-[4rem] px-[1.5rem] h-full text-center mx-auto w-full">
           <div className="md:mt-36 mt-8 lg:h-[220px]">
             <h1 className="uppercase md:text-[30px] font-futura font-semibold">
-              Login and Track your orders
+              Track your orders
             </h1>
             <form className="md:mt-8 mt-4">
               <div className="relative gap-6">
