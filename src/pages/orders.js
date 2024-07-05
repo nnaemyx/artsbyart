@@ -3,16 +3,19 @@ import { db } from '@/utils/appwrite';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { getPhoneFromLocalStorage, getPhoneFromLocalStorageLogin } from '@/utils/Localstorage';
+import { useRouter } from 'next/router';
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter()
 
   useEffect(() => {
     const fetchOrders = async () => {
       const phoneNumber = getPhoneFromLocalStorage() || getPhoneFromLocalStorageLogin();
       if (!phoneNumber) {
         toast.error('Please insert your phone number to Register/Login.');
+        router.push("/authentication/UserLogin")
         return;
       }
 

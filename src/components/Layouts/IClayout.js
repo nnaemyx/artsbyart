@@ -6,6 +6,7 @@ import Image from "next/image";
 import Sidebar from "./Sidebar";
 import ICsidebar from "./ICsidebar";
 import ICheader from "./ICheader";
+import ICHeader from "./ICheaderMobile";
 
 export default function ICLayout({ children }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -38,7 +39,7 @@ export default function ICLayout({ children }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
     <div className="min-h-screen font-opensans bg-white flex">
-      <aside className="w-[232px] hidden lg:block text-center mx-auto text-secondary bg-white border-r border-solid 2xl:w-[263px]">
+      <aside className="w-[232px] hidden lg:block lg:border-y-black text-center mx-auto text-secondary bg-white border-r border-solid 2xl:w-[263px]">
         <Image
           src="https://res.cloudinary.com/dgms1mpbw/image/upload/v1699825747/ARTS_BY_ART_LOGO_ydpcyd_nzavtb.png"
           width={170}
@@ -48,8 +49,9 @@ export default function ICLayout({ children }) {
         />
         <ICsidebar onTitleClick={handleTitleClick} />
       </aside>
-      <main className="flex-1 mt-8 px-6 flex flex-col">
+      <main className="flex-1 lg:mt-8 px-6 flex flex-col">
         <ICheader clickedTitle={clickedTitle} />
+        <ICHeader />
         {children}
       </main>
     </div>

@@ -49,10 +49,8 @@ const ICheader = ({ clickedTitle }) => {
   return (
     <div className="w-full">
       <div className="flex justify-between">
-        <div>
-          <h1 className="text-[25px] font-semibold">{clickedTitle}</h1>
-        </div>
-        <div className="flex items-center space-x-5">
+      
+        <div className="lg:flex hidden  items-center space-x-5">
           {isVerified ? (
             <div className="flex gap-2">
               <p>Verified</p>

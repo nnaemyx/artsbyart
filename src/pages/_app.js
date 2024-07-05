@@ -6,6 +6,7 @@ import AdminLayout from "@/components/Layouts/Adminlayout";
 import { useRouter } from "next/router";
 import ICLayout from "@/components/Layouts/IClayout";
 import { AuthProvider } from "@/utils/AuthContent";
+import { ModalProvider } from "@/context/ModalContext";
 
 export default function App({
   Component,
@@ -42,10 +43,12 @@ export default function App({
 
   return (
     <CustomContextProvider>
-      <Layout>
-        <Component {...pageProps} />
-        <ToastContainer />
-      </Layout>
+      <ModalProvider>
+        <Layout>
+          <Component {...pageProps} />
+          <ToastContainer />
+        </Layout>
+      </ModalProvider>
     </CustomContextProvider>
   );
 }

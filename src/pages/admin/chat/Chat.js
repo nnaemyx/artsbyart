@@ -182,7 +182,7 @@ const Chat = () => {
                 <div key={message.$id} className={"message--wrapper"}>
                   <div className="message--header">
                     <p>
-                      <span className="text-blue-300">{message?.username || "Anonymous user"}</span>
+                      <span className="text-black">{message?.username || "Anonymous user"}</span>
                       <small className="message-timestamp"> {new Date(message.$createdAt).toLocaleString()}</small>
                     </p>
                     {message.$permissions.includes(`delete(\"user:${user.$id}\")`) && (

@@ -128,15 +128,15 @@ const Room = () => {
                 <div key={message.$id} className={"message--wrapper"}>
                   <div className="message--header">
                     <p>
-                      <span className="text-blue-300">{message?.username || "Anonymous user"}</span>
+                      <span className="text-black ">{message?.username || "Anonymous user"}</span>
                       <small className="message-timestamp"> {new Date(message.$createdAt).toLocaleString()}</small>
                     </p>
                     {message.$permissions.includes(`delete(\"user:${user.$id}\")`) && (
                       <Trash2 className="delete--btn" onClick={() => deleteMessage(message.$id)} />
                     )}
                   </div>
-                  <div className={"message--body" + (message?.user_id === user.$id ? " message--body--owner" : "")}>
-                    <span>{message.body}</span>
+                  <div className={"message--body bg-black" + (message?.user_id === user.$id ? " message--body--owner bg-black" : "")}>
+                    <span className="text-white bg-black">{message.body}</span>
                   </div>
                 </div>
               ))}

@@ -250,8 +250,6 @@ align-items: center;
 
 .message--body{
 padding: 0.5em 0;
-color: var(--textColorSecondary);
-background-color: var(--themeColorMain);
 padding: 1em;
 border-radius: 20px;
 width:fit-content;
@@ -261,7 +259,6 @@ word-wrap: break-word; /* added */
 
 .message--body--owner{
 border: 1px solid rgba(219,26,90,1);
-background-color: var(--secondaryBgColor);
 }
 
 .message-timestamp{
@@ -341,8 +338,8 @@ color:red;
 }
 
 .message--body--owner {
-  background-color: #dcf8c6;
   align-self: flex-end;
+  background-color: black;
 }
 
 #message--form {

@@ -9,6 +9,9 @@ import {
 } from "@/utils/Localstorage";
 import { useCustomContext } from "@/context/Customcontext"; // Adjust the import path accordingly
 import dynamic from "next/dynamic";
+import Login from "../authentication/Login";
+import { useModal } from "@/context/ModalContext";
+import Register from "../authentication/Register";
 
 const SearchPanel = dynamic(() => import("./SearchPanel"), { ssr: false });
 
@@ -18,6 +21,7 @@ const Navbar = () => {
   const [loggedInUser, setLoggedInUser] = useState(null);
   const router = useRouter();
   const { isRightOpen, openRight } = useCustomContext();
+  const { openModal, closeModal, isModalOpen, modalContent } = useModal();
 
   useEffect(() => {
     setLoggedInUser(getUserFromLocalStorage());
@@ -32,6 +36,13 @@ const Navbar = () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
+  const handleLogin = () => {
+    openModal(<Login closeModal={closeModal} />);
+  };
+  const handleRegister = () => {
+    openModal(<Register closeModal={closeModal} />);
+  };
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -75,12 +86,12 @@ const Navbar = () => {
               <p className="text-[15px]">Contact Us</p>
               <span className="absolute inset-x-0 bottom-0 bg-primary transition-transform transform translate-y-full group-hover:border border-solid border-primary group-hover:translate-x-0 ease-in-out"></span>
             </Link>
-            
+
             <Link href="/ICregister/Registration" className="relative group">
               <p className="text-[15px]">Become an IC</p>
               <span className="absolute inset-x-0 bottom-0 bg-primary transition-transform transform translate-y-full group-hover:border border-solid border-primary group-hover:translate-x-0 ease-in-out"></span>
             </Link>
-            
+
             <Link href="/contact" className="relative group">
               <p className="text-[15px]">Team</p>
               <span className="absolute inset-x-0 bottom-0 bg-primary transition-transform transform translate-y-full group-hover:border border-solid border-primary group-hover:translate-x-0 ease-in-out"></span>
@@ -125,13 +136,54 @@ const Navbar = () => {
                 )}
               </div>
             ) : (
-              <Link href="/">
-                <AccountIcon2 className="fill-white" />
-              </Link>
+              <div className="relative group">
+                <button
+                  type="button"
+                  className="focus:outline-none"
+                  onClick={toggleDropdown}
+                >
+                  <AccountIcon2 className="" />
+                </button>
+                {isOpen && (
+                  <div className="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                    <div className="py-1">
+                      <div
+                        className="cursor-pointer hover:bg-gray-100"
+                        onClick={handleLogin}
+                      >
+                        <p className="block px-4 py-2 text-sm text-gray-700">
+                          Login
+                        </p>
+                      </div>
+                      <div
+                        className="cursor-pointer hover:bg-gray-100"
+                        onClick={handleRegister}
+                      >
+                        <p className="block px-4 py-2 text-sm text-gray-700">
+                          Register
+                        </p>
+                      </div>
+                      <Link
+                        href="/orders"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        My Orders
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </div>
       </nav>
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white h-[50%] w-[50%] p-6 rounded-lg shadow-lg">
+            {modalContent}
+          </div>
+        </div>
+      )}
       {isRightOpen && <SearchPanel />}
     </>
   );
