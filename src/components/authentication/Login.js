@@ -4,8 +4,9 @@ import { useRouter } from "next/router";
 import { saveUserToLocalStorage } from "@/utils/Localstorage";
 import Link from "next/link";
 
-const Login = ({ closeModal, setMessage, setPhone }) => {
-  const [password, setPassword] = useState("");
+const Login = ({ closeModal, setMessage }) => {
+  const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
   const router = useRouter();
 
   const handleLogin = async () => {
@@ -32,7 +33,7 @@ const Login = ({ closeModal, setMessage, setPhone }) => {
   };
 
   return (
-    <div className="px-4 mt-[8rem] flex flex-col justify-between items-center">
+    <div className="px-4 mt-[1rem] flex flex-col justify-between items-center">
       <div className="flex gap-5 items-center">
         <h2 className="font-futura font-semibold text-[30px]">Login</h2>
         <button onClick={closeModal}>
@@ -42,11 +43,18 @@ const Login = ({ closeModal, setMessage, setPhone }) => {
         </button>
       </div>
       <div className="w-full px-[1rem] md:px-[4rem] py-[2rem]">
-        <div className="w-full relative">
+        <input
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          type="number"
+          placeholder="Phone Number (remove first 0)"
+          className="focus:outline-none w-full border border-solid border-dark md:px-4 px-2 md:w-[32rem] rounded-md py-[0.27rem] md:py-[1.06rem]"
+        />
+        <div className="w-full relative mt-4">
           <input
             type="password"
             value={password}
-            className={`focus:outline-none w-[100%] border border-solid px-[18px] py-[18px]`}
+            className="focus:outline-none w-[100%] border border-solid px-[18px] py-[18px]"
             onChange={(e) => setPassword(e.target.value)}
           />
           <label
@@ -58,7 +66,15 @@ const Login = ({ closeModal, setMessage, setPhone }) => {
             Enter Password
           </label>
         </div>
-        <div className="mt-4 text-center">Don't have an account? <Link className="text-red-500 underline " href="/authentication/UserRegister">Register</Link></div>
+        <div className="mt-4 text-center">
+          Don't have an account?{" "}
+          <Link
+            className="text-red-500 underline "
+            href="/authentication/UserRegister"
+          >
+            Register
+          </Link>
+        </div>
         <div className="mt-4 text-center">
           <a
             href="#"

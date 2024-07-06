@@ -1,17 +1,15 @@
-import { AccountIcon2, SearchIcon } from "@/icon";
+import { AccountIcon2, SearchIcon, WishlistIcon } from "@/icon"; // Add WishlistIcon
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import {
-  getUserFromLocalStorage,
-  removeUserFromLocalStorage,
-} from "@/utils/Localstorage";
+import { getUserFromLocalStorage, removeUserFromLocalStorage } from "@/utils/Localstorage";
 import { useCustomContext } from "@/context/Customcontext"; // Adjust the import path accordingly
 import dynamic from "next/dynamic";
 import Login from "../authentication/Login";
 import { useModal } from "@/context/ModalContext";
 import Register from "../authentication/Register";
+import { useWishlist } from "@/context/WishlistContext"; // Import WishlistContext
 
 const SearchPanel = dynamic(() => import("./SearchPanel"), { ssr: false });
 
@@ -19,9 +17,11 @@ const Navbar = () => {
   const [bg, setBg] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [loggedInUser, setLoggedInUser] = useState(null);
+  const [wishlistOpen, setWishlistOpen] = useState(false); // State for wishlist dropdown
   const router = useRouter();
   const { isRightOpen, openRight } = useCustomContext();
   const { openModal, closeModal, isModalOpen, modalContent } = useModal();
+  const { wishlist } = useWishlist(); // Get wishlist from context
 
   useEffect(() => {
     setLoggedInUser(getUserFromLocalStorage());
@@ -46,6 +46,10 @@ const Navbar = () => {
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
+  };
+
+  const toggleWishlist = () => {
+    setWishlistOpen(!wishlistOpen);
   };
 
   const handleSignOut = () => {
@@ -100,6 +104,36 @@ const Navbar = () => {
           <div className="hidden lg:flex items-center justify-end gap-[28px]">
             <div onClick={openRight}>
               <SearchIcon className="fill-white" />
+            </div>
+            <div className="relative group">
+              <button
+                type="button"
+                className="focus:outline-none"
+                onClick={toggleWishlist}
+              >
+                <WishlistIcon className="fill-white" />
+              </button>
+              {wishlistOpen && (
+                <div className="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                  <div className="py-1">
+                    {wishlist.length === 0 ? (
+                      <p className="block px-4 py-2 text-sm text-gray-700">
+                        Wishlist is empty
+                      </p>
+                    ) : (
+                      wishlist.map((item) => (
+                        <Link
+                          href={`/products/${item.slug}`}
+                          key={item.id}
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          {item.title}
+                        </Link>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
             {loggedInUser ? (
               <div className="relative group">

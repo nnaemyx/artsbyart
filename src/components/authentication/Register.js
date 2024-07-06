@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { saveUserToLocalStorage } from "@/utils/Localstorage";
 
-const Register = ({ closeModal, setMessage, phone }) => {
+const Register = ({ closeModal, setMessage }) => {
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [otp, setOtp] = useState("");
   const [isOtpSent, setIsOtpSent] = useState(false);
@@ -77,7 +78,7 @@ const Register = ({ closeModal, setMessage, phone }) => {
   };
 
   return (
-    <div className="px-4 mt-[8rem] flex flex-col justify-between items-center">
+    <div className="px-4 mt-[1rem] flex flex-col justify-between items-center">
       <div className="flex gap-4 items-center">
         <h2 className="font-futura font-semibold text-[30px]">Register</h2>
         <button onClick={closeModal}>
@@ -87,6 +88,13 @@ const Register = ({ closeModal, setMessage, phone }) => {
         </button>
       </div>
       <div className="w-full px-[1rem] md:px-[4rem] py-[2rem]">
+        <input
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          type="number"
+          placeholder="Phone Number (remove first 0)"
+          className="focus:outline-none w-full border border-solid border-dark md:px-4 px-2 md:w-[32rem] rounded-md py-[0.27rem] md:py-[1.06rem]"
+        />
         <div className="w-full relative">
           <input
             type="password"

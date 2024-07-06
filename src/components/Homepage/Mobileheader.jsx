@@ -6,17 +6,27 @@ import { AccountIcon2, SearchIcon } from "@/icon";
 import MobileSearch from "./MobileSearch";
 import { useRouter } from "next/router";
 import { getUserFromLocalStorage, removeUserFromLocalStorage } from "@/utils/Localstorage";
+import Login from "../authentication/Login";
+import Register from "../authentication/Register";
+import { useModal } from "@/context/ModalContext";
 
 const Mobileheader = () => {
   const [bg, setBg] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const loggedInUser = getUserFromLocalStorage();
+  const { openModal, closeModal, isModalOpen, modalContent } = useModal();
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
 
+  const handleLogin = () => {
+    openModal(<Login closeModal={closeModal} />);
+  };
+  const handleRegister = () => {
+    openModal(<Register closeModal={closeModal} />);
+  };
   const handleSignOut = () => {
     removeUserFromLocalStorage();
     router.push("/"); // Redirect to home page after sign-out
@@ -102,9 +112,43 @@ const Mobileheader = () => {
                 )}
               </div>
             ) : (
-              <Link href="/">
-                <AccountIcon2 className="fill-white" />
-              </Link>
+              <div className="relative group">
+              <button
+                type="button"
+                className="focus:outline-none"
+                onClick={toggleDropdown}
+              >
+                <AccountIcon2 className="" />
+              </button>
+              {isOpen && (
+                <div className="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                  <div className="py-1">
+                    <div
+                      className="cursor-pointer hover:bg-gray-100"
+                      onClick={handleLogin}
+                    >
+                      <p className="block px-4 py-2 text-sm text-gray-700">
+                        Login
+                      </p>
+                    </div>
+                    <div
+                      className="cursor-pointer hover:bg-gray-100"
+                      onClick={handleRegister}
+                    >
+                      <p className="block px-4 py-2 text-sm text-gray-700">
+                        Register
+                      </p>
+                    </div>
+                    <Link
+                      href="/orders"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      My Orders
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </div>
             )}
             <button
               onClick={openLeft}
@@ -181,6 +225,13 @@ const Mobileheader = () => {
                 <p className="text-[15px]">Admin</p>
               </Link> */}
             </div>
+          </div>
+        </div>
+      )}
+          {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white h-[80%] w-[80%] p-6 rounded-lg shadow-lg">
+            {modalContent}
           </div>
         </div>
       )}

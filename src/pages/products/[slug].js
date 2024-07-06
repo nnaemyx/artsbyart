@@ -2,9 +2,13 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import Chat from "@/components/Chat/Chat";
 import { useCustomContext } from "@/context/Customcontext";
-import { getPhoneFromLocalStorage, getPhoneFromLocalStorageLogin } from "@/utils/Localstorage";
+import {
+  getPhoneFromLocalStorage,
+  getPhoneFromLocalStorageLogin,
+} from "@/utils/Localstorage";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { WishlistIcon } from "@/icon";
 
 const ProductDetail = () => {
   const router = useRouter();
@@ -12,6 +16,7 @@ const ProductDetail = () => {
   const [product, setProduct] = useState(null);
   const [mainMedia, setMainMedia] = useState(null);
   const [showChat, setShowChat] = useState(false);
+  const [wishlist, setWishlist] = useState([]);
   const chatRef = useRef(null);
   const { isBottomOpen, openBottom, closeBottom } = useCustomContext();
 
@@ -32,11 +37,41 @@ const ProductDetail = () => {
     }
   }, [slug]);
 
+  useEffect(() => {
+    const fetchWishlist = async () => {
+      const response = await fetch('/api/wishlist');
+      const data = await response.json();
+      setWishlist(data.data?.products);
+      console.log(data)
+    };
+    fetchWishlist();
+  }, []);
+
+  const handleWishlistClick = async () => {
+    const response = await fetch('/api/wishlist', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ productId: product._id }),
+    });
+
+    const data = await response.json();
+    if (data.success) {
+      setWishlist(data.data.products);
+    } else {
+      toast.error("Something went wrong");
+    }
+  };
+
+  const isInWishlist = wishlist?.some((item) => item._id === product?._id);
+
   const handleToggleChat = () => {
-    const storedPhone = getPhoneFromLocalStorage() || getPhoneFromLocalStorageLogin();
+    const storedPhone =
+      getPhoneFromLocalStorage() || getPhoneFromLocalStorageLogin();
     if (!storedPhone) {
       toast.error("Please log in to create an order.");
-      router.push("/"); // Navigate to the homepage
+      router.push("/authentication/UserLogin");
     } else {
       setShowChat(!showChat);
     }
@@ -93,28 +128,50 @@ const ProductDetail = () => {
                 onClick={() => setMainMedia(image)}
               />
             ))}
-            {product.video && product.video.map((video, index) => (
-              <video
-                key={index}
-                className="w-20 h-20 object-cover cursor-pointer"
-                onClick={() => setMainMedia(video)}
-              >
-                <source src={video} type="video/mp4" />
-              </video>
-            ))}
+            {product.video &&
+              product.video.map((video, index) => (
+                <video
+                  key={index}
+                  className="w-20 h-20 object-cover cursor-pointer"
+                  onClick={() => setMainMedia(video)}
+                >
+                  <source src={video} type="video/mp4" />
+                </video>
+              ))}
           </div>
         </div>
         <div className="lg:w-[50%]" ref={chatRef}>
           <h1 className="text-2xl font-semibold">{product.title}</h1>
           <p className="text-gray-700 mt-2">{product.description}</p>
-          <p className="text-gray-700 mt-2">{product.quantity} for N{product.price}</p>
+
+          <p className="text-gray-700 mt-2">
+            {product.quantity} for N{product.price}
+          </p>
+
           <p className="text-xl font-bold mt-2">N{product.price}</p>
-          <button
-            onClick={handleToggleChat}
-            className="bg-blue-500 hidden lg:block text-white p-2 mb-[8rem] rounded mt-4"
-          >
-            Create Order
-          </button>
+
+          <div className="flex items-baseline mt-2 gap-4">
+            <button
+              onClick={handleToggleChat}
+              className="bg-blue-500 hidden lg:block text-white p-2 mb-[8rem] rounded mt-4"
+            >
+              Create Order
+            </button>
+            <button
+              className="flex gap-4 items-center p-2 rounded bg-gray-500 text-white"
+              onClick={handleWishlistClick}
+            >
+              <p>{isInWishlist ? "Remove from Wishlist" : "Add to Wishlist"}</p>
+              <WishlistIcon
+                className={
+                  isInWishlist
+                    ? "fill-red-600 text-red-500"
+                    : "fill-white text-gray-500"
+                }
+              />
+            </button>
+          </div>
+
           {/* mobile */}
           <button
             onClick={handleToggleChat}
@@ -129,7 +186,9 @@ const ProductDetail = () => {
                 productName={product.slug}
                 procedures={product.procedures[0]}
                 images={product.images[0]}
-                phoneNumber={getPhoneFromLocalStorage() || getPhoneFromLocalStorageLogin()}
+                phoneNumber={
+                  getPhoneFromLocalStorage() || getPhoneFromLocalStorageLogin()
+                }
               />
             </div>
           )}
@@ -140,7 +199,9 @@ const ProductDetail = () => {
                 productName={product.slug}
                 procedures={product.procedures.join(", ")}
                 images={product.images[0]}
-                phoneNumber={getPhoneFromLocalStorage()|| getPhoneFromLocalStorageLogin()}
+                phoneNumber={
+                  getPhoneFromLocalStorage() || getPhoneFromLocalStorageLogin()
+                }
               />
             </div>
           )}

@@ -15,7 +15,7 @@ export default async function handler(req, res) {
             await OTP.deleteOne({ phone });
             res.status(200).json({ success: true });
           } else {
-            res.status(200).json({ success: false, message: 'Invalid OTP' });
+            res.status(201).json({ success: false, message: 'Invalid OTP' });
           }
         } else {
           res.status(200).json({ success: false, message: 'No OTP found or OTP expired' });

@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import ICLayout from "@/components/Layouts/IClayout";
 import { AuthProvider } from "@/utils/AuthContent";
 import { ModalProvider } from "@/context/ModalContext";
+import { WishlistProvider } from "@/context/WishlistContext";
 
 export default function App({
   Component,
@@ -43,12 +44,14 @@ export default function App({
 
   return (
     <CustomContextProvider>
-      <ModalProvider>
-        <Layout>
-          <Component {...pageProps} />
-          <ToastContainer />
-        </Layout>
-      </ModalProvider>
+      <WishlistProvider>
+        <ModalProvider>
+          <Layout>
+            <Component {...pageProps} />
+            <ToastContainer />
+          </Layout>
+        </ModalProvider>
+      </WishlistProvider>
     </CustomContextProvider>
   );
 }
