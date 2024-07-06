@@ -9,6 +9,7 @@ import {
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { WishlistIcon } from "@/icon";
+import { useWishlist } from "@/context/WishlistContext";
 
 const ProductDetail = () => {
   const router = useRouter();
@@ -16,6 +17,7 @@ const ProductDetail = () => {
   const [product, setProduct] = useState(null);
   const [mainMedia, setMainMedia] = useState(null);
   const [showChat, setShowChat] = useState(false);
+  const { addToWishlist, removeFromWishlist } = useWishlist();
   const [wishlist, setWishlist] = useState([]);
   const chatRef = useRef(null);
   const { isBottomOpen, openBottom, closeBottom } = useCustomContext();
@@ -36,35 +38,6 @@ const ProductDetail = () => {
       fetchProduct();
     }
   }, [slug]);
-
-  useEffect(() => {
-    const fetchWishlist = async () => {
-      const response = await fetch('/api/wishlist');
-      const data = await response.json();
-      setWishlist(data.data?.products);
-      console.log(data)
-    };
-    fetchWishlist();
-  }, []);
-
-  const handleWishlistClick = async () => {
-    const response = await fetch('/api/wishlist', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ productId: product._id }),
-    });
-
-    const data = await response.json();
-    if (data.success) {
-      setWishlist(data.data.products);
-    } else {
-      toast.error("Something went wrong");
-    }
-  };
-
-  const isInWishlist = wishlist?.some((item) => item._id === product?._id);
 
   const handleToggleChat = () => {
     const storedPhone =
@@ -95,8 +68,10 @@ const ProductDetail = () => {
     return <div>Loading...</div>;
   }
 
+  const isInWishlist = wishlist.some((item) => item._id === product._id);
+
   return (
-    <div className="mx-auto lg:px-6  mt-24 lg:mt-[11rem]">
+    <div className="mx-auto lg:px-6 mt-24 lg:mt-[11rem]">
       <div className="flex flex-col px-6 md:px-0 md:flex-row gap-12">
         <div className="flex flex-col items-center">
           <div className="w-full h-auto">
@@ -159,7 +134,7 @@ const ProductDetail = () => {
             </button>
             <button
               className="flex gap-4 items-center p-2 rounded bg-gray-500 text-white"
-              onClick={handleWishlistClick}
+              onClick={() => isInWishlist ? removeFromWishlist(product._id) : addToWishlist(product._id)}
             >
               <p>{isInWishlist ? "Remove from Wishlist" : "Add to Wishlist"}</p>
               <WishlistIcon

@@ -71,3 +71,26 @@ export const getICsFromLocalStorage = () => {
   return null;
 };
 
+
+
+export const saveWishlistToLocalStorage = (wishlist) => {
+  if (typeof window !== "undefined") {
+    localStorage.setItem("wishlist", JSON.stringify(wishlist));
+  }
+};
+
+export const getWishlistFromLocalStorage = () => {
+  if (typeof window !== "undefined") {
+    const storedWishlist = localStorage.getItem("wishlist");
+    const parsedWishlist = storedWishlist ? JSON.parse(storedWishlist) : [];
+    return parsedWishlist;
+  }
+  return [];
+};
+
+export const clearWishlistFromLocalStorage = () => {
+  if (typeof window !== "undefined") {
+    localStorage.removeItem("wishlist");
+  }
+};
+

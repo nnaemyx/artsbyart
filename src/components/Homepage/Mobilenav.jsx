@@ -1,11 +1,23 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Mobileheader from "./Mobileheader";
-import { ContactIcon, HomeIcon, ProfileIcon, ShopIcon, WishlistIcon } from "@/icon";
+import { ContactIcon, HomeIcon, ShopIcon, WishlistIcon } from "@/icon"; // Adjust icon imports as needed
 import Link from "next/link";
 import { useWishlist } from "@/context/WishlistContext";
 
 const Mobilenav = () => {
   const { wishlist } = useWishlist();
+  const [localWishlist, setLocalWishlist] = useState([]);
+
+  useEffect(() => {
+    // Load wishlist from localStorage on component mount
+    const savedWishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+    setLocalWishlist(savedWishlist);
+  }, []);
+
+  useEffect(() => {
+    // Update localStorage when wishlist changes
+    localStorage.setItem("wishlist", JSON.stringify(localWishlist));
+  }, [localWishlist]);
 
   return (
     <div className="lg:hidden block">
@@ -16,34 +28,36 @@ const Mobilenav = () => {
             <span>
               <HomeIcon />
             </span>
-            <p className="text-[12px]">Home</p>
+            <p className=" text-[12px] ">Home</p>
           </Link>
 
           <Link href="/orders" className="flex flex-col items-center">
-            <span className="text-center">
+            <span className="text-center ">
               <ContactIcon />
             </span>
-            <p className="text-[12px]">Orders</p>
+            <p className=" text-[12px] ">Orders</p>
           </Link>
 
           <Link href="/shop" className="flex flex-col items-center">
             <span>
               <ShopIcon />
             </span>
-            <p className="text-[12px]">Shop</p>
+            <p className=" text-[12px] ">Shop</p>
           </Link>
 
-          <Link href="/wishlist" className="flex flex-col items-center relative"> {/* Wishlist link */}
-            <span>
-              <WishlistIcon />
-            </span>
-            {wishlist.length > 0 && (
-              <span className="absolute -top-1 -right-1 px-1.5 bg-red-500 text-white rounded-full text-[10px]">
-                {wishlist.length}
+          <div className="relative group">
+            <Link href="/wishlist" className="flex flex-col items-center">
+              <span>
+                <WishlistIcon />
               </span>
-            )}
-            <p className="text-[12px]">Wishlist</p>
-          </Link>
+              <p className=" text-[12px] ">Wishlist</p>
+              {localWishlist.length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+                  {localWishlist.length}
+                </span>
+              )}
+            </Link>
+          </div>
         </div>
       </div>
     </div>

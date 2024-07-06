@@ -1,7 +1,12 @@
 // context/WishlistContext.js
 
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
+import {
+  saveWishlistToLocalStorage,
+  getWishlistFromLocalStorage,
+  clearWishlistFromLocalStorage,
+} from "@/utils/Localstorage";
 
 const WishlistContext = createContext();
 
@@ -11,8 +16,15 @@ export const WishlistProvider = ({ children }) => {
   const [wishlist, setWishlist] = useState([]);
 
   useEffect(() => {
-    fetchWishlist();
+    // Load wishlist from localStorage on component mount
+    const savedWishlist = getWishlistFromLocalStorage();
+    setWishlist(savedWishlist);
   }, []);
+
+  useEffect(() => {
+    // Save wishlist to localStorage whenever it changes
+    saveWishlistToLocalStorage(wishlist);
+  }, [wishlist]);
 
   const fetchWishlist = async () => {
     try {
@@ -41,8 +53,15 @@ export const WishlistProvider = ({ children }) => {
     }
   };
 
+  const clearWishlist = () => {
+    setWishlist([]);
+    clearWishlistFromLocalStorage(); // Clear localStorage
+  };
+
   return (
-    <WishlistContext.Provider value={{ wishlist, addToWishlist, removeFromWishlist }}>
+    <WishlistContext.Provider
+      value={{ wishlist, addToWishlist, removeFromWishlist, clearWishlist }}
+    >
       {children}
     </WishlistContext.Provider>
   );

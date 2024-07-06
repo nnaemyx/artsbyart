@@ -2,7 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import Link from "next/link";
-import { getUserFromLocalStorage, removeUserFromLocalStorage } from "@/utils/Localstorage";
+import {
+  getUserFromLocalStorage,
+  removeUserFromLocalStorage,
+} from "@/utils/Localstorage";
 import { useCustomContext } from "@/context/Customcontext";
 import dynamic from "next/dynamic";
 import Login from "../authentication/Login";
@@ -123,20 +126,27 @@ const Navbar = () => {
                       </p>
                     ) : (
                       wishlist.map((item) => (
-                        <div key={item.id} className="flex items-center px-4 py-2 border-b border-gray-200">
-                          <div className="flex-shrink-0 mr-2">
-                            <Image
-                              src={item.images[0]} // Replace with your image source
-                              alt={item.title}
-                              width={40}
-                              height={40}
-                              className="rounded"
-                            />
-                          </div>
-                          <div className="flex-1">
-                            <p className="text-sm">{item.title}</p>
-                            <p className="text-sm text-gray-500">{item.price}</p>
-                          </div>
+                        <div
+                          key={item.id}
+                          className="flex items-center px-4 py-2 border-b border-gray-200"
+                        >
+                          <Link href={`/products/${item.slug}`} className="flex">
+                            <div className="flex-shrink-0 mr-2">
+                              <Image
+                                src={item.images[0]} // Replace with your image source
+                                alt={item.title}
+                                width={40}
+                                height={40}
+                                className="rounded"
+                              />
+                            </div>
+                            <div className="flex-1">
+                              <p className="text-sm">{item.title}</p>
+                              <p className="text-sm text-gray-500">
+                                {item.price}
+                              </p>
+                            </div>
+                          </Link>
                           <button
                             className="ml-auto focus:outline-none"
                             onClick={() => removeFromWishlist(item.id)}
