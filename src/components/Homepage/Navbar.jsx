@@ -1,15 +1,15 @@
-import { AccountIcon2, SearchIcon, WishlistIcon } from "@/icon"; // Add WishlistIcon
-import Image from "next/image";
-import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import Image from "next/image";
+import Link from "next/link";
 import { getUserFromLocalStorage, removeUserFromLocalStorage } from "@/utils/Localstorage";
-import { useCustomContext } from "@/context/Customcontext"; // Adjust the import path accordingly
+import { useCustomContext } from "@/context/Customcontext";
 import dynamic from "next/dynamic";
 import Login from "../authentication/Login";
 import { useModal } from "@/context/ModalContext";
 import Register from "../authentication/Register";
-import { useWishlist } from "@/context/WishlistContext"; // Import WishlistContext
+import { useWishlist } from "@/context/WishlistContext";
+import { AccountIcon2, SearchIcon, WishlistIcon, DeleteIcon } from "@/icon";
 
 const SearchPanel = dynamic(() => import("./SearchPanel"), { ssr: false });
 
@@ -17,11 +17,11 @@ const Navbar = () => {
   const [bg, setBg] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [loggedInUser, setLoggedInUser] = useState(null);
-  const [wishlistOpen, setWishlistOpen] = useState(false); // State for wishlist dropdown
+  const [wishlistOpen, setWishlistOpen] = useState(false);
   const router = useRouter();
   const { isRightOpen, openRight } = useCustomContext();
   const { openModal, closeModal, isModalOpen, modalContent } = useModal();
-  const { wishlist } = useWishlist(); // Get wishlist from context
+  const { wishlist, removeFromWishlist } = useWishlist();
 
   useEffect(() => {
     setLoggedInUser(getUserFromLocalStorage());
@@ -40,6 +40,7 @@ const Navbar = () => {
   const handleLogin = () => {
     openModal(<Login closeModal={closeModal} />);
   };
+
   const handleRegister = () => {
     openModal(<Register closeModal={closeModal} />);
   };
@@ -54,7 +55,7 @@ const Navbar = () => {
 
   const handleSignOut = () => {
     removeUserFromLocalStorage();
-    router.push("/"); // Redirect to home page after sign-out
+    router.push("/");
   };
 
   return (
@@ -101,7 +102,7 @@ const Navbar = () => {
               <span className="absolute inset-x-0 bottom-0 bg-primary transition-transform transform translate-y-full group-hover:border border-solid border-primary group-hover:translate-x-0 ease-in-out"></span>
             </Link>
           </div>
-          <div className="hidden lg:flex items-center justify-end gap-[28px]">
+          <div className="hidden lg:flex items-center justify-end gap-[28px] relative">
             <div onClick={openRight}>
               <SearchIcon className="fill-white" />
             </div>
@@ -111,10 +112,10 @@ const Navbar = () => {
                 className="focus:outline-none"
                 onClick={toggleWishlist}
               >
-                <WishlistIcon className="fill-white" />
+                <WishlistIcon className="fill-gray-500" />
               </button>
               {wishlistOpen && (
-                <div className="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                <div className="origin-top-right absolute right-0 mt-2 w-60 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
                   <div className="py-1">
                     {wishlist.length === 0 ? (
                       <p className="block px-4 py-2 text-sm text-gray-700">
@@ -122,17 +123,36 @@ const Navbar = () => {
                       </p>
                     ) : (
                       wishlist.map((item) => (
-                        <Link
-                          href={`/products/${item.slug}`}
-                          key={item.id}
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        >
-                          {item.title}
-                        </Link>
+                        <div key={item.id} className="flex items-center px-4 py-2 border-b border-gray-200">
+                          <div className="flex-shrink-0 mr-2">
+                            <Image
+                              src={item.images[0]} // Replace with your image source
+                              alt={item.title}
+                              width={40}
+                              height={40}
+                              className="rounded"
+                            />
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-sm">{item.title}</p>
+                            <p className="text-sm text-gray-500">{item.price}</p>
+                          </div>
+                          <button
+                            className="ml-auto focus:outline-none"
+                            onClick={() => removeFromWishlist(item.id)}
+                          >
+                            <DeleteIcon className="fill-black" />
+                          </button>
+                        </div>
                       ))
                     )}
                   </div>
                 </div>
+              )}
+              {wishlist.length > 0 && (
+                <span className="absolute -top-1 -right-1 px-1.5 bg-red-500 text-white rounded-full text-[10px]">
+                  {wishlist.length}
+                </span>
               )}
             </div>
             {loggedInUser ? (

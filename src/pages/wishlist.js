@@ -1,3 +1,5 @@
+// pages/wishlist.js
+
 import Link from "next/link";
 import { useWishlist } from "@/context/WishlistContext";
 
@@ -11,17 +13,23 @@ const WishlistPage = () => {
           Your wishlist is empty.
         </p>
       ) : (
-        <div className="mt-[10rem] grid grid-cols-4">
+        <div className="mt-[10rem] grid lg:grid-cols-4 gap-4">
           {wishlist.map((item) => (
-            <div key={item.id} className="flex">
-              <Link href={`/products/${item.slug}`} className="flex">
-                <img src={item.images[0]} className="w-[200px]" alt={item.title} />
-                <div>
-                  <h3>{item.title}</h3>
-                  <p>{item.price}</p>
+            <div key={item._id} className="flex items-center border p-4">
+              <Link href={`/products/${item.slug}`}>
+                <div className="flex items-center space-x-4">
+                  <img
+                    src={item.images[0]}
+                    className="w-[200px] h-[200px] object-cover"
+                    alt={item.title}
+                  />
+                  <div>
+                    <h3>{item.title}</h3>
+                    <p>{item.price}</p>
+                  </div>
                 </div>
               </Link>
-              <button onClick={() => removeFromWishlist(item.id)}>
+              <button onClick={() => removeFromWishlist(item._id)}>
                 Remove
               </button>
             </div>
