@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { saveUserToLocalStorage } from "@/utils/Localstorage";
 import Link from "next/link";
 
-const Login = ({ closeModal, setMessage }) => {
+const Login = () => {
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
@@ -20,11 +20,10 @@ const Login = ({ closeModal, setMessage }) => {
       });
 
       const data = await response.json();
-      setMessage(data.message);
+      
 
       if (response.ok) {
         saveUserToLocalStorage(data);
-        closeModal();
         router.push("/orders");
       }
     } catch (error) {
@@ -36,11 +35,7 @@ const Login = ({ closeModal, setMessage }) => {
     <div className="px-4 mt-[1rem] flex flex-col justify-between items-center">
       <div className="flex gap-5 items-center">
         <h2 className="font-futura font-semibold text-[30px]">Login</h2>
-        <button onClick={closeModal}>
-          <svg viewBox="0 0 24 24" width="30" height="30">
-            <path d="M12.0007 10.5865L16.9504 5.63672L18.3646 7.05093L13.4149 12.0007L18.3646 16.9504L16.9504 18.3646L12.0007 13.4149L7.05093 18.3646L5.63672 16.9504L10.5865 12.0007L5.63672 7.05093L7.05093 5.63672L12.0007 10.5865Z"></path>
-          </svg>
-        </button>
+     
       </div>
       <div className="w-full px-[1rem] md:px-[4rem] py-[2rem]">
         <input

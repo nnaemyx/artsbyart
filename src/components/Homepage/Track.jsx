@@ -11,7 +11,7 @@ const Track = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState("register");
   const [phone, setPhone] = useState("");
-  const [message, setMessage] = useState("");
+ 
   const [userExists, setUserExists] = useState(false);
   const [focusedInput, setFocusedInput] = useState(null);
   const [phoneError, setPhoneError] = useState("");
@@ -136,13 +136,13 @@ const Track = () => {
           {authMode === "register" ? (
             <Register
               closeModal={closeModal}
-              setMessage={setMessage}
+             
               phone={phone}
             />
           ) : (
             <Login
               closeModal={closeModal}
-              setMessage={setMessage}
+             
               phone={phone}
             />
           )}

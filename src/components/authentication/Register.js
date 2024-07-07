@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { saveUserToLocalStorage } from "@/utils/Localstorage";
 
-const Register = ({ closeModal, setMessage }) => {
+const Register = ({ closeModal }) => {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [otp, setOtp] = useState("");
@@ -65,7 +65,7 @@ const Register = ({ closeModal, setMessage }) => {
       });
 
       const data = await response.json();
-      setMessage(data.message);
+    
 
       if (response.ok) {
         saveUserToLocalStorage(data);
