@@ -66,24 +66,24 @@ const About = () => {
           <div className="space-y-[10px]">
             <h2 className="font-semibold">Why Choose Artsbyart Design?</h2>
             <p>
-              Exceptional Quality and Craftsmanship: We are committed to
+              <span className="font-semibold">Exceptional Quality and Craftsmanship:</span> We are committed to
               delivering top-notch quality in every aspect of our work. Our
               attention to detail and dedication to excellence ensure that your
               projects are completed to the highest standards.
             </p>
             <p>
-              Customized Solutions: We understand that every client is unique.
+              <span className="font-semibold ">Customized Solutions:</span> We understand that every client is unique.
               Our solutions are tailored to meet your specific needs, ensuring
               that your brand stands out in the marketplace.
             </p>
             <p>
-              Innovative and Sustainable Practices: We embrace innovation and
+              <span className="font-semibold ">Innovative and Sustainable Practices:</span> We embrace innovation and
               sustainability in our processes. By using eco-friendly materials
               and the latest technology, we not only enhance the quality of our
               products but also contribute to a greener future.
             </p>
             <p>
-              Comprehensive And Exceptional Maintenance Services: As a
+              <span className="font-semibold ">Comprehensive And Exceptional Maintenance Services:</span> As a
               full-service art, signage, and branding organization, we offer a
               wide array of services under one roof. Our expertise spans graphic
               design, logo creation, large format printing, digital and offset
@@ -99,7 +99,7 @@ const About = () => {
               top shape.
             </p>
             <p>
-              Escrow Services for Security and Peace of Mind: "Our foremost
+              <span className="font-semibold ">Escrow Services for Security and Peace of Mind:</span> "Our foremost
               priority is delivering exceptional service to you, rather than
               focusing on your financial contributions." We are committed to
               ensuring our clients feel secure throughout the project. Artsbyart
@@ -110,7 +110,7 @@ const About = () => {
               course of the projects.
             </p>
             <p>
-              Client Satisfaction: Our proven track record and numerous
+              <span className="font-semibold ">Client Satisfaction:</span> Our proven track record and numerous
               satisfied clients are a testament to our dedication and expertise.
               We strive to build long-lasting relationships based on trust,
               reliability, and outstanding service.
