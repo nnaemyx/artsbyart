@@ -13,6 +13,7 @@
     "@next/font": "^14.1.0",
     "@novu/node": "^0.22.0",
     "@novu/notification-center": "^0.22.0",
+    "@react-google-maps/api": "^2.19.3",
     "appwrite": "^13.0.1",
     "axios": "^1.7.2",
     "bcryptjs": "^2.4.3",
