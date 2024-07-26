@@ -17,7 +17,6 @@ const Sidebar = ({onTitleClick}) => {
   };
 
   const isSubItemActive = (subItem, dropdownId) => {
-    // Determine if the subItem is active based on the current route
     return subItem.href === router.asPath && activeDropdowns[dropdownId];
   };
   return (

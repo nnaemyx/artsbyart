@@ -100,8 +100,8 @@ const Navbar = () => {
               <span className="absolute inset-x-0 bottom-0 bg-primary transition-transform transform translate-y-full group-hover:border border-solid border-primary group-hover:translate-x-0 ease-in-out"></span>
             </Link>
 
-            <Link href="/contact" className="relative group">
-              <p className="text-[15px]">Team</p>
+            <Link href="/about" className="relative group">
+              <p className="text-[15px]">About Us</p>
               <span className="absolute inset-x-0 bottom-0 bg-primary transition-transform transform translate-y-full group-hover:border border-solid border-primary group-hover:translate-x-0 ease-in-out"></span>
             </Link>
           </div>

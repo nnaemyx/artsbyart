@@ -211,11 +211,11 @@ const Mobileheader = () => {
                 <p className="text-[15px]">Mission</p>
               </Link> */}
               <Link
-                href="/contact"
+                href="/about"
                 onClick={closeLeft}
                 className="relative group"
               >
-                <p className="text-[15px]">Team</p>
+                <p className="text-[15px]">About Us</p>
               </Link>
               {/* <Link
                 href="/authentication/login"
