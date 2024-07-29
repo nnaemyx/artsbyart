@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 
 const IntegratedC = () => {
   const [ics, setIcs] = useState([]);
-  const [isVerified, setIsVerified] = useState(getIsVerified());
   const [loading, setLoading] = useState(true);
   const [selectedDocumentId, setSelectedDocumentId] = useState(null);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
@@ -49,8 +48,47 @@ const IntegratedC = () => {
               : ic
           )
         );
-        setIsVerified(newValue);
+
+        // Send SMS after updating verification status
+        const message = newValue
+          ? "You are now a Verified IC at Artsbyart."
+          : "Your account has been unverified.";
+        if (icToUpdate.phone_num1) {
+          await sendSMS(icToUpdate.phone_num1, message);
+        }
+        if (icToUpdate.phone_num2) {
+          await sendSMS(icToUpdate.phone_num2, message);
+        }
       }
+    }
+    handleCloseModal();
+  };
+
+  const sendSMS = async (phoneNumber, message) => {
+    const formattedPhoneNumber = phoneNumber.startsWith("0")
+      ? `+234${phoneNumber.slice(1)}`
+      : phoneNumber;
+
+    try {
+      const response = await fetch("/api/sms", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          phoneNumber: formattedPhoneNumber,
+          message,
+        }),
+      });
+
+      if (response.ok) {
+        console.log("SMS sent successfully!");
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to send SMS");
+      }
+    } catch (error) {
+      console.error("Error sending SMS:", error);
     }
   };
 
@@ -59,10 +97,10 @@ const IntegratedC = () => {
       {loading ? (
         <p>Loading...</p>
       ) : (
-        <div className="overflow-x-auto mt-8">
-          <table className="table-auto min-w-full bg-white border border-gray-300">
+        <div className="w-full mt-8">
+          <table className="bg-white border border-gray-300">
             <thead>
-              <tr className="bg-gray-100">
+              <tr className="bg-gray-100 text-[12px]">
                 <th className="py-2 px-4">Office Address</th>
                 <th className="py-2 px-4">CAC num</th>
                 <th className="py-2 px-4">Business Name</th>
@@ -76,7 +114,7 @@ const IntegratedC = () => {
             </thead>
             <tbody>
               {ics.map((ic) => (
-                <tr key={ic.$id}>
+                <tr key={ic.$id} className="text-[12px]">
                   <td className="py-2 px-4">{ic.office_address}</td>
                   <td className="py-2 px-4">{ic.reg_num}</td>
                   <td className="py-2 px-4">{ic.bus_name}</td>
@@ -86,14 +124,14 @@ const IntegratedC = () => {
                   <td className="py-2 px-4">{ic.services}</td>
                   <td className="py-2 px-4">{ic.smart_phone}</td>
                   <td className="py-2 px-4 border-b">
-                     <button
-                    onClick={() => handleToggle(ic.$id)}
-                    className={`toggle-switch ${
-                      ic.is_verified ? 'bg-blue-500 text-light px-2' : 'bg-gray-300'
-                    }`}
-                  >
-                    {ic.is_verified ? 'Verified' : 'Not Verified'}
-                  </button>
+                    <button
+                      onClick={() => handleToggle(ic.$id)}
+                      className={`toggle-switch ${
+                        ic.is_verified ? 'bg-blue-500 text-light px-2' : 'bg-gray-300'
+                      }`}
+                    >
+                      {ic.is_verified ? 'Verified' : 'Not Verified'}
+                    </button>
                   </td>
                 </tr>
               ))}

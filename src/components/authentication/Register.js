@@ -1,14 +1,18 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { saveUserToLocalStorage } from "@/utils/Localstorage";
+import Spinner from "../Layouts/Spinner";
+
 
 const Register = ({ closeModal }) => {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false); // Add loading state
   const [otp, setOtp] = useState("");
   const [isOtpSent, setIsOtpSent] = useState(false);
 
   const sendOtp = async () => {
+    setLoading(true); // Show spinner
     try {
       const response = await fetch("/api/otp", {
         method: "POST",
@@ -21,13 +25,15 @@ const Register = ({ closeModal }) => {
       const data = await response.json();
       if (data.success) {
         setIsOtpSent(true);
-        toast.success("OTP sent successfully");
+        toast.success("An OTP message was sent to your number.");
       } else {
         toast.error("Failed to send OTP");
       }
     } catch (error) {
       console.error("Error:", error);
       toast.error("Error sending OTP");
+    }finally {
+      setLoading(false); // Hide spinner
     }
   };
 
@@ -88,14 +94,23 @@ const Register = ({ closeModal }) => {
         </button>
       </div>
       <div className="w-full px-[1rem] md:px-[4rem] py-[2rem]">
-        <input
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          type="number"
-          placeholder="Phone Number (remove first 0)"
-          className="focus:outline-none w-full border border-solid border-dark md:px-4 px-2 md:w-[32rem] rounded-md py-[0.27rem] md:py-[1.06rem]"
-        />
-        <div className="w-full relative">
+      <div className="w-full relative mt-4">
+          <input
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            type="number"
+            className="focus:outline-none w-[100%] border border-solid px-[18px] py-[18px]"
+          />
+          <label
+            htmlFor="phone"
+            className={`absolute left-4 text-[14px] text-[#9b9191] top-4 transition-all duration-300 ${
+              phone ? "translate-y-[-125%] text-[12px] bg-white" : ""
+            }`}
+          >
+           Remove the first 0 of your phone number
+          </label>
+        </div>
+        <div className="w-full relative mt-4">
           <input
             type="password"
             value={password}
@@ -116,8 +131,9 @@ const Register = ({ closeModal }) => {
         className="mt-[14px] text-[12px] md:text-[14px] font-semibold bg-primary text-white px-[4rem] tracking-[1.5px] py-[18px] flex justify-center w-[50%] mx-auto"
         type="button"
         onClick={sendOtp}
+        disabled={loading} // Disable button while loading
       >
-        Send OTP
+       {loading ? <Spinner /> : "Register"} {/* Show spinner or text */}
       </button>
       {isOtpSent && (
         <div className="mt-4 w-full px-[1rem] md:px-[4rem] py-[2rem]">

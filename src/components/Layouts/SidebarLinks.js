@@ -37,16 +37,6 @@ export const menuItems = [
         icon: <AccountIcon2/>
       },
       {
-        href: '/admin/catalog/Color',
-        title: 'Color',
-        icon: <AccountIcon2/>
-      },
-      {
-        href: '/admin/catalog/Colorlist',
-        title: 'Color List',
-        icon: <AccountIcon2/>
-      },
-      {
         href: '/admin/catalog/Procedures',
         title: 'Procedures',
         icon: <AccountIcon2/>
@@ -74,7 +64,7 @@ export const menuItems = [
       },
       {
         href: '/admin/create/CreateCustomer',
-        title: 'Create Customers',
+        title: 'Create Customer',
         icon: <AccountIcon2/>
       },
     ],

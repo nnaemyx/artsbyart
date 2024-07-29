@@ -114,29 +114,27 @@ const CreateCustomers = () => {
   return (
     <div className="">
       <div className="relative">
-        <div className="font-opensan 2xl:px-[20rem] xl:px-[20rem] md:px-[4rem] px-[1.5rem] h-full text-center mx-auto w-full">
+        <div className="font-opensan  h-full text-center mx-auto w-full">
           <div className="md:mt-36 mt-8 lg:h-[220px]">
             <h1 className="uppercase md:text-[30px] font-futura font-semibold">
               Input Phone number to register user
             </h1>
-            <form className="md:mt-8 mt-4">
-              <div className="relative gap-6">
-                <input
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  type="number"
-                  placeholder="Phone Number"
-                  className="focus:outline-none w-full border border-solid border-dark md:px-4 px-2 md:w-[32rem] rounded-md py-[0.27rem] md:py-[1.06rem]"
-                />
+            <form className="md:mt-8 mt-4 flex flex-col gap-6 justify-center items-center">
+              <input
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                type="number"
+                placeholder="Phone Number"
+                className="focus:outline-none w-full border border-solid border-dark md:px-4 px-2 md:w-[32rem] rounded-md py-[0.27rem] md:py-[1.06rem]"
+              />
 
-                <button
-                  type="button"
-                  className="bg-primary md:px-12 text-[12px] md:text-[18px] md:rounded-md md:py-4 py-2 px-6 text-white absolute right-[0rem] 425:right-[0.1rem]"
-                  onClick={handleTrack}
-                >
-                  Register
-                </button>
-              </div>
+              <button
+                type="button"
+                className="bg-primary md:px-12 text-[12px] md:text-[18px] md:rounded-md md:py-4 py-2 px-6 text-white"
+                onClick={handleTrack}
+              >
+                Register
+              </button>
             </form>
           </div>
         </div>

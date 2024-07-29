@@ -407,3 +407,16 @@ color:red;
 
 
 
+/* Add this CSS to handle the overflow in table cells */
+.overflow-x-auto {
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+table {
+  width: 100%;
+}
+
+td {
+  max-width: 200px; /* Adjust based on your needs */
+}

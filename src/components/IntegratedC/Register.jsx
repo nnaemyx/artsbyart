@@ -31,6 +31,32 @@ const Register = () => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
+  const sendAdminSMS = async () => {
+    try {
+      const response = await fetch("/api/sms", {
+        // Change this to your Twilio API endpoint
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          phoneNumber: "+2347069363614",
+          message:
+            "Hello Admin, a new IC has been registered. Please review the details.",
+        }),
+      });
+
+      if (response.ok) {
+        console.log("SMS sent successfully!");
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to send SMS");
+      }
+    } catch (error) {
+      console.error("Error sending SMS:", error);
+    }
+  };
+
   const submitForm = async () => {
     setIsLoading(true);
     try {
@@ -65,6 +91,7 @@ const Register = () => {
         toast.success("Form submitted successfully!");
         saveICToLocalStorage(response, generateID);
         setSuccessModalOpen(true);
+        await sendAdminSMS();
       } else {
         toast.error("Error submitting form");
         console.log("Error submitting form - Response:", response);

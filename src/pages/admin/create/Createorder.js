@@ -61,8 +61,8 @@ export default function Createorder() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="w-full min-h-[200vh] overflow-hidden  ">
-        <div className="w-full min-h-[90vh]  ">
+      <main className=" ">
+        <div className="  ">
           <div className="md:w-[60%] w-full h-full flex flex-col py-6 md:px-10 px-4 overflow-y-auto">
             <h2 className="font-bold text-2xl mb-2">Create Order</h2>
             <p className="opacity-50 mb-6 text-sm">

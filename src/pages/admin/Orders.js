@@ -296,7 +296,7 @@ const Orders = () => {
       </h2>
       <table className="table-auto min-w-full bg-white">
         <thead>
-          <tr className="bg-gray-100">
+          <tr className="bg-gray-100 text-[12px]">
             <th>Name</th>
             <th>ProductName</th>
             <th>Email</th>
@@ -304,7 +304,7 @@ const Orders = () => {
             <th>Action</th>
           </tr>
         </thead>
-        <tbody>{renderCompletedTicketRows(completedTickets)}</tbody>
+        <tbody className="text-[12px]">{renderCompletedTicketRows(completedTickets)}</tbody>
       </table>
     </div>
   );
