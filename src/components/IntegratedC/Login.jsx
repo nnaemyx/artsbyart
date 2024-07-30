@@ -11,6 +11,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [focusedInput, setFocusedInput] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const router = useRouter();
 
@@ -32,6 +33,10 @@ const Login = () => {
       console.error("Error during login:", error);
     }
     setIsLoading(false);
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
   };
 
   return (
@@ -66,7 +71,7 @@ const Login = () => {
           <br />
           <div className="mt-4 relative">
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               value={password}
               placeholder=" "
               className={`focus:outline-none w-[100%] border border-solid px-[18px] py-[18px] ${
@@ -87,6 +92,22 @@ const Login = () => {
             >
               Password
             </label>
+            <button
+              type="button"
+              onClick={togglePasswordVisibility}
+              className="absolute right-4 top-4 text-gray-600"
+            >
+              {showPassword ? (
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M1 12s3.75-7.5 11-7.5 11 7.5 11 7.5-3.75 7.5-11 7.5S1 12 1 12z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M1 12s3.75-7.5 11-7.5 11 7.5 11 7.5-3.75 7.5-11 7.5S1 12 1 12z" />
+                </svg>
+              )}
+            </button>
           </div>
           <br />
           <button
