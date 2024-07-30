@@ -4,16 +4,44 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import "react-toastify/dist/ReactToastify.css";
 import Link from "next/link";
+import Select from "react-select";
 import { ID, account, db } from "@/utils/appwrite";
 import { saveICToLocalStorage } from "@/utils/Localstorage";
 import Spinner from "@/components/Layouts/Spinner";
+
+// Options for the services select dropdown
+const servicesOptions = [
+  { value: "Signages", label: "Signages" },
+  { value: "Banners", label: "Banners" },
+  { value: "Billboards", label: "Billboards" },
+  { value: "Apparels", label: "Apparels" },
+  { value: "Vehicle Branding", label: "Vehicle Branding" },
+  { value: "Business Cards", label: "Business Cards" },
+  { value: "Certificates", label: "Certificates" },
+  { value: "Calendars", label: "Calendars" },
+  { value: "Cartons And Boxes", label: "Cartons And Boxes" },
+  { value: "Flyers And Posters", label: "Flyers And Posters" },
+  { value: "Invitation And Tickets", label: "Invitation And Tickets" },
+  { value: "Letterhead Papers", label: "Letterhead Papers" },
+  { value: "Souvenirs/Stationaries", label: "Souvenirs/Stationaries" },
+  { value: "Bags Branding", label: "Bags Branding" },
+  { value: "Stickers", label: "Stickers" },
+  { value: "Roll Up Stands", label: "Roll Up Stands" },
+  { value: "Stamps And Seals", label: "Stamps And Seals" },
+  { value: "Throw Pillows Branding", label: "Throw Pillows Branding" },
+  { value: "Paintings", label: "Paintings" },
+  { value: "Government Registrations", label: "Government Registrations" },
+  { value: "Designs", label: "Designs" },
+  { value: "Phone Branding", label: "Phone Branding" },
+  { value: "Maintenance", label: "Maintenance" },
+  { value: "Books", label: "Books" },
+];
 
 const Register = () => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     office_address: "",
     reg_num: "",
-    // bank_account: "",
     smart_phone: "",
     password: "",
     email: "",
@@ -31,10 +59,16 @@ const Register = () => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
+  const handleServiceChange = (selectedOptions) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      services: selectedOptions ? selectedOptions.map((opt) => opt.value) : [],
+    }));
+  };
+
   const sendAdminSMS = async () => {
     try {
       const response = await fetch("/api/sms", {
-        // Change this to your Twilio API endpoint
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -76,7 +110,6 @@ const Register = () => {
         {
           office_address: formData.office_address,
           reg_num: formData.reg_num,
-          // bank_account: formData.bank_account,
           smart_phone: formData.smart_phone,
           bus_name: formData.bus_name,
           phone_num1: formData.phone_num1,
@@ -120,22 +153,6 @@ const Register = () => {
   const closeModal = () => {
     setSuccessModalOpen(false);
     router.push("/ICregister/AccountLogin");
-  };
-
-  const handleCheckboxChange = (service) => {
-    const isChecked = formData.services.includes(service);
-
-    if (isChecked) {
-      setFormData((prevData) => ({
-        ...prevData,
-        services: prevData.services.filter((s) => s !== service),
-      }));
-    } else {
-      setFormData((prevData) => ({
-        ...prevData,
-        services: [...prevData.services, service],
-      }));
-    }
   };
 
   return (
@@ -239,7 +256,7 @@ const Register = () => {
             className="w-full p-2 mb-4 border border-gray-300"
           />
 
-          <label htmlFor="password">Create password</label>
+          <label htmlFor="password">Create Password:</label>
           <input
             type="password"
             id="password"
@@ -249,7 +266,7 @@ const Register = () => {
             className="w-full p-2 mb-4 border border-gray-300"
           />
 
-          <label htmlFor="email">Email</label>
+          <label htmlFor="email">Email:</label>
           <input
             type="email"
             id="email"
@@ -259,38 +276,18 @@ const Register = () => {
             className="w-full p-2 mb-4 border border-gray-300"
           />
 
-          <label>Services:</label>
-          <div className="flex flex-wrap">
-            <label className="w-full md:w-1/2 lg:w-1/3">
-              <input
-                type="checkbox"
-                value="service1"
-                checked={formData.services.includes("service1")}
-                onChange={() => handleCheckboxChange("service1")}
-              />
-              Flyer-indi
-            </label>
+          <label htmlFor="services">Services:</label>
+          <Select
+            id="services"
+            isMulti
+            options={servicesOptions}
+            value={servicesOptions.filter((option) =>
+              formData.services.includes(option.value)
+            )}
+            onChange={handleServiceChange}
+            className="w-full p-2 mb-4"
+          />
 
-            <label className="w-full md:w-1/2 lg:w-1/3">
-              <input
-                type="checkbox"
-                value="service2"
-                checked={formData.services.includes("service2")}
-                onChange={() => handleCheckboxChange("service2")}
-              />
-              Logo-indi
-            </label>
-
-            <label className="w-full md:w-1/2 lg:w-1/3">
-              <input
-                type="checkbox"
-                value="service3"
-                checked={formData.services.includes("service3")}
-                onChange={() => handleCheckboxChange("service3")}
-              />
-              Service 3
-            </label>
-          </div>
           <button
             onClick={prevStep}
             className="bg-gray-500 text-white p-2 rounded mr-2"
@@ -301,13 +298,14 @@ const Register = () => {
 
           <button
             onClick={nextStep}
-            className="bg-blue-500 md:mb-0 text-white p-2 rounded"
+            className="bg-blue-500 text-white p-2 rounded"
             disabled={isLoading}
           >
             {isLoading ? <Spinner /> : "Submit"}
           </button>
         </div>
       )}
+
       <Modal
         isOpen={isSuccessModalOpen}
         onRequestClose={closeModal}
@@ -329,6 +327,7 @@ const Register = () => {
           </button>
         </div>
       </Modal>
+
       <div className="mb-16">
         <p className="text-center">
           Already have an account,{" "}

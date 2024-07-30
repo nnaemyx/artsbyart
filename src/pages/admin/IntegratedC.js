@@ -1,6 +1,7 @@
 import UpdateModal from "@/components/IntegratedC/UpdateModal";
 import { db, getIsVerified, updateIsVerified } from "@/utils/appwrite";
 import React, { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 
 const IntegratedC = () => {
   const [ics, setIcs] = useState([]);
@@ -92,6 +93,21 @@ const IntegratedC = () => {
     }
   };
 
+  const handleDelete = async (documentId) => {
+    try {
+      await db.deleteDocument(
+        process.env.NEXT_PUBLIC_DB_ID,
+        process.env.NEXT_PUBLIC_REGISTRATION_COLLECTION_ID,
+        documentId
+      );
+      setIcs((prevIcs) => prevIcs.filter((ic) => ic.$id !== documentId));
+      toast.success("IC deleted successfully");
+    } catch (error) {
+      console.error("Error deleting IC:", error);
+      toast.error("Error deleting IC");
+    }
+  };
+
   return (
     <div>
       {loading ? (
@@ -110,6 +126,7 @@ const IntegratedC = () => {
                 <th className="py-2 px-4">Services</th>
                 <th className="py-2 px-4">SmartPhone</th>
                 <th className="py-2 px-4">Verify IC</th>
+                <th className="py-2 px-4">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -121,7 +138,7 @@ const IntegratedC = () => {
                   <td className="py-2 px-4">{ic.phone_num1}</td>
                   <td className="py-2 px-4">{ic.phone_num2}</td>
                   <td className="py-2 px-4">{ic.branches}</td>
-                  <td className="py-2 px-4">{ic.services}</td>
+                  <td className="py-2 px-4">{ic.services.join(', ')}</td>
                   <td className="py-2 px-4">{ic.smart_phone}</td>
                   <td className="py-2 px-4 border-b">
                     <button
@@ -131,6 +148,14 @@ const IntegratedC = () => {
                       }`}
                     >
                       {ic.is_verified ? 'Verified' : 'Not Verified'}
+                    </button>
+                  </td>
+                  <td className="py-2 px-4 border-b">
+                    <button
+                      onClick={() => handleDelete(ic.$id)}
+                      className="bg-red-500 text-white p-1 rounded"
+                    >
+                      Delete
                     </button>
                   </td>
                 </tr>
