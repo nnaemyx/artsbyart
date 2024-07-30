@@ -12,6 +12,8 @@ const Productlist = () => {
   const [newPrice, setNewPrice] = useState("");
   const [newDescription, setNewDescription] = useState("");
   const [newAvailability, setNewAvailability] = useState(true);
+  const [newImages, setNewImages] = useState([]);
+  const [newVideo, setNewVideo] = useState(null);
 
   useEffect(() => {
     fetch("/api/products/products")
@@ -42,12 +44,12 @@ const Productlist = () => {
               products.filter((product) => product._id !== productId)
             );
           } else {
-            throw new Error(`Error deleting product: ${response.statusText}`);
+            return response.text().then(text => { throw new Error(text) });
           }
         })
         .catch((error) => {
           console.error("Fetch error:", error);
-          toast.error("Failed to delete product");
+          toast.error(`Failed to delete product: ${error.message}`);
         });
     }
   };
@@ -59,6 +61,8 @@ const Productlist = () => {
     setNewPrice(product.price);
     setNewDescription(product.description);
     setNewAvailability(product.available);
+    setNewImages(product.images);
+    setNewVideo(product.video);
   };
 
   const handleUpdateProduct = async (productId) => {
@@ -72,21 +76,23 @@ const Productlist = () => {
       return;
     }
 
+    const formData = new FormData();
+    formData.append("title", newTitle);
+    formData.append("category", newCategory);
+    formData.append("price", newPrice);
+    formData.append("description", newDescription);
+    formData.append("available", newAvailability);
+    if (newVideo) {
+      formData.append("video", newVideo);
+    }
+    newImages.forEach((image) => {
+      formData.append("images", image);
+    });
+
     try {
       const response = await fetch(`/api/products/${productId}/product`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          newProduct: {
-            title: newTitle,
-            category: newCategory,
-            price: newPrice,
-            description: newDescription,
-            available: newAvailability,
-          },
-        }),
+        body: formData,
       });
 
       if (response.ok) {
@@ -102,154 +108,259 @@ const Productlist = () => {
         setNewPrice("");
         setNewDescription("");
         setNewAvailability(true);
+        setNewImages([]);
+        setNewVideo(null);
         toast.success("Product updated successfully");
       } else {
         const errorMessage = await response.text();
-        throw new Error(errorMessage || "Failed to update product");
+        throw new Error(`Error updating product: ${errorMessage}`);
       }
     } catch (error) {
-      console.error("Error updating product:", error.message);
+      console.error("Fetch error:", error);
       toast.error("Failed to update product");
     }
   };
 
-  const handleCancelEdit = () => {
-    setEditingProduct(null);
-    setNewTitle("");
-    setNewCategory("");
-    setNewPrice("");
-    setNewDescription("");
-    setNewAvailability(true);
+  const handleDeleteImage = (productId, imageId) => {
+    if (window.confirm("Are you sure you want to delete this image?")) {
+      fetch(`/api/products/${productId}/product`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ imageId }),
+      })
+        .then((response) => {
+          if (response.ok) {
+            toast.success("Image deleted successfully");
+            setProducts((products) =>
+              products.map((product) =>
+                product._id === productId
+                  ? {
+                      ...product,
+                      images: product.images.filter((img) => img !== imageId),
+                    }
+                  : product
+              )
+            );
+          } else {
+            return response.text().then(text => { throw new Error(text) });
+          }
+        })
+        .catch((error) => {
+          console.error("Fetch error:", error);
+          toast.error(`Failed to delete image: ${error.message}`);
+        });
+    }
   };
+  
+  const handleDeleteVideo = (productId, videoId) => {
+    if (window.confirm("Are you sure you want to delete this video?")) {
+      fetch(`/api/products/${productId}/product`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ videoId }),
+      })
+        .then((response) => {
+          if (response.ok) {
+            toast.success("Video deleted successfully");
+            setProducts((products) =>
+              products.map((product) =>
+                product._id === productId
+                  ? {
+                      ...product,
+                      video: null,
+                    }
+                  : product
+              )
+            );
+          } else {
+            return response.text().then(text => { throw new Error(text) });
+          }
+        })
+        .catch((error) => {
+          console.error("Fetch error:", error);
+          toast.error(`Failed to delete video: ${error.message}`);
+        });
+    }
+  };
+  
 
   return (
-    <div className="mt-12 mx-4 md:mx-12">
+    <>
       <Head>
-        <title>Artsbyart Admin</title>
-        <meta
-          name="description"
-          content="Artsbyart is a premier creative agency specialized in branding and print solutions, serving businesses of all sizes and across all industries. We partner with our clients to develop, maintain, and enhance their brands through strategic planning, innovative design, and effective communication"
-        />
-        <link rel="icon" href="/favicon.ico" />
+        <title>Products</title>
       </Head>
-      <h2 className="text-[25px] font-semibold font-futura mb-4">Products</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {products.map((product) => (
-          <div key={product._id} className="border rounded-lg p-4">
-            <div className="flex items-center mb-4">
-              <Image
-                src={product.images[0]}
-                className="border rounded-[4px] border-solid border-dark"
-                width={40}
-                height={40}
-                alt="image"
-              />
-              {editingProduct === product._id ? (
-                <input
-                  type="text"
-                  value={newTitle}
-                  onChange={(e) => setNewTitle(e.target.value)}
-                  className="border p-2 ml-4 w-full"
-                />
-              ) : (
-                <div className="ml-4">{product.title}</div>
-              )}
-            </div>
-            <div className="mb-4">
-              <strong>Category:</strong>{" "}
-              {editingProduct === product._id ? (
-                <input
-                  type="text"
-                  value={newCategory}
-                  onChange={(e) => setNewCategory(e.target.value)}
-                  className="border p-2 w-full"
-                />
-              ) : (
-                product.category
-              )}
-            </div>
-            <div className="mb-4">
-              <strong>Price:</strong>{" "}
-              {editingProduct === product._id ? (
-                <input
-                  type="text"
-                  value={newPrice}
-                  onChange={(e) => setNewPrice(e.target.value)}
-                  className="border p-2 w-full"
-                />
-              ) : (
-                product.price
-              )}
-            </div>
-            <div className="mb-4">
-              <strong>Description:</strong>{" "}
-              {editingProduct === product._id ? (
-                <input
-                  type="text"
-                  value={newDescription}
-                  onChange={(e) => setNewDescription(e.target.value)}
-                  className="border p-2 w-full"
-                />
-              ) : (
-                <p className="truncate">{product.description}</p>
-              )}
-            </div>
-            <div className="mb-4">
-              <strong>Availability:</strong>{" "}
-              {editingProduct === product._id ? (
-                <select
-                  value={newAvailability}
-                  onChange={(e) =>
-                    setNewAvailability(e.target.value === "true")
-                  }
-                  className="border p-2 w-full"
-                >
-                  <option value="true">Available</option>
-                  <option value="false">Not Available</option>
-                </select>
-              ) : product.available ? (
-                "Available"
-              ) : (
-                "Not Available"
-              )}
-            </div>
-            <div className="flex justify-between">
-              {editingProduct === product._id ? (
-                <>
+
+      <div className="">
+        <h1 className="text-3xl font-bold mb-4">Products</h1>
+        <table className="w-full border-collapse border border-gray-400">
+          <thead>
+            <tr>
+              <th className="border border-gray-300 p-2">Title</th>
+              <th className="border border-gray-300 p-2">Category</th>
+              <th className="border border-gray-300 p-2">Price</th>
+              <th className="border border-gray-300 p-2">Description</th>
+              <th className="border border-gray-300 p-2">Available</th>
+              <th className="border border-gray-300 p-2">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {products.map((product) => (
+              <tr key={product._id}>
+                <td className="border border-gray-300 p-2">{product.title}</td>
+                <td className="border border-gray-300 p-2">{product.category}</td>
+                <td className="border border-gray-300 p-2">{product.price}</td>
+                <td className="border border-gray-300 p-2">
+                  {product.description}
+                </td>
+                <td className="border border-gray-300 p-2">
+                  {product.available ? "Yes" : "No"}
+                </td>
+                <td className="border border-gray-300 p-2">
                   <button
-                    onClick={() => handleUpdateProduct(product._id)}
-                    className="text-green-600 hover:text-green-900"
-                  >
-                    Save
-                  </button>
-                  <button
-                    onClick={handleCancelEdit}
-                    className="text-red-600 hover:text-red-900 ml-4"
-                  >
-                    Cancel
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button
+                    className="bg-blue-500 text-white px-4 py-2 rounded"
                     onClick={() => handleEditProduct(product)}
-                    className="text-blue-600 hover:text-blue-900"
                   >
                     Edit
                   </button>
                   <button
-                    className="text-red-600 hover:text-red-900 ml-4"
+                    className="bg-red-500 text-white px-4 py-2 rounded ml-2"
                     onClick={() => handleDeleteProduct(product._id)}
                   >
                     Delete
                   </button>
-                </>
-              )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        {editingProduct && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+            <div className="bg-white p-6 rounded-lg shadow-lg">
+              <h2 className="text-2xl font-bold mb-4">Edit Product</h2>
+              <div>
+                <label className="block mb-2 font-bold">Title</label>
+                <input
+                  type="text"
+                  className="w-full border border-gray-300 p-2 rounded"
+                  value={newTitle}
+                  onChange={(e) => setNewTitle(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block mb-2 font-bold">Category</label>
+                <input
+                  type="text"
+                  className="w-full border border-gray-300 p-2 rounded"
+                  value={newCategory}
+                  onChange={(e) => setNewCategory(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block mb-2 font-bold">Price</label>
+                <input
+                  type="text"
+                  className="w-full border border-gray-300 p-2 rounded"
+                  value={newPrice}
+                  onChange={(e) => setNewPrice(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block mb-2 font-bold">Description</label>
+                <textarea
+                  className="w-full border border-gray-300 p-2 rounded"
+                  value={newDescription}
+                  onChange={(e) => setNewDescription(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block mb-2 font-bold">Availability</label>
+                <select
+                  className="w-full border border-gray-300 p-2 rounded"
+                  value={newAvailability}
+                  onChange={(e) => setNewAvailability(e.target.value === "true")}
+                >
+                  <option value="true">Yes</option>
+                  <option value="false">No</option>
+                </select>
+              </div>
+              <div>
+                <label className="block mb-2 font-bold">Images</label>
+                {newImages.map((image, index) => (
+                  <div key={index} className="relative inline-block mr-2">
+                    <Image
+                      src={image}
+                      alt={`Product Image ${index + 1}`}
+                      width={100}
+                      height={100}
+                      className="border border-gray-300"
+                    />
+                    <button
+                      className="absolute top-0 right-0 bg-red-500 text-white p-1 rounded-full"
+                      onClick={() => handleDeleteImage(editingProduct, image)}
+                    >
+                      &times;
+                    </button>
+                  </div>
+                ))}
+                <input
+                  type="file"
+                  className="w-full border border-gray-300 p-2 rounded mt-2"
+                  onChange={(e) =>
+                    setNewImages([...newImages, ...Array.from(e.target.files)])
+                  }
+                  multiple
+                />
+              </div>
+              <div>
+                <label className="block mb-2 font-bold">Video</label>
+                {newVideo && (
+                  <div className="relative inline-block mr-2">
+                    <video
+                      src={newVideo}
+                      alt="Product Video"
+                      width={200}
+                      controls
+                      className="border border-gray-300"
+                    />
+                    <button
+                      className="absolute top-0 right-0 bg-red-500 text-white p-1 rounded-full"
+                      onClick={() => handleDeleteVideo(editingProduct, newVideo)}
+                    >
+                      &times;
+                    </button>
+                  </div>
+                )}
+                <input
+                  type="file"
+                  className="w-full border border-gray-300 p-2 rounded mt-2"
+                  onChange={(e) => setNewVideo(e.target.files[0])}
+                  accept="video/*"
+                />
+              </div>
+              <div className="flex justify-end mt-4">
+                <button
+                  className="bg-gray-500 text-white px-4 py-2 rounded mr-2"
+                  onClick={() => setEditingProduct(null)}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="bg-green-500 text-white px-4 py-2 rounded"
+                  onClick={() => handleUpdateProduct(editingProduct)}
+                >
+                  Save
+                </button>
+              </div>
             </div>
           </div>
-        ))}
+        )}
       </div>
-    </div>
+    </>
   );
 };
 

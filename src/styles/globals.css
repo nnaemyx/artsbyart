@@ -339,7 +339,7 @@ color:red;
 
 .message--body--owner {
   align-self: flex-end;
-  background-color: black;
+  background-color: white;
 }
 
 #message--form {
