@@ -3,10 +3,9 @@ import Product from "@/models/productModel";
 import { v2 as cloudinary } from "cloudinary";
 import multer from "multer";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
-import { NextResponse } from "next/server";
-import slugify from "slugify";
-import initMiddleware from "@/utils/init-Middleware";
 import Cors from "cors";
+import initMiddleware from "@/utils/init-Middleware";
+import slugify from "slugify";
 
 // Initialize CORS middleware
 const cors = initMiddleware(
@@ -45,6 +44,8 @@ export const config = {
 
 export default async function handler(req, res) {
   await cors(req, res);
+  console.log(`${req.method} request received at ${req.url}`);
+
   const { id } = req.query;
 
   await connectDb();
@@ -77,9 +78,7 @@ export default async function handler(req, res) {
         product.images = product.images.filter((image) => image !== imageId);
         await product.save();
 
-        res
-          .status(200)
-          .json({ success: true, message: "Image deleted successfully" });
+        res.status(200).json({ success: true, message: "Image deleted successfully" });
       } catch (error) {
         console.error("Error deleting image:", error);
         return res.status(500).json({ error: "Error deleting image" });
@@ -101,22 +100,18 @@ export default async function handler(req, res) {
         product.video = null;
         await product.save();
 
-        res
-          .status(200)
-          .json({ success: true, message: "Video deleted successfully" });
+        res.status(200).json({ success: true, message: "Video deleted successfully" });
       } catch (error) {
         console.error("Error deleting video:", error);
         return res.status(500).json({ error: "Error deleting video" });
       }
-    } else  {
+    } else {
       try {
         const deletedProduct = await Product.findByIdAndDelete(id);
         if (!deletedProduct) {
           return res.status(404).json({ error: "Product not found" });
         }
-        res
-          .status(200)
-          .json({ success: true, message: "Product deleted successfully" });
+        res.status(200).json({ success: true, message: "Product deleted successfully" });
       } catch (error) {
         console.error("Error deleting product:", error);
         return res.status(500).json({ error: "Error deleting product" });
@@ -137,8 +132,7 @@ export default async function handler(req, res) {
         });
       });
 
-      const { title, category, price, description, available, procedures } =
-        req.body;
+      const { title, category, price, description, available, procedures } = req.body;
       const imageURLs = req.files.images
         ? req.files.images.map((file) => file.path)
         : [];
@@ -172,13 +166,11 @@ export default async function handler(req, res) {
         return res.status(404).json({ error: "Product not found" });
       }
 
-      res
-        .status(200)
-        .json({
-          success: true,
-          message: "Product updated successfully",
-          updatedProduct,
-        });
+      res.status(200).json({
+        success: true,
+        message: "Product updated successfully",
+        updatedProduct,
+      });
     } catch (error) {
       console.error("Error updating product:", error);
       return res.status(500).json({ error: "Error updating product" });

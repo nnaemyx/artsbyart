@@ -16,7 +16,7 @@ const Productlist = () => {
   const [newVideo, setNewVideo] = useState(null);
 
   useEffect(() => {
-    fetch("/api/products/products")
+    fetch("/api/products/products") 
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to fetch products");
@@ -34,7 +34,7 @@ const Productlist = () => {
 
   const handleDeleteProduct = (productId) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
-      fetch(`/api/products/${productId}/product`, {
+      fetch(`https://artsbyart-api.vercel.app/api/products/${productId}`, { // Change the endpoint here
         method: "DELETE",
       })
         .then((response) => {
@@ -90,7 +90,7 @@ const Productlist = () => {
     });
 
     try {
-      const response = await fetch(`/api/products/${productId}/product`, {
+      const response = await fetch(`https://artsbyart-api.vercel.app/api/products/${productId}`, { // Change the endpoint here
         method: "PUT",
         body: formData,
       });
@@ -123,7 +123,7 @@ const Productlist = () => {
 
   const handleDeleteImage = (productId, imageId) => {
     if (window.confirm("Are you sure you want to delete this image?")) {
-      fetch(`/api/products/${productId}/product`, {
+      fetch(`https://artsbyart-api.vercel.app/api/products/${productId}/image`, { // Change the endpoint here
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -156,7 +156,7 @@ const Productlist = () => {
   
   const handleDeleteVideo = (productId, videoId) => {
     if (window.confirm("Are you sure you want to delete this video?")) {
-      fetch(`/api/products/${productId}/product`, {
+      fetch(`https://artsbyart-api.vercel.app/api/products/${productId}/video`, { // Change the endpoint here
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -301,7 +301,7 @@ const Productlist = () => {
                     />
                     <button
                       className="absolute top-0 right-0 bg-red-500 text-white p-1 rounded-full"
-                      onClick={() => handleDeleteImage(editingProduct, image)}
+                      onClick={() => setNewImages(newImages.filter((_, i) => i !== index))}
                     >
                       &times;
                     </button>
@@ -321,7 +321,7 @@ const Productlist = () => {
                 {newVideo && (
                   <div className="relative inline-block mr-2">
                     <video
-                      src={newVideo}
+                      src={URL.createObjectURL(newVideo)}
                       alt="Product Video"
                       width={200}
                       controls
@@ -329,7 +329,7 @@ const Productlist = () => {
                     />
                     <button
                       className="absolute top-0 right-0 bg-red-500 text-white p-1 rounded-full"
-                      onClick={() => handleDeleteVideo(editingProduct, newVideo)}
+                      onClick={() => setNewVideo(null)}
                     >
                       &times;
                     </button>
