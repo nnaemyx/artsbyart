@@ -17,7 +17,7 @@ const Addproduct = () => {
   const [selectedColor, setSelectedColor] = useState("");
   const [images, setImages] = useState([]);
   const [thumbnailUrls, setThumbnailUrls] = useState([]);
-  const [video, setVideo] = useState(null);
+  const [video, setVideo] = useState([]);
   const [videoUrl, setVideoUrl] = useState("");
   const [loading, setLoading] = useState(false); // Loading state
 
