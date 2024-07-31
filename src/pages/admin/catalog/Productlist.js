@@ -13,7 +13,7 @@ const Productlist = () => {
   const [newDescription, setNewDescription] = useState("");
   const [newAvailability, setNewAvailability] = useState(true);
   const [newImages, setNewImages] = useState([]);
-  const [newVideo, setNewVideo] = useState(null);
+  const [newVideo, setNewVideo] = useState([]);
 
   useEffect(() => {
     fetch("/api/products/products") 
@@ -239,126 +239,127 @@ const Productlist = () => {
         </table>
 
         {editingProduct && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <div className="bg-white p-6 rounded-lg shadow-lg">
-              <h2 className="text-2xl font-bold mb-4">Edit Product</h2>
-              <div>
-                <label className="block mb-2 font-bold">Title</label>
-                <input
-                  type="text"
-                  className="w-full border border-gray-300 p-2 rounded"
-                  value={newTitle}
-                  onChange={(e) => setNewTitle(e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="block mb-2 font-bold">Category</label>
-                <input
-                  type="text"
-                  className="w-full border border-gray-300 p-2 rounded"
-                  value={newCategory}
-                  onChange={(e) => setNewCategory(e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="block mb-2 font-bold">Price</label>
-                <input
-                  type="text"
-                  className="w-full border border-gray-300 p-2 rounded"
-                  value={newPrice}
-                  onChange={(e) => setNewPrice(e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="block mb-2 font-bold">Description</label>
-                <textarea
-                  className="w-full border border-gray-300 p-2 rounded"
-                  value={newDescription}
-                  onChange={(e) => setNewDescription(e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="block mb-2 font-bold">Availability</label>
-                <select
-                  className="w-full border border-gray-300 p-2 rounded"
-                  value={newAvailability}
-                  onChange={(e) => setNewAvailability(e.target.value === "true")}
-                >
-                  <option value="true">Yes</option>
-                  <option value="false">No</option>
-                </select>
-              </div>
-              <div>
-                <label className="block mb-2 font-bold">Images</label>
-                {newImages.map((image, index) => (
-                  <div key={index} className="relative inline-block mr-2">
-                    <Image
-                      src={image}
-                      alt={`Product Image ${index + 1}`}
-                      width={100}
-                      height={100}
-                      className="border border-gray-300"
-                    />
-                    <button
-                      className="absolute top-0 right-0 bg-red-500 text-white p-1 rounded-full"
-                      onClick={() => setNewImages(newImages.filter((_, i) => i !== index))}
-                    >
-                      &times;
-                    </button>
-                  </div>
-                ))}
-                <input
-                  type="file"
-                  className="w-full border border-gray-300 p-2 rounded mt-2"
-                  onChange={(e) =>
-                    setNewImages([...newImages, ...Array.from(e.target.files)])
-                  }
-                  multiple
-                />
-              </div>
-              <div>
-                <label className="block mb-2 font-bold">Video</label>
-                {newVideo && (
-                  <div className="relative inline-block mr-2">
-                    <video
-                      src={URL.createObjectURL(newVideo)}
-                      alt="Product Video"
-                      width={200}
-                      controls
-                      className="border border-gray-300"
-                    />
-                    <button
-                      className="absolute top-0 right-0 bg-red-500 text-white p-1 rounded-full"
-                      onClick={() => setNewVideo(null)}
-                    >
-                      &times;
-                    </button>
-                  </div>
-                )}
-                <input
-                  type="file"
-                  className="w-full border border-gray-300 p-2 rounded mt-2"
-                  onChange={(e) => setNewVideo(e.target.files[0])}
-                  accept="video/*"
-                />
-              </div>
-              <div className="flex justify-end mt-4">
-                <button
-                  className="bg-gray-500 text-white px-4 py-2 rounded mr-2"
-                  onClick={() => setEditingProduct(null)}
-                >
-                  Cancel
-                </button>
-                <button
-                  className="bg-green-500 text-white px-4 py-2 rounded"
-                  onClick={() => handleUpdateProduct(editingProduct)}
-                >
-                  Save
-                </button>
-              </div>
-            </div>
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+    <div className="bg-white p-6 rounded-lg shadow-lg max-h-[90vh] overflow-y-auto">
+      <h2 className="text-2xl font-bold mb-4">Edit Product</h2>
+      <div>
+        <label className="block mb-2 font-bold">Title</label>
+        <input
+          type="text"
+          className="w-full border border-gray-300 p-2 rounded"
+          value={newTitle}
+          onChange={(e) => setNewTitle(e.target.value)}
+        />
+      </div>
+      <div>
+        <label className="block mb-2 font-bold">Category</label>
+        <input
+          type="text"
+          className="w-full border border-gray-300 p-2 rounded"
+          value={newCategory}
+          onChange={(e) => setNewCategory(e.target.value)}
+        />
+      </div>
+      <div>
+        <label className="block mb-2 font-bold">Price</label>
+        <input
+          type="text"
+          className="w-full border border-gray-300 p-2 rounded"
+          value={newPrice}
+          onChange={(e) => setNewPrice(e.target.value)}
+        />
+      </div>
+      <div>
+        <label className="block mb-2 font-bold">Description</label>
+        <textarea
+          className="w-full border border-gray-300 p-2 rounded"
+          value={newDescription}
+          onChange={(e) => setNewDescription(e.target.value)}
+        />
+      </div>
+      <div>
+        <label className="block mb-2 font-bold">Availability</label>
+        <select
+          className="w-full border border-gray-300 p-2 rounded"
+          value={newAvailability}
+          onChange={(e) => setNewAvailability(e.target.value === "true")}
+        >
+          <option value="true">Yes</option>
+          <option value="false">No</option>
+        </select>
+      </div>
+      <div>
+        <label className="block mb-2 font-bold">Images</label>
+        {newImages.map((image, index) => (
+          <div key={index} className="relative inline-block mr-2">
+            <Image
+              src={image}
+              alt={`Product Image ${index + 1}`}
+              width={100}
+              height={100}
+              className="border border-gray-300"
+            />
+            <button
+              className="absolute top-0 right-0 bg-red-500 text-white p-1 rounded-full"
+              onClick={() => setNewImages(newImages.filter((_, i) => i !== index))}
+            >
+              &times;
+            </button>
+          </div>
+        ))}
+        <input
+          type="file"
+          className="w-full border border-gray-300 p-2 rounded mt-2"
+          onChange={(e) =>
+            setNewImages([...newImages, ...Array.from(e.target.files)])
+          }
+          multiple
+        />
+      </div>
+      <div>
+        <label className="block mb-2 font-bold">Video</label>
+        {newVideo && (
+          <div className="relative inline-block mr-2">
+            <video
+              src={URL.createObjectURL(newVideo)}
+              alt="Product Video"
+              width={200}
+              controls
+              className="border border-gray-300"
+            />
+            <button
+              className="absolute top-0 right-0 bg-red-500 text-white p-1 rounded-full"
+              onClick={() => setNewVideo(null)}
+            >
+              &times;
+            </button>
           </div>
         )}
+        <input
+          type="file"
+          className="w-full border border-gray-300 p-2 rounded mt-2"
+          onChange={(e) => setNewVideo(e.target.files[0])}
+          accept="video/*"
+        />
+      </div>
+      <div className="flex justify-end mt-4">
+        <button
+          className="bg-gray-500 text-white px-4 py-2 rounded mr-2"
+          onClick={() => setEditingProduct(null)}
+        >
+          Cancel
+        </button>
+        <button
+          className="bg-green-500 text-white px-4 py-2 rounded"
+          onClick={() => handleUpdateProduct(editingProduct)}
+        >
+          Save
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
       </div>
     </>
   );
