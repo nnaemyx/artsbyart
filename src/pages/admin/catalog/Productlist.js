@@ -318,10 +318,10 @@ const Productlist = () => {
       </div>
       <div>
         <label className="block mb-2 font-bold">Video</label>
-        {newVideo && (
-          <div className="relative inline-block mr-2">
+        {newVideo.map((video, index) => (
+          <div key={index} className="relative inline-block mr-2">
             <video
-              src={URL.createObjectURL(newVideo)}
+              src={video}
               alt="Product Video"
               width={200}
               controls
@@ -334,7 +334,7 @@ const Productlist = () => {
               &times;
             </button>
           </div>
-        )}
+        ))}
         <input
           type="file"
           className="w-full border border-gray-300 p-2 rounded mt-2"
