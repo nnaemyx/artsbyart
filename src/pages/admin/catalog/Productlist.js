@@ -16,7 +16,7 @@ const Productlist = () => {
   const [newVideo, setNewVideo] = useState([]);
 
   useEffect(() => {
-    fetch("/api/products/products") 
+    fetch("/api/products/products")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to fetch products");
@@ -34,7 +34,8 @@ const Productlist = () => {
 
   const handleDeleteProduct = (productId) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
-      fetch(`https://artsbyart-api.vercel.app/api/products/${productId}`, { // Change the endpoint here
+      fetch(`https://artsbyart-api.vercel.app/api/products/${productId}`, {
+        // Change the endpoint here
         method: "DELETE",
       })
         .then((response) => {
@@ -44,7 +45,9 @@ const Productlist = () => {
               products.filter((product) => product._id !== productId)
             );
           } else {
-            return response.text().then(text => { throw new Error(text) });
+            return response.text().then((text) => {
+              throw new Error(text);
+            });
           }
         })
         .catch((error) => {
@@ -82,18 +85,22 @@ const Productlist = () => {
     formData.append("price", newPrice);
     formData.append("description", newDescription);
     formData.append("available", newAvailability);
-    if (newVideo) {
-      formData.append("video", newVideo);
+    if (newVideo && newVideo.length < 0) {
+      formData.append("video", newVideo[0]);
     }
     newImages.forEach((image) => {
       formData.append("images", image);
     });
 
     try {
-      const response = await fetch(`https://artsbyart-api.vercel.app/api/products/${productId}`, { // Change the endpoint here
-        method: "PUT",
-        body: formData,
-      });
+      const response = await fetch(
+        `https://artsbyart-api.vercel.app/api/products/${productId}`,
+        {
+          // Change the endpoint here
+          method: "PUT",
+          body: formData,
+        }
+      );
 
       if (response.ok) {
         const { updatedProduct } = await response.json();
@@ -123,13 +130,17 @@ const Productlist = () => {
 
   const handleDeleteImage = (productId, imageId) => {
     if (window.confirm("Are you sure you want to delete this image?")) {
-      fetch(`https://artsbyart-api.vercel.app/api/products/${productId}/image`, { // Change the endpoint here
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ imageId }),
-      })
+      fetch(
+        `https://artsbyart-api.vercel.app/api/products/${productId}/image`,
+        {
+          // Change the endpoint here
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ imageId }),
+        }
+      )
         .then((response) => {
           if (response.ok) {
             toast.success("Image deleted successfully");
@@ -144,7 +155,9 @@ const Productlist = () => {
               )
             );
           } else {
-            return response.text().then(text => { throw new Error(text) });
+            return response.text().then((text) => {
+              throw new Error(text);
+            });
           }
         })
         .catch((error) => {
@@ -153,16 +166,20 @@ const Productlist = () => {
         });
     }
   };
-  
+
   const handleDeleteVideo = (productId, videoId) => {
     if (window.confirm("Are you sure you want to delete this video?")) {
-      fetch(`https://artsbyart-api.vercel.app/api/products/${productId}/video`, { // Change the endpoint here
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ videoId }),
-      })
+      fetch(
+        `https://artsbyart-api.vercel.app/api/products/${productId}/video`,
+        {
+          // Change the endpoint here
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ videoId }),
+        }
+      )
         .then((response) => {
           if (response.ok) {
             toast.success("Video deleted successfully");
@@ -177,7 +194,9 @@ const Productlist = () => {
               )
             );
           } else {
-            return response.text().then(text => { throw new Error(text) });
+            return response.text().then((text) => {
+              throw new Error(text);
+            });
           }
         })
         .catch((error) => {
@@ -186,7 +205,6 @@ const Productlist = () => {
         });
     }
   };
-  
 
   return (
     <>
@@ -211,7 +229,9 @@ const Productlist = () => {
             {products.map((product) => (
               <tr key={product._id}>
                 <td className="border border-gray-300 p-2">{product.title}</td>
-                <td className="border border-gray-300 p-2">{product.category}</td>
+                <td className="border border-gray-300 p-2">
+                  {product.category}
+                </td>
                 <td className="border border-gray-300 p-2">{product.price}</td>
                 <td className="border border-gray-300 p-2">
                   {product.description}
@@ -239,127 +259,135 @@ const Productlist = () => {
         </table>
 
         {editingProduct && (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-    <div className="bg-white p-6 rounded-lg shadow-lg max-h-[90vh] overflow-y-auto">
-      <h2 className="text-2xl font-bold mb-4">Edit Product</h2>
-      <div>
-        <label className="block mb-2 font-bold">Title</label>
-        <input
-          type="text"
-          className="w-full border border-gray-300 p-2 rounded"
-          value={newTitle}
-          onChange={(e) => setNewTitle(e.target.value)}
-        />
-      </div>
-      <div>
-        <label className="block mb-2 font-bold">Category</label>
-        <input
-          type="text"
-          className="w-full border border-gray-300 p-2 rounded"
-          value={newCategory}
-          onChange={(e) => setNewCategory(e.target.value)}
-        />
-      </div>
-      <div>
-        <label className="block mb-2 font-bold">Price</label>
-        <input
-          type="text"
-          className="w-full border border-gray-300 p-2 rounded"
-          value={newPrice}
-          onChange={(e) => setNewPrice(e.target.value)}
-        />
-      </div>
-      <div>
-        <label className="block mb-2 font-bold">Description</label>
-        <textarea
-          className="w-full border border-gray-300 p-2 rounded"
-          value={newDescription}
-          onChange={(e) => setNewDescription(e.target.value)}
-        />
-      </div>
-      <div>
-        <label className="block mb-2 font-bold">Availability</label>
-        <select
-          className="w-full border border-gray-300 p-2 rounded"
-          value={newAvailability}
-          onChange={(e) => setNewAvailability(e.target.value === "true")}
-        >
-          <option value="true">Yes</option>
-          <option value="false">No</option>
-        </select>
-      </div>
-      <div>
-        <label className="block mb-2 font-bold">Images</label>
-        {newImages.map((image, index) => (
-          <div key={index} className="relative inline-block mr-2">
-            <Image
-              src={image}
-              alt={`Product Image ${index + 1}`}
-              width={100}
-              height={100}
-              className="border border-gray-300"
-            />
-            <button
-              className="absolute top-0 right-0 bg-red-500 text-white p-1 rounded-full"
-              onClick={() => setNewImages(newImages.filter((_, i) => i !== index))}
-            >
-              &times;
-            </button>
-          </div>
-        ))}
-        <input
-          type="file"
-          className="w-full border border-gray-300 p-2 rounded mt-2"
-          onChange={(e) =>
-            setNewImages([...newImages, ...Array.from(e.target.files)])
-          }
-          multiple
-        />
-      </div>
-      <div>
-        <label className="block mb-2 font-bold">Video</label>
-        {newVideo.map((video, index) => (
-          <div key={index} className="relative inline-block mr-2">
-            <video
-              src={video}
-              alt="Product Video"
-              width={200}
-              controls
-              className="border border-gray-300"
-            />
-            <button
-              className="absolute top-0 right-0 bg-red-500 text-white p-1 rounded-full"
-              onClick={() => setNewVideo(null)}
-            >
-              &times;
-            </button>
-          </div>
-        ))}
-        <input
-          type="file"
-          className="w-full border border-gray-300 p-2 rounded mt-2"
-          onChange={(e) => setNewVideo(e.target.files[0])}
-          accept="video/*"
-        />
-      </div>
-      <div className="flex justify-end mt-4">
-        <button
-          className="bg-gray-500 text-white px-4 py-2 rounded mr-2"
-          onClick={() => setEditingProduct(null)}
-        >
-          Cancel
-        </button>
-        <button
-          className="bg-green-500 text-white px-4 py-2 rounded"
-          onClick={() => handleUpdateProduct(editingProduct)}
-        >
-          Save
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+            <div className="bg-white p-6 rounded-lg shadow-lg max-h-[90vh] overflow-y-auto">
+              <h2 className="text-2xl font-bold mb-4">Edit Product</h2>
+              <div>
+                <label className="block mb-2 font-bold">Title</label>
+                <input
+                  type="text"
+                  className="w-full border border-gray-300 p-2 rounded"
+                  value={newTitle}
+                  onChange={(e) => setNewTitle(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block mb-2 font-bold">Category</label>
+                <input
+                  type="text"
+                  className="w-full border border-gray-300 p-2 rounded"
+                  value={newCategory}
+                  onChange={(e) => setNewCategory(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block mb-2 font-bold">Price</label>
+                <input
+                  type="text"
+                  className="w-full border border-gray-300 p-2 rounded"
+                  value={newPrice}
+                  onChange={(e) => setNewPrice(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block mb-2 font-bold">Description</label>
+                <textarea
+                  className="w-full border border-gray-300 p-2 rounded"
+                  value={newDescription}
+                  onChange={(e) => setNewDescription(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block mb-2 font-bold">Availability</label>
+                <select
+                  className="w-full border border-gray-300 p-2 rounded"
+                  value={newAvailability}
+                  onChange={(e) =>
+                    setNewAvailability(e.target.value === "true")
+                  }
+                >
+                  <option value="true">Yes</option>
+                  <option value="false">No</option>
+                </select>
+              </div>
+              <div>
+                <label className="block mb-2 font-bold">Images</label>
+                {newImages.map((image, index) => (
+                  <div key={index} className="relative inline-block mr-2">
+                    <Image
+                      src={image}
+                      alt={`Product Image ${index + 1}`}
+                      width={100}
+                      height={100}
+                      className="border border-gray-300"
+                    />
+                    <button
+                      className="absolute top-0 right-0 bg-red-500 text-white p-1 rounded-full"
+                      onClick={() =>
+                        setNewImages(newImages.filter((_, i) => i !== index))
+                      }
+                    >
+                      &times;
+                    </button>
+                  </div>
+                ))}
+                <input
+                  type="file"
+                  className="w-full border border-gray-300 p-2 rounded mt-2"
+                  onChange={(e) =>
+                    setNewImages([...newImages, ...Array.from(e.target.files)])
+                  }
+                  multiple
+                />
+              </div>
+              <div>
+                <label className="block mb-2 font-bold">Video</label>
+                {newVideo && Array.isArray(newVideo) && newVideo.length > 0 ? (
+                  newVideo.map((video, index) => (
+                    <div key={index} className="relative inline-block mr-2">
+                      <video
+                        src={video}
+                        alt="Product Video"
+                        width={200}
+                        controls
+                        className="border border-gray-300"
+                      />
+                      <button
+                        className="absolute top-0 right-0 bg-red-500 text-white p-1 rounded-full"
+                        onClick={() => setNewVideo(null)}
+                      >
+                        &times;
+                      </button>
+                    </div>
+                  ))
+                ) : (
+                  <p>No video available</p>
+                )}
+                <input
+                  type="file"
+                  className="w-full border border-gray-300 p-2 rounded mt-2"
+                  onChange={(e) => setNewVideo([e.target.files[0]])} // Update to set as array
+                  accept="video/*"
+                />
+              </div>
 
+              <div className="flex justify-end mt-4">
+                <button
+                  className="bg-gray-500 text-white px-4 py-2 rounded mr-2"
+                  onClick={() => setEditingProduct(null)}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="bg-green-500 text-white px-4 py-2 rounded"
+                  onClick={() => handleUpdateProduct(editingProduct)}
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

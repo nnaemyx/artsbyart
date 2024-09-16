@@ -5,9 +5,7 @@ const nextConfig = {
     domains: ['res.cloudinary.com'],
     // hostname: ["res.cloudinary.com"],
   },
-  experimental: {
-    runtime: 'edge',
-  },
+
 }
 
 module.exports = nextConfig
