@@ -13,6 +13,7 @@ const Addproduct = () => {
   const [quantity, setQuantity] = useState("");
   const [category, setCategory] = useState("");
   const [procedures, setProcedures] = useState([]);
+  const [selectedColor, setSelectedColor] = useState("");
   const [images, setImages] = useState([]);
   const [thumbnailUrls, setThumbnailUrls] = useState([]);
   const [video, setVideo] = useState([]);
@@ -76,6 +77,13 @@ const Addproduct = () => {
     accept: "video/*",
     multiple: false,
   });
+
+  useEffect(() => {
+    // Fetch the colors when the component mounts
+    // Fetch the product categories when the component mounts
+    categoryStore.getCategories();
+    procedureStore.getProcedures();
+  }, []);
 
   const router = useRouter();
 
