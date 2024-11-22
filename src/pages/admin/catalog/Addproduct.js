@@ -1,4 +1,3 @@
-import useColorStore from "@/store/color/colorStore";
 import useProductCategoryStore from "@/store/pcategory/pStore";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -14,14 +13,12 @@ const Addproduct = () => {
   const [quantity, setQuantity] = useState("");
   const [category, setCategory] = useState("");
   const [procedures, setProcedures] = useState([]);
-  const [selectedColor, setSelectedColor] = useState("");
   const [images, setImages] = useState([]);
   const [thumbnailUrls, setThumbnailUrls] = useState([]);
   const [video, setVideo] = useState([]);
   const [videoUrl, setVideoUrl] = useState("");
   const [loading, setLoading] = useState(false); // Loading state
 
-  const colorStore = useColorStore(); // Get the color store
   const categoryStore = useProductCategoryStore(); // Get the product category store
   const procedureStore = useProcedureStore();
 
@@ -79,14 +76,6 @@ const Addproduct = () => {
     accept: "video/*",
     multiple: false,
   });
-
-  useEffect(() => {
-    // Fetch the colors when the component mounts
-    colorStore.getColors();
-    // Fetch the product categories when the component mounts
-    categoryStore.getCategories();
-    procedureStore.getProcedures();
-  }, []);
 
   const router = useRouter();
 
